@@ -25,6 +25,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
+// remove for 1.6.4
 @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
