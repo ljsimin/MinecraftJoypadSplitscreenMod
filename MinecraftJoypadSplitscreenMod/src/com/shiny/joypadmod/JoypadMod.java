@@ -3,6 +3,10 @@ package com.shiny.joypadmod;
 import java.io.File;
 import org.lwjgl.input.Controllers;
 
+/* 
+ * Main class for Joypad mod.  This initializes everything.
+ */
+
 import net.minecraft.client.Minecraft;
 
 import cpw.mods.fml.common.Mod;
@@ -25,6 +29,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
+// Remove from 1.6.4 please--test
 @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
