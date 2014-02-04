@@ -4,25 +4,27 @@ import java.io.File;
 import org.lwjgl.input.Controllers;
 
 import net.minecraft.client.Minecraft;
-import cpw.mods.fml.common.registry.TickRegistry;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.relauncher.Side;
 
-/* 1.7.2
+/* 1.7.2 Forge
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;*/
 
+// 1.6.4 Forge
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.common.network.NetworkMod;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
+
 @NetworkMod(serverSideRequired = false)
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
 public class JoypadMod
 {
     public static final String MODID = "joypadmod";
