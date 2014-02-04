@@ -90,8 +90,7 @@ public class GameRenderHandler {
 				 else
 				 {
 					 // backup
-					 mc.displayGuiScreen(null);
-					// mc.func_147108_a(null);
+					 JoypadMod.obfuscationHelper.DisplayGuiScreen(null);					 				
 					 mc.setIngameFocus();
 				 }
 			 }
@@ -124,9 +123,9 @@ public class GameRenderHandler {
 	private static boolean attacking = false; 
     private static boolean using = false;
     private static boolean sneaking = false;
-    private static int attackKeyCode = mc.gameSettings.keyBindAttack.keyCode;//.func_151463_i(); // getKeyCode
-	private static int useKeyCode =  mc.gameSettings.keyBindUseItem.keyCode;//.func_151463_i();
-	private static int sneakKeyCode =  mc.gameSettings.keyBindSneak.keyCode;
+    private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
+	private static int useKeyCode =  JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
+	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
 	    
     protected static void HandleJoystickInGame()
     {
@@ -170,8 +169,8 @@ public class GameRenderHandler {
 			 else if (ControllerSettings.joyBindInventory.wasPressed())
     		 {
 				 System.out.println("Inventory control pressed");
-				 int code = mc.gameSettings.keyBindInventory.keyCode;//field_151445_Q.func_151463_i();// get key code
-				 KeyBinding.onTick(code);//.field_151445_Q.onTick(code);				 				    
+				 int code = JoypadMod.obfuscationHelper.KeyBindCodeInventory();
+				 KeyBinding.onTick(code);				 				    
     		 } 
 			 else if (ControllerSettings.joyBindNextItem.wasPressed())
 			 {
@@ -187,7 +186,7 @@ public class GameRenderHandler {
 			 {
 				 if (mc.currentScreen != null)
 				 {
-					 mc.displayGuiScreen(null);//func_147108_a(null);
+					 JoypadMod.obfuscationHelper.DisplayGuiScreen(null);					 
 					 mc.setIngameFocus();
 				 }
 				 else
@@ -236,10 +235,9 @@ public class GameRenderHandler {
 			try
 			{				
 				System.out.println("Replacing control screen");
-				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls)gui, "parentScreen", "field_73909_b");
-				mc.displayGuiScreen(new JoypadConfigMenu(parent, mc.gameSettings));
-				//mc.func_147108_a(new GuiControlsJoypad(parent, mc.gameSettings));
-				//mc.currentScreen = new GuiControlsJoypad(parent, mc.gameSettings);
+				String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("parentScreen");
+				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls)gui, names[0], names[1]);
+				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, mc.gameSettings));
 			}
 			catch (Exception ex)
 			{

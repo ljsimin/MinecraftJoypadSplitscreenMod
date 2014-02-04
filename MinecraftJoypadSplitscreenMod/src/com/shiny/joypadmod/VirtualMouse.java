@@ -160,24 +160,30 @@ public class VirtualMouse {
 		mcX = x * scaledResolution.getScaleFactor();		
 	}
 	
+	String[] eventButtonNames = JoypadMod.obfuscationHelper.GetMinecraftVarNames("eventButton");
+	String[] lastMouseEventNames = JoypadMod.obfuscationHelper.GetMinecraftVarNames("lastMouseEvent");
+	
+	// todo: look at this variable!!?!
 	int gMdParam = 0;
 	private void gui_mouseDown( int rawX, int rawY, int button)
 	{	    
+		// todo: this function is riddled with bad names 
 		if (gMdParam  == -1)
 		{
 			System.out.println("gui_mouseDown disabled due to earlier error");
 			return;
 		}
-		String[] names = { "mouseClicked", "func_73864_a" };		
+		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseClicked");		
 		Method mouseClicked = null;
+		
 		@SuppressWarnings("rawtypes")
 		Class[] params = new Class[] { int.class, int.class, int.class };
 	    
 		//System.out.println("Calling mouseClicked");
 		try
 		{
-		    ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, button, "eventButton"/*"eventButton"*/, "field_85042_b" );
-		    ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, Minecraft.getSystemTime(), "lastMouseEvent", "field_85043_c" );
+		    ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, button, eventButtonNames[0], eventButtonNames[1] );
+		    ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, Minecraft.getSystemTime(), lastMouseEventNames[0], lastMouseEventNames[1]);
 		    
 		    try
 		    {
@@ -207,7 +213,7 @@ public class VirtualMouse {
 			return;
 		}
 		
-		String[] names = { "mouseMovedOrUp", "func_73879_b" };
+		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseMovedOrUp");
 
 	    Method mouseMovedOrUp = null;
 		@SuppressWarnings("rawtypes")
@@ -233,6 +239,7 @@ public class VirtualMouse {
 		}
 	}
 
+	// todo: again!!
 	int mdParam = 0;
 	public void gui_mouseDrag(int rawX, int rawY) 
 	{
@@ -244,16 +251,16 @@ public class VirtualMouse {
 		
 		long lastEvent = -1;
 		int eventButton = -1;
-		String[] names = { "mouseClickMove", "func_85041_a" };
+		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseClickMove");
 	    Method mouseButtonMove = null;
 		@SuppressWarnings("rawtypes")
 		Class[] params = new Class[] { int.class, int.class, int.class, long.class };	
 		//System.out.println("Calling mouseDrag");
 		
 		try
-		{
-			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, "lastMouseEvent", "field_85043_c");
-			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, "eventButton", "field_85042_b");					
+		{			
+			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, eventButtonNames[0], eventButtonNames[1] );
+			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen)mc.currentScreen, lastMouseEventNames[0], lastMouseEventNames[1]);								
 		}
 		catch (Exception ex)
 		{
@@ -284,7 +291,7 @@ public class VirtualMouse {
 				
 	}
 		
-	//clickMouse(int par1)
+	// oh minecraft why did you have to mess with the clicking function?
 	private static int glcParam = 0;
 	private static void game_leftClick()
 	{		
