@@ -3,18 +3,11 @@ package com.shiny.joypadmod.minecraftExtensions;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.JoypadMod;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlider;
-import net.minecraft.client.settings.EnumOptions;
 import net.minecraft.client.settings.GameSettings;
 
 public class JoypadConfigMenu extends GuiControls{
