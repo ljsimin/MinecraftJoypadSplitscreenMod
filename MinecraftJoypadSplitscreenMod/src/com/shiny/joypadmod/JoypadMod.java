@@ -3,12 +3,6 @@ package com.shiny.joypadmod;
 import java.io.File;
 import org.lwjgl.input.Controllers;
 
-/* 1.7.2
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;*/
-
 import net.minecraft.client.Minecraft;
 import cpw.mods.fml.common.registry.TickRegistry;
 import net.minecraftforge.common.Configuration;
@@ -20,7 +14,11 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.relauncher.Side;
 
-
+/* 1.7.2
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;*/
 
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
