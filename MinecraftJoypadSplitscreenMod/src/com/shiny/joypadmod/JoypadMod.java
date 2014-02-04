@@ -3,6 +3,10 @@ package com.shiny.joypadmod;
 import java.io.File;
 import org.lwjgl.input.Controllers;
 
+/* 
+ * Main class for Joypad mod.  This initializes everything.
+ */
+
 import net.minecraft.client.Minecraft;
 
 import cpw.mods.fml.common.Mod;
