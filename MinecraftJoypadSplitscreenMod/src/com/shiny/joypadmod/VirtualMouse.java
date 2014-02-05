@@ -8,19 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
-
-
-
-
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
-
-
-
-
-
-
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class VirtualMouse {

@@ -20,18 +20,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 
-/*
-// 1.6.4
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.TickRegistry;
-
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
-*/
-
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
-// 1.6.4
-// @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
     public static final String MODID = "joypadmod";
@@ -57,8 +46,6 @@ public class JoypadMod
     	{
     		//1.7.4
     		FMLCommonHandler.instance().bus().register(this);
-    		//1.6.4 
-    		// TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
     	}
     }
    
