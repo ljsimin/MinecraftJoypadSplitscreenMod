@@ -102,11 +102,11 @@ public class JoypadMod
     	
     	if (event.phase == TickEvent.Phase.START)
     	{
-    		GameRenderHandler.HandleGuiPreRender();
+    		GameRenderHandler.HandlePreRender();
     	}
     	else if (event.phase == TickEvent.Phase.END)
     	{
-    		GameRenderHandler.HandleGuiPostRender();
+    		GameRenderHandler.HandlePostRender();
     	}    		
     }
       
