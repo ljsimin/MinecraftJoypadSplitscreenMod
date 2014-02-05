@@ -1,11 +1,11 @@
 package com.shiny.joypadmod;
 
 import java.util.EnumSet;
-/* 1.6.4
+// 1.6.4
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
-*/
-public class RenderTickHandler { /*1.6.4  implements ITickHandler {
+
+public class RenderTickHandler implements ITickHandler {
 
 	
 	// start of rendering on screen
@@ -31,5 +31,5 @@ public class RenderTickHandler { /*1.6.4  implements ITickHandler {
 	public String getLabel() {		
 		return "joyTickHandler";
 	}	
-*/
+
 }

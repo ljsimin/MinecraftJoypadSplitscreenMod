@@ -45,28 +45,28 @@ public class MinecraftObfuscationHelper {
 	{
 		
 		//de-obfuscated
-		//return key.keyCode;
+		return key.keyCode;
 		
 		//obfuscated 1.7.2
-		return key.func_151463_i();
+		//return key.func_151463_i();
 	}
 	
 	public int KeyBindCodeInventory()
 	{
 		// de-obfuscated
-		// return JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
+		return JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 		
 		// obfuscated 1.7.2
-		return KeyBindCodeHelper(mc.gameSettings.field_151445_Q);
+		//return KeyBindCodeHelper(mc.gameSettings.field_151445_Q);
 	}
 	
 	public void DisplayGuiScreen(GuiScreen guiScreen)
 	{
 		//de-obfuscated
-		//mc.displayGuiScreen(guiScreen);
+		mc.displayGuiScreen(guiScreen);
 		
 		//obfuscated 1.7.2
-		mc.func_147108_a(guiScreen);
+		//mc.func_147108_a(guiScreen);
 	}
 	
 	// returns de-obfuscated and obfuscated names for that version

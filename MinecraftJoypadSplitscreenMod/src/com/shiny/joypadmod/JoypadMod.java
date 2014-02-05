@@ -8,37 +8,38 @@ import java.io.File;
 import org.lwjgl.input.Controllers;
 
 import net.minecraft.client.Minecraft;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 //1.7.4
+/*
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.config.*;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
+*/
 
-/*
 // 1.6.4
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.TickRegistry;
-
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
-*/
+
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
 // 1.6.4
-// @NetworkMod(serverSideRequired = false)
+@NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
     public static final String MODID = "joypadmod";
-    public static final String VERSION = "1.7.2";
+    public static final String VERSION = "1.6.4";
     public static final String NAME = "Joypad / SplitScreen Mod"; 
     public static MinecraftObfuscationHelper obfuscationHelper;
-    public static final int MC_VERSION = 172;
+    public static final int MC_VERSION = 164;
     public static ControllerSettings controllerSettings;
     public int JoyNo = -1;    
     
@@ -56,9 +57,9 @@ public class JoypadMod
     	if (ControllerSettings.inputEnabled)
     	{
     		//1.7.4
-    		FMLCommonHandler.instance().bus().register(this);
+    		//FMLCommonHandler.instance().bus().register(this);
     		//1.6.4 
-    		// TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
+    		TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
     	}
     }
    
@@ -107,7 +108,7 @@ public class JoypadMod
     }
            
     // 1.7.2
-    @SubscribeEvent
+    /*@SubscribeEvent
     public void tickRender(RenderTickEvent event) 
     {
     	if (!ControllerSettings.inputEnabled)
@@ -121,7 +122,7 @@ public class JoypadMod
     	{
     		GameRenderHandler.HandleGuiPostRender();
     	}    		
-    }
+    }*/
       
 }
 
