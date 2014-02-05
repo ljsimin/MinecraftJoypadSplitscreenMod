@@ -27,13 +27,8 @@ public class GameRenderHandler {
 			{
 				ReplaceControlScreen((GuiControls)mc.currentScreen);
 			}
-			HandleGuiPreRender();
-			joypadMouse.hack_mouseXY(joypadMouse.mcX, joypadMouse.mcY);
-			if (joypadMouse.leftButtonHeld || joypadMouse.rightButtonHeld)
-			{
-				joypadMouse.gui_mouseDrag(joypadMouse.x,joypadMouse.y); 
-				VirtualMouse.hack_mouseButton( joypadMouse.leftButtonHeld ? 0 : 1 );
-			}
+
+			HandleGuiPreRender();		
 		}		
 	}
 	
@@ -43,18 +38,14 @@ public class GameRenderHandler {
     	{
 	    	if (InGuiCheckNeeded())
 	    	{
-	    		HandleGuiPostRender();
+	    		HandleGuiPostRender();	    		
 	    	}
 	    	    	
 	    	if (InGameCheckNeeded())
 	    	{ 
 	    		ReplacePlayerMovement();
 	    		
-	    		HandleJoystickInGame();
-	    		
-	    		// set FOV axis readings
-	    		VirtualMouse.updateCameraAxisReading();    		
-		        mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
+	    		HandleJoystickInGame();	    			    	
 	    	}    	
     	}
     	catch (Exception ex)
@@ -64,7 +55,7 @@ public class GameRenderHandler {
 
 	}
 	
-	protected static void HandleGuiPreRender()
+	private static void HandleGuiPreRender()
 	{
 		if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
     		return;	
@@ -104,10 +95,20 @@ public class GameRenderHandler {
     			joypadMouse.rightButtonDown();
 
     		}
-    	}    	   		
+    	}
+    	
+		// This call here re-points the mouse position that Minecraft picks up to 
+		// determine if it should do the Hover over button effect.
+		joypadMouse.hack_mouseXY(joypadMouse.mcX, joypadMouse.mcY);			
+		
+		if (joypadMouse.leftButtonHeld || joypadMouse.rightButtonHeld)
+		{
+			joypadMouse.gui_mouseDrag(joypadMouse.x,joypadMouse.y); 
+			VirtualMouse.hack_mouseButton( joypadMouse.leftButtonHeld ? 0 : 1 );
+		}
 	}
 	
-	protected static void HandleGuiPostRender()
+	private static void HandleGuiPostRender()
     {      
     
     	if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
@@ -127,7 +128,7 @@ public class GameRenderHandler {
 	private static int useKeyCode =  JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
 	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
 	    
-    protected static void HandleJoystickInGame()
+    private static void HandleJoystickInGame()
     {
 		while (Controllers.next())
 		{       	      			
@@ -205,10 +206,14 @@ public class GameRenderHandler {
 				 KeyBinding.setKeyBindState(sneakKeyCode, true);
 				 sneaking = true;
 			 } 
-		}    	    
+		}
+		
+		// Read joypad movements then rotate the player based on the movements
+		VirtualMouse.updateCameraAxisReading();    		
+        mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
     }
     
-    protected static boolean ReplacePlayerMovement()
+    private static boolean ReplacePlayerMovement()
     {
     	try
 		{    		    	
@@ -228,7 +233,7 @@ public class GameRenderHandler {
     	return false;       	
     }
     
-    protected static void ReplaceControlScreen(GuiControls gui)
+    private static void ReplaceControlScreen(GuiControls gui)
 	{		
 		if (!(mc.currentScreen instanceof JoypadConfigMenu))
 		{

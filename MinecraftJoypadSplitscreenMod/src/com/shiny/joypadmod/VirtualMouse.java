@@ -329,7 +329,8 @@ public class VirtualMouse {
 	}
 		
 	public boolean hack_mouseXY(int x, int y)
-	{		
+	{	
+		//System.out.println("Hacking mouse position to x:" + x + " y:" + y);
 		try
 		{			
 			Field xField = Mouse.class.getDeclaredField("x");
