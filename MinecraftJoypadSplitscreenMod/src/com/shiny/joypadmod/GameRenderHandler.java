@@ -2,12 +2,10 @@ package com.shiny.joypadmod;
 
 import org.lwjgl.input.Controllers;
 
-import com.shiny.joypadmod.minecraftExtensions.ControllerMovementInput;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
@@ -42,9 +40,7 @@ public class GameRenderHandler {
 	    	}
 	    	    	
 	    	if (InGameCheckNeeded())
-	    	{ 
-	    		ReplacePlayerMovement();
-	    		
+	    	{ 	    		
 	    		HandleJoystickInGame();	    			    	
 	    	}    	
     	}
@@ -121,53 +117,19 @@ public class GameRenderHandler {
     	Gui.drawRect(x, y-3, x+1, y+4, reticalColor);    	    	   
     }
 	
-	private static boolean attacking = false; 
-    private static boolean using = false;
-    private static boolean sneaking = false;
     private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
-	private static int useKeyCode =  JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
-	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
+	private static int useKeyCode =  JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);	
 	    
+	// does this have to be run in post render or pre?  maybe doesn't matter...but be wary if changing it around
     private static void HandleJoystickInGame()
     {
 		while (Controllers.next())
-		{       	      			
-			if (using && !ControllerSettings.joyBindUseItem.isPressed())
-			{
-				System.out.println("Setting using to false");
-				using = false;
-				KeyBinding.setKeyBindState(useKeyCode, false);				  			
-			}
-			
-			if (attacking && !ControllerSettings.joyBindAttack.isPressed())
-   			{
-				 System.out.println("Setting attacking to false");
-   				 attacking = false;
-   				 KeyBinding.setKeyBindState(attackKeyCode, false);
-   			}
-			
-			if (sneaking && !ControllerSettings.joyBindSneak.isPressed())
-			{
-				 System.out.println("Setting sneaking to false");
-   				 sneaking = false;
-   				 mc.thePlayer.movementInput.sneak = false;
-   				 KeyBinding.setKeyBindState(sneakKeyCode, false);
-			}
- 			 
-			 if (ControllerSettings.joyBindAttack.wasPressed())
-			 {
-				 System.out.println("Setting attacking to true");
-				 VirtualMouse.leftClick();				
-				 KeyBinding.setKeyBindState(attackKeyCode, true);
-				 attacking = true;
-			 }
-			 else if (ControllerSettings.joyBindUseItem.wasPressed())
-    		 {	    			
-				System.out.println("Setting using to true");
-				KeyBinding.setKeyBindState(useKeyCode, true);    			
-    			using = true;
-    		 }	        			     			     			    			 
-			 else if (ControllerSettings.joyBindInventory.wasPressed())
+		{       	   
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
+			    	
+			// TODO maybe possible to replace all of these with just a setKeyBindState?
+			 if (ControllerSettings.joyBindInventory.wasPressed())
     		 {
 				 System.out.println("Inventory control pressed");
 				 int code = JoypadMod.obfuscationHelper.KeyBindCodeInventory();
@@ -197,40 +159,44 @@ public class GameRenderHandler {
 			 {
 				 // TODO: add option to drop more than 1 item
 				 mc.thePlayer.dropOneItem(true);
-			 }    
-			 else if (ControllerSettings.joyBindSneak.wasPressed())
-			 {
-				 System.out.println("Setting sneaking to true");
-				 mc.thePlayer.movementInput.sneak = true;
-				 KeyBinding.onTick(sneakKeyCode);
-				 KeyBinding.setKeyBindState(sneakKeyCode, true);
-				 sneaking = true;
-			 } 
+			 }   
+			 
+			 HandlePlayerMovement();
 		}
 		
-		// Read joypad movements then rotate the player based on the movements
+		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading();    		
         mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
     }
     
-    private static boolean ReplacePlayerMovement()
+    
+    // TODO this is almost getting big enough to warrant its own class
+    private static int forwardKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindForward);
+    private static int backKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindBack);
+    private static int leftKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindLeft);
+    private static int rightKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindRight);
+    private static int jumpKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindJump);
+    private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);    
+    
+    private static void HandlePlayerMovement()
     {
-    	try
-		{    		    	
-    		// modify the in game player movement
-    		EntityClientPlayerMP player = mc.thePlayer;
-    		if (player != null && !(player.movementInput instanceof ControllerMovementInput))
-	    	{	    			    			   
-				ControllerMovementInput movementInput = new ControllerMovementInput();
-				player.movementInput = movementInput; 
-				System.out.println("Replaced Player Movement with mod movement");				    		
-	    	}    		    	
-    		return true;
-		} catch (Exception ex)
+    	if (ControllerSettings.inputEnabled && ControllerSettings.joystick != null)			
 		{
-			System.out.println("Failed to replace Minecraft objects with modded objects. Error: " + ex.toString());
+			float xPlus = ControllerSettings.joyMovementXplus.getAnalogReading();
+			float xMinus = ControllerSettings.joyMovementXminus.getAnalogReading();
+			float xAxisValue = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
+			
+			float yPlus = ControllerSettings.joyMovementYplus.getAnalogReading();
+			float yMinus = ControllerSettings.joyMovementYminus.getAnalogReading();
+			float yAxisValue = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
+			    		
+			KeyBinding.setKeyBindState(forwardKeyCode, yAxisValue < 0);
+			KeyBinding.setKeyBindState(backKeyCode, yAxisValue > 0);
+			KeyBinding.setKeyBindState(leftKeyCode, xAxisValue < 0);
+			KeyBinding.setKeyBindState(rightKeyCode, xAxisValue > 0);
+			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.joyBindSneak.isPressed());
+			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.joyBindJump.isPressed());
 		}
-    	return false;       	
     }
     
     private static void ReplaceControlScreen(GuiControls gui)
