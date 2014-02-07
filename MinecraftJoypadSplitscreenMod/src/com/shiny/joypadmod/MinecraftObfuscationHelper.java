@@ -51,15 +51,6 @@ public class MinecraftObfuscationHelper {
 		//return key.func_151463_i();
 	}
 	
-	public int KeyBindCodeInventory()
-	{
-		// de-obfuscated
-		return JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
-		
-		// obfuscated 
-		//return KeyBindCodeHelper(mc.gameSettings.field_151445_Q);
-	}
-	
 	public void DisplayGuiScreen(GuiScreen guiScreen)
 	{
 		//de-obfuscated
