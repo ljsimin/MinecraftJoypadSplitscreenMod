@@ -18,25 +18,24 @@ public class GameRenderHandler {
 	public static VirtualMouse joypadMouse = new VirtualMouse();
 	
 	public static void HandlePreRender()
-	{
+	{				
 		if (InGuiCheckNeeded() && (mc.currentScreen != null))
 		{
 			if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
 			{
 				ReplaceControlScreen((GuiControls)mc.currentScreen);
 			}
-
-			HandleGuiPreRender();		
+			HandleGuiMousePreRender();		
 		}		
 	}
 	
 	public static void HandlePostRender()
-	{
+	{		
 		try
     	{
 	    	if (InGuiCheckNeeded())
 	    	{
-	    		HandleGuiPostRender();	    		
+	    		HandleGuiMousePostRender();	    		
 	    	}
 	    	    	
 	    	if (InGameCheckNeeded())
@@ -51,7 +50,7 @@ public class GameRenderHandler {
 
 	}
 	
-	private static void HandleGuiPreRender()
+	private static void HandleGuiMousePreRender()
 	{
 		if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
     		return;	
@@ -62,11 +61,14 @@ public class GameRenderHandler {
 		
     	while (Controllers.next())
     	{
+    		KeyBinding.setKeyBindState(inventoryKeyCode, ControllerSettings.joyBindInventory.isPressed());
+    		
     		if (joypadMouse.leftButtonHeld && !ControllerSettings.joyBindAttack.isPressed())
     			joypadMouse.leftButtonUp();
     		
     		if (joypadMouse.rightButtonHeld && !ControllerSettings.joyBindUseItem.isPressed())
     			joypadMouse.rightButtonUp();
+    		
     		
     		if (ControllerSettings.joyBindInventory.wasPressed())
 			 {
@@ -104,7 +106,7 @@ public class GameRenderHandler {
 		}
 	}
 	
-	private static void HandleGuiPostRender()
+	private static void HandleGuiMousePostRender()
     {      
     
     	if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
@@ -119,50 +121,50 @@ public class GameRenderHandler {
 	
     private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode =  JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);	
+	private static int inventoryKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 	    
 	// does this have to be run in post render or pre?  maybe doesn't matter...but be wary if changing it around
     private static void HandleJoystickInGame()
     {
 		while (Controllers.next())
-		{       	   
+		{
 			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
 			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
-			    	
-			// TODO maybe possible to replace all of these with just a setKeyBindState?
-			 if (ControllerSettings.joyBindInventory.wasPressed())
-    		 {
-				 System.out.println("Inventory control pressed");
-				 int code = JoypadMod.obfuscationHelper.KeyBindCodeInventory();
-				 KeyBinding.onTick(code);				 				    
-    		 } 
-			 else if (ControllerSettings.joyBindNextItem.wasPressed())
-			 {
-				 System.out.println("NextItem pressed");
-				 mc.thePlayer.inventory.changeCurrentItem(-1);
-			 }
-			 else if (ControllerSettings.joyBindPrevItem.wasPressed())
-			 {
-				 System.out.println("PrevItem pressed");
-				 mc.thePlayer.inventory.changeCurrentItem(1);
-			 }
-			 else if (ControllerSettings.joyBindMenu.wasPressed())
-			 {
-				 if (mc.currentScreen != null)
-				 {
-					 JoypadMod.obfuscationHelper.DisplayGuiScreen(null);					 
-					 mc.setIngameFocus();
-				 }
-				 else
-					 mc.displayInGameMenu();
-			 }
-			 else if (ControllerSettings.joyBindDrop.wasPressed())
-			 {
-				 // TODO: add option to drop more than 1 item
-				 mc.thePlayer.dropOneItem(true);
-			 }   
-			 
-			 HandlePlayerMovement();
-		}
+			if (ControllerSettings.joyBindInventory.wasPressed())
+			{
+				System.out.println("Inventory control pressed");				 
+				KeyBinding.onTick(inventoryKeyCode);				 				    
+			} 
+			else if (ControllerSettings.joyBindNextItem.wasPressed())
+			{
+				System.out.println("NextItem pressed");
+				mc.thePlayer.inventory.changeCurrentItem(-1);
+			}
+			else if (ControllerSettings.joyBindPrevItem.wasPressed())
+			{
+				System.out.println("PrevItem pressed");
+				mc.thePlayer.inventory.changeCurrentItem(1);
+			}
+			else if (ControllerSettings.joyBindMenu.wasPressed())
+			{
+				if (mc.currentScreen != null)
+				{
+					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);					 
+					mc.setIngameFocus();
+				}
+				else
+				{
+					mc.displayInGameMenu();
+				}
+			}
+			else if (ControllerSettings.joyBindDrop.wasPressed())
+			{
+				// TODO: add option to drop more than 1 item
+				mc.thePlayer.dropOneItem(true);
+			}   
+				 
+				 HandlePlayerMovement();
+			}	
 		
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading();    		

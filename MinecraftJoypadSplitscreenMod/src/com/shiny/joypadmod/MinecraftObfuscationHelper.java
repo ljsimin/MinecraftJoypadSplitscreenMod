@@ -38,27 +38,21 @@ public class MinecraftObfuscationHelper {
 		
 		versionNameMap.put("eventButton", new String[] { "field_85042_b", "field_146287_f" });
 		versionNameMap.put("lastMouseEvent", new String[] { "field_85043_c", "field_146288_g" });
-		versionNameMap.put("parentScreen", new String[] { "field_73909_b", "field_146288_g" });
+		versionNameMap.put("parentScreen", new String[] { "field_73909_b", "field_146496_h" });
 	}
 	
 	public int KeyBindCodeHelper(KeyBinding key)
 	{
 		
-		//de-obfuscated
+		//de-obfuscated 1.6.4
 		return key.keyCode;
 		
+		// de-obfuscated 1.7.2
+		//return key.getKeyCode();
 		//obfuscated 1.7.2
 		//return key.func_151463_i();
 	}
 	
-	public int KeyBindCodeInventory()
-	{
-		// de-obfuscated
-		return JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
-		
-		// obfuscated 1.7.2
-		//return KeyBindCodeHelper(mc.gameSettings.field_151445_Q);
-	}
 	
 	public void DisplayGuiScreen(GuiScreen guiScreen)
 	{
