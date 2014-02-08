@@ -97,9 +97,6 @@ public class JoypadMod
     @SubscribeEvent
     public void tickRender(RenderTickEvent event) 
     {
-    	if (!ControllerSettings.inputEnabled)
-    		return;
-    	
     	if (event.phase == TickEvent.Phase.START)
     	{
     		GameRenderHandler.HandlePreRender();
