@@ -19,13 +19,15 @@ public class GameRenderHandler {
 	
 	public static void HandlePreRender()
 	{				
-		if (InGuiCheckNeeded() && (mc.currentScreen != null))
+		if (mc.currentScreen != null)
 		{
 			if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
 			{
 				ReplaceControlScreen((GuiControls)mc.currentScreen);
 			}
-			HandleGuiMousePreRender();		
+			
+			if (InGuiCheckNeeded())
+				HandleGuiMousePreRender();		
 		}		
 	}
 	
@@ -57,12 +59,10 @@ public class GameRenderHandler {
     	
 		// update mouse coordinates
 		joypadMouse.getX();
-    	joypadMouse.getY();
+		joypadMouse.getY();
 		
-    	while (Controllers.next())
-    	{
-    		KeyBinding.setKeyBindState(inventoryKeyCode, ControllerSettings.joyBindInventory.isPressed());
-    		
+		while (Controllers.next())
+    	{    		
     		if (joypadMouse.leftButtonHeld && !ControllerSettings.joyBindAttack.isPressed())
     			joypadMouse.leftButtonUp();
     		
@@ -210,7 +210,7 @@ public class GameRenderHandler {
 				System.out.println("Replacing control screen");
 				String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("parentScreen");
 				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls)gui, names[0], names[1]);
-				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, mc.gameSettings));
+				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, gui));
 			}
 			catch (Exception ex)
 			{

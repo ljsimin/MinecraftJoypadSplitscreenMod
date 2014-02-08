@@ -4,6 +4,9 @@ package com.shiny.joypadmod.minecraftExtensions;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.lwjgl.input.Controller;
+import org.lwjgl.input.Controllers;
+
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;
 
@@ -14,7 +17,7 @@ import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.GameSettings;
 
-public class JoypadConfigMenu extends GuiScreen {//GuiControls{
+public class JoypadConfigMenu extends GuiScreen {
 	
 	boolean nextClicked = false;
 	long lastClick = 0;
@@ -22,20 +25,23 @@ public class JoypadConfigMenu extends GuiScreen {//GuiControls{
 	GuiScreen parentScr;
 	Minecraft mc = Minecraft.getMinecraft();
 
-	public JoypadConfigMenu(GuiScreen parent, GameSettings gameSettings) 
+	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen) 
 	{
 		parentScr = parent;
+		if (ControllerSettings.joyNo >= 0)
+			currentJoyNo = ControllerSettings.joyNo;
 	}
 	
 
 	@Override
 	public void initGui()
 	{
-		System.out.println("initGui MINE");
-									
-		AddButton(new GuiButton(0, 5, 5, 40, 20, "Enable"));
-		AddButton(new GuiButton(1, 5, 50, 40, 20, "Next"));
-		AddButton(new GuiButton(2, 5, 75, 40, 20, "Exit"));			
+		int controllerButtonWidth = width - width / 5;
+		AddButton(new GuiButton(100, width / 10, 60, controllerButtonWidth, 20, getJoystickInfo(currentJoyNo, JoyInfoEnum.name)));
+		AddButton(new GuiButton(101, width / 10, 85, controllerButtonWidth / 2, 20, "PREV"));
+		AddButton(new GuiButton(102, width / 2, 85, controllerButtonWidth / 2, 20, "NEXT"));
+		AddButton(new GuiButton(105, width / 10 + controllerButtonWidth / 4, 110, controllerButtonWidth / 2, 20, "CALIBRATE"));
+		AddButton(new GuiButton(2, width / 2 - 20, height - 25, 40, 20, "Exit"));
 	}
 		
 	@Override
@@ -44,27 +50,21 @@ public class JoypadConfigMenu extends GuiScreen {//GuiControls{
 		System.out.println("Action performed on buttonID " + GetButtonId(guiButton));
 		
 		switch (GetButtonId(guiButton)) {
-			case 0:
-				String newText;
-				if (GetDisplayString(guiButton) == "Enable")
-				{
-					ControllerSettings.inputEnabled = false;
-					newText = "Disable";
-				}
-				else
-				{
-					ControllerSettings.inputEnabled = true;
-					newText = "Enable";
-				}
-				SetDisplayString(guiButton, newText);
+			case 100: // Controller button
+				ToggleController();
 				break;
-			case 1:
-				if (Minecraft.getSystemTime() - lastClick > 1000)
-				{				
-					nextClicked = true;
-					lastClick = Minecraft.getSystemTime();
-				}
+			case 101: // PREV
+				// disable for safety
+				ControllerSettings.inputEnabled = false;
+				currentJoyNo = GetJoypadId(-1);
+				UpdateControllerButton();
 				break;
+			case 102: // NEXT
+				// disable for safety
+				ControllerSettings.inputEnabled = false;
+				currentJoyNo = GetJoypadId(1);
+				UpdateControllerButton();
+				break;			
 			case 2:
 				JoypadMod.obfuscationHelper.DisplayGuiScreen(this.parentScr);
 				break;
@@ -72,53 +72,146 @@ public class JoypadConfigMenu extends GuiScreen {//GuiControls{
 		}		
 	}
 	
+	
+	enum JoyInfoEnum
+	{
+		name, buttonAxisInfo
+	};
+	
+	private String getJoystickInfo(int joyNo, JoyInfoEnum joyInfo)
+	{
+		String ret = "";
+		
+		try
+		{
+			if (joyNo > Controllers.getControllerCount())
+				ret = "Code Error: Invalid controller # selected";
+			else
+			{
+				Controller control = Controllers.getController(joyNo);
+				if (joyInfo == JoyInfoEnum.buttonAxisInfo)
+				{
+					ret += "Buttons: " + control.getButtonCount();
+					ret += " Axis: " + control.getAxisCount();
+				}
+				else if (joyInfo == JoyInfoEnum.name)
+				{
+					ret += control.getName() + ": ";
+					ret += ControllerSettings.inputEnabled ? "on" : "off";
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			ret += " Exception caught getting controller info! " + ex.getClass();
+		}
+		return ret;
+	}
+	
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
 	{
-		DrawDefaultBackground();		
-		this.drawString(GetFontRenderer(), "Current Controller:", 6, 30, -1);
-		String output = "mouse";
-		if (ControllerSettings.inputEnabled)
-		{
-			int joyNo = ControllerSettings.joyNo;			
-			if (nextClicked)
+		DrawDefaultBackground();
+		int heightOffset = 10;
+		this.drawCenteredString(GetFontRenderer(), "Controller Settings", width/2, heightOffset, -1);
+		this.drawCenteredString(GetFontRenderer(), "Press SPACE at any time to toggle controller on/off", width/2, heightOffset + 11, -1);
+		heightOffset += 29;
+		
+		// output TEXT buttons Axis, POV count here
+		String joyStickInfoText = getJoystickInfo(currentJoyNo, JoyInfoEnum.buttonAxisInfo);		
+		this.drawCenteredString(GetFontRenderer(), joyStickInfoText, width/2, heightOffset, -1);
+		
+		// CONTROLLER NAME BUTTON
+		// PREV            NEXT
+		//       CALIBRATE
+			
+		super.drawScreen(par1, par2, par3);		
+	}
+	
+	/**
+     * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
+     */
+    protected void keyTyped(char c, int code)
+    {    	
+    	if (c == ' ')
+    	{
+    		ToggleController();
+    	}
+    	else
+    	{
+    		super.keyTyped(c, code);
+    	}
+    }
+    
+    @SuppressWarnings("rawtypes")
+	private int GetJoypadId(int offset)
+    {
+    	if (offset == 0)
+    		return currentJoyNo;
+    	
+    	// need to iterate through the list of valid controllers
+    	Map.Entry previous = null;
+    	Map.Entry current = null;
+    	Iterator it =  ControllerSettings.validControllers.entrySet().iterator();
+    	
+    	// find the current joyNo in the list of names
+		while (it.hasNext())
+		{	
+			previous = current;
+			current = (Map.Entry)it.next();
+			if ((Integer)current.getKey() == currentJoyNo)
 			{				
-				Iterator<?> it =  ControllerSettings.validControllers.entrySet().iterator();
-				Map.Entry pairs = null;
-				while (it.hasNext())
+				if (offset < 0 && previous == null)
 				{
-					pairs = (Map.Entry)it.next();
-					if ((Integer)pairs.getKey() == joyNo)
-					{
-						if (!it.hasNext())
-						{
-							it = ControllerSettings.validControllers.entrySet().iterator();						
-						}
-						pairs = (Map.Entry)it.next();
-						break;
-					}					
+					// at beginning of list and need to "wrap around" to end
+					while (it.hasNext())
+						previous = (Map.Entry)it.next();					
 				}
 				
-				if (pairs == null)
+				if (offset > 0)
 				{
-					System.out.println("Impossible pairs is null!!");
+					if (!it.hasNext())
+					{
+						// at end of list and need to "wrap around" to beginning
+						it = ControllerSettings.validControllers.entrySet().iterator();
+					}
+					current = (Map.Entry)it.next();
 				}
-				else
-				{
-					ControllerSettings.SetController((Integer)pairs.getKey());					
-				}	
-				nextClicked = false;				
-			}
-			output = ControllerSettings.validControllers.get(joyNo);			
+					
+				break;
+			}			
 		}
-		this.drawString(GetFontRenderer(), output, 6, 40, -1);
-		super.drawScreen(par1, par2, par3);
 		
-	}
+		if (current == null)
+			return 0;  // something went wrong!
+		
+		if (offset < 0)
+		{
+			return (Integer)previous.getKey();
+		}
+		
+		return (Integer)current.getKey();
+    }
+    
+    private void ToggleController()
+    {
+    	System.out.println("Enable/disable input");
+		ControllerSettings.inputEnabled = !ControllerSettings.inputEnabled; 
+		UpdateControllerButton();
+    }
+    
+    private void UpdateControllerButton()
+    {    	
+		if (ControllerSettings.inputEnabled && ControllerSettings.joyNo != currentJoyNo)
+			ControllerSettings.SetController(currentJoyNo);
+		GuiButton button = (GuiButton)buttonList.get(0);
+    	button.displayString = getJoystickInfo(currentJoyNo, JoyInfoEnum.name);
+    }
 	
 	// Obfuscation & back porting helpers -- here and not in ObfuscationHelper because accessing protected methods
 	// TODO think about extending the GuiButton class for this functionality
 	
+	@SuppressWarnings("unchecked")
 	private void AddButton(GuiButton guiButton)
 	{
 		//field_146292_n.add(guiButton);
@@ -135,18 +228,6 @@ public class JoypadConfigMenu extends GuiScreen {//GuiControls{
 	{
 		//return guiButton.field_146127_k;
 		return guiButton.id;
-	}
-	
-	private String GetDisplayString(GuiButton guiButton)
-	{
-		//return guiButton.field_146126_j;
-		return guiButton.displayString;
-	}
-	
-	private void SetDisplayString(GuiButton guiButton, String displayString)
-	{
-		//guiButton.field_146126_j = displayString;
-		guiButton.displayString = displayString;
 	}
 	
 	private FontRenderer GetFontRenderer()
