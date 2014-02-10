@@ -40,6 +40,7 @@ public class JoypadMod
     public static final String NAME = "Joypad / SplitScreen Mod"; 
     public static MinecraftObfuscationHelper obfuscationHelper;
     public static final int MC_VERSION = 164;
+    
     public static ControllerSettings controllerSettings;
     public int JoyNo = -1;    
     

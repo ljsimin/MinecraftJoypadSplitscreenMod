@@ -113,6 +113,7 @@ public class JoypadConfigMenu extends GuiScreen {
 	{
 		DrawDefaultBackground();
 		int heightOffset = 10;
+		//this.drawGradientRect(par1, par2, par3, par4, par5, par6);
 		this.drawCenteredString(GetFontRenderer(), "Controller Settings", width/2, heightOffset, -1);
 		this.drawCenteredString(GetFontRenderer(), "Press SPACE at any time to toggle controller on/off", width/2, heightOffset + 11, -1);
 		heightOffset += 29;
