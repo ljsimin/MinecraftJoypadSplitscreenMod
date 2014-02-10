@@ -1,6 +1,7 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -15,33 +16,100 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.settings.GameSettings;
 
 public class JoypadConfigMenu extends GuiScreen {
 	
-	boolean nextClicked = false;
-	long lastClick = 0;
-	int currentJoyNo = 0;
+	public boolean nextClicked = false;	
+	private int currentJoyNo = 0;
+	
+	private int labelYStart = 5;
+	
+	private int buttonYStart_top = labelYStart + 40; // Y start of the buttons at the top of the screen     
+    public int buttonYEnd_top; // Y end of the buttons at the top of the screen
+    public int buttonXStart_top; // X start of the buttons at the top of the screen
+    
+    public int controllerButtonWidth; // determined by size of screen
+    
+    private int buttonYSpacing = 21; // spacing between the buttons
+    
+    public int buttonYStart_bottom;
+    private int bottomButtonWidth = 60;		
+	
 	GuiScreen parentScr;
-	Minecraft mc = Minecraft.getMinecraft();
+	Minecraft mc = Minecraft.getMinecraft();		
+	
+	public Map<String, String> translation; 
+	
+	private JoypadControlList optionList;
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen) 
 	{
+		super();
 		parentScr = parent;
 		if (ControllerSettings.joyNo >= 0)
-			currentJoyNo = ControllerSettings.joyNo;
+			currentJoyNo = ControllerSettings.joyNo;	
+		
+		// TODO find somewhere to put this, most likely ControllerSettings or ControllerUtils
+		 translation = new HashMap<String, String>();	        
+        // used until I figure out how to pack .property files
+        translation.put("joy.attack", "Attack");
+        translation.put("joy.use", "Use");
+        translation.put("joy.jump", "Jump");
+        translation.put("joy.sneak", "Sneak");
+        translation.put("joy.drop", "Drop");
+        translation.put("joy.inventory", "Open inventory");
+        translation.put("joy.interact", "Interact");
+        translation.put("joy.guiLeftClick", "Left click");
+        translation.put("joy.guiRightClick", "Right click");
+        translation.put("joy.prevItem", "Previous item");
+        translation.put("joy.nextItem", "Next item");
+        translation.put("joy.run", "Sprint");
+        translation.put("joy.menu", "Open menu");
+        translation.put("joy.shiftClick", "Shift-click");
+        translation.put("joy.cameraX+", "Look right");
+        translation.put("joy.cameraX-", "Look left");
+        translation.put("joy.cameraY+", "Look down");
+        translation.put("joy.cameraY-", "Look up");
+        translation.put("joy.movementX+", "Strafe right");
+        translation.put("joy.movementX-", "Strafe left");
+        translation.put("joy.movementY+", "Move forward");
+        translation.put("joy.movementY-", "Move backwards");
+        translation.put("joy.guiX+", "GUI right");
+        translation.put("joy.guiX-", "GUI left");
+        translation.put("joy.guiY+", "GUI down");
+        translation.put("joy.guiY-", "GUI up");     
 	}
 	
 
 	@Override
 	public void initGui()
+	{			
+		controllerButtonWidth = width - width / 5;
+		buttonXStart_top = width / 10;
+		buttonYStart_bottom = height - 20;
+                          
+        // add top buttons
+		AddButton(new GuiButton(100, buttonXStart_top, buttonYStart_top, controllerButtonWidth, 20, getJoystickInfo(currentJoyNo, JoyInfoEnum.name)));
+		AddButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2, 20, "PREV"));
+		AddButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 2, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2, 20, "NEXT"));
+	
+		// the middle section will be populated with the controller settings so record where we left off with the top
+		buttonYEnd_top = buttonYStart_top + (buttonYSpacing * 2);
+		
+		// add bottom buttons
+		AddButton(new GuiButton(500, width / 2 - 92, buttonYStart_bottom, bottomButtonWidth, 20, "Calibrate"));			
+		AddButton(new GuiButton(501, width / 2 - 30, buttonYStart_bottom, bottomButtonWidth, 20, "Exit"));
+		AddButton(new GuiButton(502, width / 2 + 32, buttonYStart_bottom, bottomButtonWidth, 20, "Reset"));
+		
+		
+		this.optionList=new JoypadControlList(this, GetFontRenderer()); 
+	}
+	
+	@Override
+	public void onGuiClosed() 
 	{
-		int controllerButtonWidth = width - width / 5;
-		AddButton(new GuiButton(100, width / 10, 60, controllerButtonWidth, 20, getJoystickInfo(currentJoyNo, JoyInfoEnum.name)));
-		AddButton(new GuiButton(101, width / 10, 85, controllerButtonWidth / 2, 20, "PREV"));
-		AddButton(new GuiButton(102, width / 2, 85, controllerButtonWidth / 2, 20, "NEXT"));
-		AddButton(new GuiButton(105, width / 10 + controllerButtonWidth / 4, 110, controllerButtonWidth / 2, 20, "CALIBRATE"));
-		AddButton(new GuiButton(2, width / 2 - 20, height - 25, 40, 20, "Exit"));
+		System.out.println("JoypadConfigMenu OnGuiClosed");
+		ControllerSettings.suspendControllerInput(false);		
 	}
 		
 	@Override
@@ -65,7 +133,8 @@ public class JoypadConfigMenu extends GuiScreen {
 				currentJoyNo = GetJoypadId(1);
 				UpdateControllerButton();
 				break;			
-			case 2:
+			case 501:
+				// TODO replace minecraft game settings with copy
 				JoypadMod.obfuscationHelper.DisplayGuiScreen(this.parentScr);
 				break;
 			
@@ -91,7 +160,8 @@ public class JoypadConfigMenu extends GuiScreen {
 				Controller control = Controllers.getController(joyNo);
 				if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 				{
-					ret += "Buttons: " + control.getButtonCount();
+					ret += "Controller " + joyNo + " of " + (Controllers.getControllerCount() - 1);
+					ret += "-Buttons: " + control.getButtonCount();
 					ret += " Axis: " + control.getAxisCount();
 				}
 				else if (joyInfo == JoyInfoEnum.name)
@@ -110,10 +180,11 @@ public class JoypadConfigMenu extends GuiScreen {
 	
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
-	{
+	{		
 		DrawDefaultBackground();
-		int heightOffset = 10;
-		//this.drawGradientRect(par1, par2, par3, par4, par5, par6);
+		this.optionList.drawScreen(par1, par2, par3);
+		//this.keyBindingList.drawScreen(par1, par2, par3);
+		int heightOffset = labelYStart;
 		this.drawCenteredString(GetFontRenderer(), "Controller Settings", width/2, heightOffset, -1);
 		this.drawCenteredString(GetFontRenderer(), "Press SPACE at any time to toggle controller on/off", width/2, heightOffset + 11, -1);
 		heightOffset += 29;
@@ -126,7 +197,8 @@ public class JoypadConfigMenu extends GuiScreen {
 		// PREV            NEXT
 		//       CALIBRATE
 			
-		super.drawScreen(par1, par2, par3);		
+		super.drawScreen(par1, par2, par3);	
+			
 	}
 	
 	/**
@@ -233,8 +305,8 @@ public class JoypadConfigMenu extends GuiScreen {
 	
 	private FontRenderer GetFontRenderer()
 	{
-		return this.fontRenderer;
 		//return this.field_146289_q;
 		//return this.fontRendererObj;
+		return this.fontRenderer;
 	}
 }
