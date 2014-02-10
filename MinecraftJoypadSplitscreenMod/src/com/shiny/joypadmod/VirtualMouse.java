@@ -90,6 +90,12 @@ public class VirtualMouse {
 		}
 	}
 	
+	public void UnpressButtons()
+	{
+		leftButtonUp();
+		rightButtonUp();
+	}
+	
 	// used for in game clicking
 	public static void leftClick()
 	{		

@@ -44,7 +44,7 @@ public class ControllerUtils {
 		xinputNamesMap.put("POV Y", "Dpad vertical");
 	}
 
-	public static void printDeadZones(Controller joystick2) {
+	public void printDeadZones(Controller joystick2) {
 		if (joystick2 != null) {
 	    	for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++ ) {
 				System.out.println("Axis " + axisNo + " deadzone: " +joystick2.getDeadZone(axisNo));
@@ -64,7 +64,7 @@ public class ControllerUtils {
 		}		
 	}
 
-	public static boolean checkJoypadRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount) {		
+	public boolean checkJoypadRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount) {		
 		boolean meetsRequirements = meetsInputRequirements(controller, requiredButtonCount, requiredMinButtonCount, requiredAxisCount);
 		StringBuilder msg = new StringBuilder("");
 		
@@ -85,7 +85,7 @@ public class ControllerUtils {
 		return meetsRequirements;
 	}
     
-    public static boolean meetsInputRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount) {
+    public boolean meetsInputRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount) {
     	boolean meetsRequirements = true;
 		if ((controller.getButtonCount() < requiredMinButtonCount) || 
 				(controller.getButtonCount() < requiredButtonCount && controller.getAxisCount() < requiredAxisCount)) {

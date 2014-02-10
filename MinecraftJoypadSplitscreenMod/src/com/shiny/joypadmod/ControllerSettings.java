@@ -2,6 +2,7 @@ package com.shiny.joypadmod;
 
 // Common code
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.lwjgl.input.Controllers;
 import com.shiny.joypadmod.inputevent.AxisInputEvent;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 import com.shiny.joypadmod.inputevent.PovInputEvent;
 
@@ -62,10 +64,14 @@ public class ControllerSettings {
 	public static Map<Integer, String> validControllers;
 	public static Map<Integer, String> inValidControllers;
 	public static Controllers controllers;
+	public static ControllerUtils controllerUtils;
+	
+	private static boolean suspendControllerInput = false;
     
     public ControllerSettings()
     {    	
     	controllers = new Controllers();
+    	controllerUtils = new ControllerUtils();
     	validControllers = new HashMap<Integer, String>();
     	inValidControllers = new HashMap<Integer,String>();
     }
@@ -129,7 +135,7 @@ public class ControllerSettings {
 	    			System.out.println("Found controller " + thisController.getName() + " (" + joyNo +")");
 	    			System.out.println("It has  "+thisController.getButtonCount() +" buttons.");        			
 	    			System.out.println("It has  "+thisController.getAxisCount() +" axes.");
-	    			if (ControllerUtils.meetsInputRequirements(thisController, requiredButtonCount, requiredMinButtonCount, requiredAxisCount)) {	    				
+	    			if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount, requiredMinButtonCount, requiredAxisCount)) {	    				
 	    				System.out.println("Controller #" + joyNo + " ( " + thisController.getName() + ") meets the input requirements");
 	    				validControllers.put(joyNo, thisController.getName());	    				
 	    			} 
@@ -162,7 +168,7 @@ public class ControllerSettings {
     		System.out.println("Controllers.getControllerCount == " + Controllers.getControllerCount());
     		joystick = Controllers.getController(controllerNo); 
     		joyNo = controllerNo;    			
-			ControllerUtils.printDeadZones(joystick);
+    		controllerUtils.printDeadZones(joystick);
 			inputEnabled = true;
 			
 			setDefaultJoyBindings();
@@ -178,6 +184,52 @@ public class ControllerSettings {
 			joystick = null;
 			inputEnabled = false;
 		} 
+    	if (joystick != null)
+    	{
+    		// note this is an instance of the private JInputController
+    		// http://grepcode.com/file/repo1.maven.org/maven2/org.lwjgl.lwjgl/lwjgl/2.8.2/org/lwjgl/input/JInputController.java
+    		try
+    		{
+    			Class c = joystick.getClass();
+    			Field buttonArray = c.getDeclaredField("buttonState");
+    		
+    			buttonArray.setAccessible(true);
+    			boolean[] b = (boolean[])buttonArray.get(joystick); 
+    			if (b == null)
+    				System.out.println("Boolean array null!");
+    			else
+    			{
+    				System.out.println("Found " + b.length + " buttons");
+	    			for (boolean bool:b)
+	    			{
+	    				System.out.println(bool);
+	    			}
+    			}
+    					
+    			
+    			System.out.println("!!Succeeded getting buttonState!!");
+    		}catch (Exception ex)
+    		{
+    			System.out.println("!!Failed getting buttonState!! " + ex.toString());
+    		}
+    		
+    	}
     	return joystick != null;    	
     }      
+    
+    public static void suspendControllerInput(boolean b)
+    {
+    	ControllerSettings.suspendControllerInput = b; 
+    	GameRenderHandler.joypadMouse.UnpressButtons();
+    }
+    
+    public static boolean isSuspended()
+    {
+    	return ControllerSettings.suspendControllerInput;
+    }
+    
+    public static void setControllerBinding(int inputId, ControllerInputEvent inputEvent)
+    {
+    	ControllerSettings.joyBindings[inputId].inputEvent = inputEvent;
+    }
 }

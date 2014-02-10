@@ -1,0 +1,132 @@
+package com.shiny.joypadmod.minecraftExtensions;
+
+import org.lwjgl.input.Controllers;
+
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent;
+
+import cpw.mods.fml.client.GuiScrollingList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.Tessellator;
+
+public class JoypadControlList extends GuiScrollingList {
+
+    private JoypadConfigMenu parent;
+    private FontRenderer fontRenderer;
+    private int controllerInputTimeout = 5000;
+    private long controllerTickStart = 0;
+    
+    private int selectedIndex = -1;
+    private boolean doubleClicked = false;
+
+
+    public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
+    {
+        super(parent.mc, 200,             // width
+        	  parent.height,              // height 
+        	  parent.buttonYEnd_top + 2,  // top start
+        	  parent.buttonYStart_bottom, // bottom end
+        	  parent.width / 2 - 100,     // left start
+        	  20);					      // entryHeight
+        this.parent = parent;
+        this.fontRenderer = fontRenderer;
+    }
+    
+
+    @Override
+    protected int getSize()
+    {
+        return ControllerSettings.joyBindings.length;//parent.translation.size();//.controlLabels.length;
+    }
+
+    @Override
+    protected void elementClicked(int index, boolean doubleClick)
+    {
+    	selectedIndex = index;
+    	System.out.println("Element " + index + " clicked! Double: " + doubleClick);
+    	doubleClicked = doubleClick;
+    	if (doubleClick)    	
+    	{
+    		controllerTickStart = Minecraft.getSystemTime(); 
+    		ControllerSettings.suspendControllerInput(true);
+    	}    	
+    }
+
+    @Override
+    protected boolean isSelected(int index)
+    {
+    	return (selectedIndex == index);
+    }
+
+    @Override
+    protected void drawBackground()
+    {
+    }
+    
+    public boolean getControllerInput() 
+    {
+    	if (selectedIndex < 0)
+    		return false;
+    	    	    	
+    	ControllerInputEvent inputEvent = null;
+    	try
+    	{    		    	    		    
+    		while(Controllers.next())
+    		{
+    			System.out.println("Controllers.next triggered");
+    			
+    			if (Minecraft.getSystemTime() - controllerTickStart < 200)
+    			{
+    				System.out.println("Discarding events that occured too soon after last button click");    				
+    			}
+    			else
+    			{    			
+		    		inputEvent = ControllerSettings.controllerUtils.getLastEvent(ControllerSettings.joystick, Controllers.getEventControlIndex());		    		
+		    		if (inputEvent != null) 
+		    		{
+		    			System.out.println("Received from controller: " + inputEvent.getName());	    			
+		    			ControllerSettings.setControllerBinding(selectedIndex, inputEvent);	
+		    			return true;
+		    		}
+    			}
+    		}
+    		
+    		System.out.println("No controller event available");
+    	}
+    	catch (Exception ex)
+    	{
+    		System.out.println("Caught exception while trying to set controller button! " + ex.toString());
+    	}    
+    	return false;
+    };
+
+    @Override
+    protected void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5)
+    {    	
+    	String mcActionName = (String)parent.translation.get(ControllerSettings.joyBindings[var1].inputString);
+
+    	String mcActionButton;
+    	
+    	if (doubleClicked && var1 == selectedIndex)
+    	{
+    		mcActionButton = "> ?? <";	   	
+    	}
+    	else
+    	{
+    		mcActionButton = ControllerSettings.controllerUtils.getHumanReadableInputName(ControllerSettings.joystick, ControllerSettings.joyBindings[var1].inputEvent);
+    	}
+        this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionName, 100), this.left + 3 , var3 + 2, 0xFF2222);
+        this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionButton, listWidth - 100), this.left + 100, var3 + 2, -1); 
+        
+        if (doubleClicked && var1 == selectedIndex)
+        {
+        	if (getControllerInput() || Minecraft.getSystemTime() - controllerTickStart >  controllerInputTimeout)
+    		{
+    			doubleClicked = false;
+    			ControllerSettings.suspendControllerInput(false);
+    		} 
+        }
+    }
+
+}

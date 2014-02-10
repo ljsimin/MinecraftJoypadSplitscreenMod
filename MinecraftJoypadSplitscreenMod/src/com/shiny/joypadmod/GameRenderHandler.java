@@ -18,8 +18,8 @@ public class GameRenderHandler {
 	public static VirtualMouse joypadMouse = new VirtualMouse();
 	
 	public static void HandlePreRender()
-	{				
-		if (mc.currentScreen != null)
+	{			
+		if (!ControllerSettings.isSuspended() && mc.currentScreen != null)
 		{
 			if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
 			{
@@ -33,6 +33,9 @@ public class GameRenderHandler {
 	
 	public static void HandlePostRender()
 	{		
+		if (ControllerSettings.isSuspended())
+			return;
+		
 		try
     	{
 	    	if (InGuiCheckNeeded())
