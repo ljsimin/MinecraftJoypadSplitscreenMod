@@ -302,6 +302,9 @@ public class VirtualMouse
 	// oh minecraft why did you have to mess with the clicking function?
 	private static int glcParam = 0;
 
+	// note clicking functions updated in 1.7.2+, separate function calls for
+	// left vs right click
+	@SuppressWarnings("unused")
 	private static void game_leftClick()
 	{
 		if (glcParam == -1)
@@ -310,12 +313,13 @@ public class VirtualMouse
 			return;
 		}
 
-		String[] names = { "clickMouse", "func_71402_c" };
-		// String actualName = "clickMouse"; // this might be wrong
-		// String obscuredName = "func_147116_af";
+		String functionName = JoypadMod.VERSION == "1.6.4" ? "clickMouse" : "leftClick";
+		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames(functionName);
+
 		System.out.println("Calling " + names[0] + "(" + names[1] + ")");
-		@SuppressWarnings("rawtypes")
-		Class[] params = new Class[] { int.class };
+
+		@SuppressWarnings({ "rawtypes" })
+		Class[] params = JoypadMod.VERSION == "1.6.4" ? new Class[] { int.class } : null;
 		Method clickLeftMouse;
 		try
 		{
@@ -329,7 +333,10 @@ public class VirtualMouse
 				glcParam = 1;
 			}
 			clickLeftMouse.setAccessible(true);
-			clickLeftMouse.invoke((Object) mc, 0);
+			if (JoypadMod.VERSION == "1.6.4")
+				clickLeftMouse.invoke((Object) mc, 0);
+			else
+				clickLeftMouse.invoke((Object) mc);
 		}
 		catch (Exception ex)
 		{

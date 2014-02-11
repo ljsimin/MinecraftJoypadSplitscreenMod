@@ -142,9 +142,13 @@ public class GameRenderHandler
 	{
 		while (Controllers.next())
 		{
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
-			if (ControllerSettings.joyBindInventory.wasPressed())
+			if (ControllerSettings.joyBindAttack.wasPressed())
+			{
+				// need this for "air punch"
+				System.out.println("Initiating left click");
+				VirtualMouse.leftClick();
+			}
+			else if (ControllerSettings.joyBindInventory.wasPressed())
 			{
 				System.out.println("Inventory control pressed");
 				KeyBinding.onTick(inventoryKeyCode);
@@ -176,6 +180,9 @@ public class GameRenderHandler
 				// TODO: add option to drop more than 1 item
 				mc.thePlayer.dropOneItem(true);
 			}
+
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
 
 			HandlePlayerMovement();
 		}
