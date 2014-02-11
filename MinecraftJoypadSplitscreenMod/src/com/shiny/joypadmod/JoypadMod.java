@@ -21,11 +21,12 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION + JoypadMod.MINVERSION)
 public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
 	public static final String VERSION = "1.7.2";
+	public static final String MINVERSION = "-0.01pre";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static MinecraftObfuscationHelper obfuscationHelper;
 	public static final int MC_VERSION = 172;

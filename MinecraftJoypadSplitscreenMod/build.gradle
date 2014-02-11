@@ -1,0 +1,43 @@
+buildscript {
+    repositories
+    {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies
+    {
+	   classpath 'org.lwjgl.lwjgl:lwjgl:2.+'
+	   classpath "net.minecraftforge.gradle:ForgeGradle:1.1-SNAPSHOT"
+    }
+}
+ 
+apply plugin: "forge"
+ 
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.lwjgl.lwjgl:lwjgl:2.+'
+}
+
+sourceSets
+{
+    main
+    {
+        java { srcDirs = ["$projectDir/src"] }
+       resources { srcDirs = ["$projectDir/resources"] }
+    }
+}
+ 
+archivesBaseName = "JoypadMod"
+version = "1.7.2-0.01pre"
+minecraft.version = "1.7.2-10.12.0.1024"
