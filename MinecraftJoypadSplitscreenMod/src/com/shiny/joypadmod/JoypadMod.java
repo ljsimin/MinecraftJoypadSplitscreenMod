@@ -50,14 +50,16 @@ public class JoypadMod
 			// 1.7.4
 			FMLCommonHandler.instance().bus().register(this);
 		}
+
 	}
 
 	public void initialize()
 	{
+		LogHelper.Info("Initializing " + NAME);
 		controllerSettings = new ControllerSettings();
 		if (JoyNo < -1)
 		{
-			System.out.println("Controller disabled");
+			LogHelper.Info("Controller disabled");
 			ControllerSettings.inputEnabled = false;
 		}
 		else
@@ -72,7 +74,7 @@ public class JoypadMod
 				Controllers.clearEvents();
 			}
 		}
-
+		Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 	}
 
 	public void readConfigFile(File configFile)
