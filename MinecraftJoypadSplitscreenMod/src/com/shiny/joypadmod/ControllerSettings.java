@@ -79,7 +79,7 @@ public class ControllerSettings
 
 	public static void setDefaultJoyBindings()
 	{
-		System.out.println("Setting default joy bindings");
+		LogHelper.Info("Setting default joy bindings");
 		joyBindJump = new ControllerBinding("joy.jump", new ButtonInputEvent(joyNo, 0));
 		joyBindInventory = new ControllerBinding("joy.inventory", new ButtonInputEvent(joyNo, 3));
 		joyBindDrop = new ControllerBinding("joy.drop", new ButtonInputEvent(joyNo, 6));
@@ -123,26 +123,26 @@ public class ControllerSettings
 				Controllers.create();
 			if (Controllers.getControllerCount() > 0)
 			{
-				System.out.println("Minecraft Joypad (Controller) Mod v" + JoypadMod.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
-				System.out.println("Found " + Controllers.getControllerCount() + " controller(s) in total.");
+				LogHelper.Info("Minecraft Joypad (Controller) Mod v" + JoypadMod.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
+				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
 				for (int joyNo = 0; joyNo < Controllers.getControllerCount(); joyNo++)
 				{
 					Controller thisController = Controllers.getController(joyNo);
 
-					System.out.println("Found controller " + thisController.getName() + " (" + joyNo + ")");
-					System.out.println("It has  " + thisController.getButtonCount() + " buttons.");
-					System.out.println("It has  " + thisController.getAxisCount() + " axes.");
+					LogHelper.Info("Found controller " + thisController.getName() + " (" + joyNo + ")");
+					LogHelper.Info("It has  " + thisController.getButtonCount() + " buttons.");
+					LogHelper.Info("It has  " + thisController.getAxisCount() + " axes.");
 					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount, requiredMinButtonCount, requiredAxisCount))
 					{
-						System.out.println("Controller #" + joyNo + " ( " + thisController.getName() + ") meets the input requirements");
+						LogHelper.Info("Controller #" + joyNo + " ( " + thisController.getName() + ") meets the input requirements");
 						validControllers.put(joyNo, thisController.getName());
 					}
 					else
 					{
 						inValidControllers.put(joyNo, thisController.getName());
-						System.out.println("This controller does not meet the input requirements");
+						LogHelper.Info("This controller does not meet the input requirements");
 					}
-					System.out.println("---");
+					LogHelper.Info("---");
 				}
 			}
 		}
@@ -151,19 +151,19 @@ public class ControllerSettings
 			System.err.println("Couldn't initialize Controllers: " + e.getMessage());
 		}
 
-		System.out.println("Found " + validControllers.size() + " valid controllers!");
+		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
 		return validControllers.size();
 	}
 
 	public static boolean SetController(int controllerNo)
 	{
-		System.out.println("Attempting to use controller " + controllerNo);
+		LogHelper.Info("Attempting to use controller " + controllerNo);
 		try
 		{
 			if (!Controllers.isCreated())
 				Controllers.create();
 
-			System.out.println("Controllers.getControllerCount == " + Controllers.getControllerCount());
+			LogHelper.Info("Controllers.getControllerCount == " + Controllers.getControllerCount());
 			joystick = Controllers.getController(controllerNo);
 			joyNo = controllerNo;
 			controllerUtils.printDeadZones(joystick);

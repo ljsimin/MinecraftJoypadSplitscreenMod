@@ -21,15 +21,22 @@ public class GameRenderHandler
 
 	public static void HandlePreRender()
 	{
-		if (!ControllerSettings.isSuspended() && mc.currentScreen != null)
+		if (mc.currentScreen != null && !ControllerSettings.isSuspended())
 		{
-			if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
+			try
 			{
-				ReplaceControlScreen((GuiControls) mc.currentScreen);
-			}
+				if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
+				{
+					ReplaceControlScreen((GuiControls) mc.currentScreen);
+				}
 
-			if (InGuiCheckNeeded())
-				HandleGuiMousePreRender();
+				if (InGuiCheckNeeded())
+					HandleGuiMousePreRender();
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
+			}
 		}
 	}
 
@@ -52,7 +59,7 @@ public class GameRenderHandler
 		}
 		catch (Exception ex)
 		{
-			System.out.println("Joypad mod unhandled exception caught! " + ex.toString());
+			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 
 	}
@@ -76,7 +83,7 @@ public class GameRenderHandler
 
 			if (ControllerSettings.joyBindInventory.wasPressed())
 			{
-				System.out.println("Inventory control pressed");
+				LogHelper.Debug("Inventory control pressed");
 
 				if (mc.thePlayer != null)
 					mc.thePlayer.closeScreen();
@@ -150,17 +157,17 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.joyBindInventory.wasPressed())
 			{
-				System.out.println("Inventory control pressed");
+				LogHelper.Debug("Inventory control pressed");
 				KeyBinding.onTick(inventoryKeyCode);
 			}
 			else if (ControllerSettings.joyBindNextItem.wasPressed())
 			{
-				System.out.println("NextItem pressed");
+				LogHelper.Debug("NextItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(-1);
 			}
 			else if (ControllerSettings.joyBindPrevItem.wasPressed())
 			{
-				System.out.println("PrevItem pressed");
+				LogHelper.Debug("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
 			else if (ControllerSettings.joyBindMenu.wasPressed())
@@ -180,16 +187,27 @@ public class GameRenderHandler
 				// TODO: add option to drop more than 1 item
 				mc.thePlayer.dropOneItem(true);
 			}
-
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
-
+			UpdateKeyBindStates();
 			HandlePlayerMovement();
 		}
 
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading();
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
+	}
+
+	private static long lastPump = 0;
+
+	private static void UpdateKeyBindStates()
+	{
+		if (Minecraft.getSystemTime() - lastPump > 200)
+		{
+			mc.inGameHasFocus = true;
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
+			lastPump = Minecraft.getSystemTime();
+		}
+
 	}
 
 	// TODO this is almost getting big enough to warrant its own class
@@ -227,14 +245,14 @@ public class GameRenderHandler
 		{
 			try
 			{
-				System.out.println("Replacing control screen");
+				LogHelper.Debug("Replacing control screen");
 				String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("parentScreen");
 				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui, names[0], names[1]);
 				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, gui));
 			}
 			catch (Exception ex)
 			{
-				System.out.println("Failed to get parent of options gui.  aborting");
+				LogHelper.Debug("Failed to get parent of options gui.  aborting");
 				return;
 			}
 		}

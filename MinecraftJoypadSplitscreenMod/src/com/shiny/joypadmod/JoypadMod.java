@@ -62,14 +62,16 @@ public class JoypadMod
 			// 1.6.4
 			TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
 		}
+
 	}
 
 	public void initialize()
 	{
+		LogHelper.Info("Initializing " + NAME);
 		controllerSettings = new ControllerSettings();
 		if (JoyNo < -1)
 		{
-			System.out.println("Controller disabled");
+			LogHelper.Info("Controller disabled");
 			ControllerSettings.inputEnabled = false;
 		}
 		else
@@ -84,7 +86,7 @@ public class JoypadMod
 				Controllers.clearEvents();
 			}
 		}
-
+		Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 	}
 
 	public void readConfigFile(File configFile)
