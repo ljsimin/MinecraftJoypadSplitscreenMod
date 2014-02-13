@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Controllers;
@@ -18,6 +19,8 @@ public class GameRenderHandler
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
+	private static long lastInGuiTick = 0;
+	private static long lastInGameTick = 0;
 
 	public static void HandlePreRender()
 	{
@@ -50,11 +53,13 @@ public class GameRenderHandler
 			if (InGuiCheckNeeded())
 			{
 				HandleGuiMousePostRender();
+				lastInGuiTick = Minecraft.getSystemTime();
 			}
 
 			if (InGameCheckNeeded())
 			{
 				HandleJoystickInGame();
+				lastInGameTick = Minecraft.getSystemTime();
 			}
 		}
 		catch (Exception ex)
@@ -75,6 +80,17 @@ public class GameRenderHandler
 
 		while (Controllers.next() && mc.currentScreen != null)
 		{
+			// ignore controller events in the milliseconds following in GAME
+			// controlling
+			if (Minecraft.getSystemTime() - lastInGameTick < 200)
+				continue;
+
+			if (mc.currentScreen instanceof GuiContainer)
+			{
+				joypadMouse.hack_shiftKey(ControllerSettings.joyBindSneak.isPressed());
+				System.out.println("Inside Gui Container. do controls different here?");
+			}
+
 			if (joypadMouse.leftButtonHeld && !ControllerSettings.joyBindAttack.isPressed())
 				joypadMouse.leftButtonUp();
 
@@ -149,11 +165,28 @@ public class GameRenderHandler
 	{
 		while (Controllers.next())
 		{
+			// ignore controller events in the milliseconds following in GUI
+			// controlling
+			if (Minecraft.getSystemTime() - lastInGuiTick < 200)
+				continue;
+
 			if (ControllerSettings.joyBindAttack.wasPressed())
 			{
 				// need this for "air punch"
-				System.out.println("Initiating left click");
-				VirtualMouse.leftClick();
+				System.out.println("Initiating attack ontick");
+				KeyBinding.onTick(attackKeyCode);
+				// virtual mouse left click appears to not do anything the
+				// ontick won't
+				// keeping it here in case the future holds cases where ontick
+				// won't work but leftclick will
+				// VirtualMouse.leftClick();
+			}
+			else if (ControllerSettings.joyBindUseItem.wasPressed())
+			{
+				// this call is probably unnecessary but keeping here in case it
+				// solves some edge case
+				System.out.println("Initiating use ontick");
+				KeyBinding.onTick(useKeyCode);
 			}
 			else if (ControllerSettings.joyBindInventory.wasPressed())
 			{
@@ -187,7 +220,9 @@ public class GameRenderHandler
 				// TODO: add option to drop more than 1 item
 				mc.thePlayer.dropOneItem(true);
 			}
-			UpdateKeyBindStates();
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
+			UpdateFocusState();
 			HandlePlayerMovement();
 		}
 
@@ -198,13 +233,13 @@ public class GameRenderHandler
 
 	private static long lastPump = 0;
 
-	private static void UpdateKeyBindStates()
+	private static void UpdateFocusState()
 	{
+		// losing focus happens when playing split screen, make sure minecraft
+		// thinks it is always in focus
 		if (Minecraft.getSystemTime() - lastPump > 200)
 		{
 			mc.inGameHasFocus = true;
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
 			lastPump = Minecraft.getSystemTime();
 		}
 
