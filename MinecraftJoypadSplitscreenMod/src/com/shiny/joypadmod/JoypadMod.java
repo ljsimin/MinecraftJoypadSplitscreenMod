@@ -3,9 +3,13 @@ package com.shiny.joypadmod;
 /*
  * Main class for Joypad mod. This initializes everything.
  */
+
+// Common imports
 import java.io.File;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 
 import org.lwjgl.input.Controllers;
 
@@ -13,30 +17,27 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-
-// 1.7.4
-/*
- * import cpw.mods.fml.common.FMLCommonHandler; import
- * net.minecraftforge.common.config.*; import
- * cpw.mods.fml.common.eventhandler.SubscribeEvent; import
- * cpw.mods.fml.common.gameevent.TickEvent; import
- * cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
- */
-
 // 1.6.4
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION)
+// 1.7.4
+// import cpw.mods.fml.common.gameevent.TickEvent;
+// import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
+// import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+// import cpw.mods.fml.common.FMLCommonHandler;
+// import net.minecraftforge.common.config.Configuration;
+// import net.minecraftforge.common.config.Property;
+
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION + JoypadMod.MINVERSION)
 // 1.6.4
 @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
 	public static final String VERSION = "1.6.4";
+	public static final String MINVERSION = "-0.01pre";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static MinecraftObfuscationHelper obfuscationHelper;
 	public static final int MC_VERSION = 164;
@@ -92,6 +93,7 @@ public class JoypadMod
 	public void readConfigFile(File configFile)
 	{
 		Configuration config = new Configuration(configFile);
+
 		config.load();
 
 		String userName = "unknown";
@@ -110,5 +112,13 @@ public class JoypadMod
 
 		config.save();
 	}
+
+	// 1.7.2
+	/*
+	 * @SubscribeEvent public void tickRender(RenderTickEvent event) { if
+	 * (event.phase == TickEvent.Phase.START) {
+	 * GameRenderHandler.HandlePreRender(); } else if (event.phase ==
+	 * TickEvent.Phase.END) { GameRenderHandler.HandlePostRender(); } }
+	 */
 
 }

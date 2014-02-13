@@ -1,18 +1,17 @@
 package com.shiny.joypadmod;
 
 import java.util.EnumSet;
+
 // 1.6.4
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 
 public class RenderTickHandler implements ITickHandler
 {
-
 	// start of rendering on screen
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData)
 	{
-
 		GameRenderHandler.HandlePreRender();
 	}
 
@@ -20,7 +19,6 @@ public class RenderTickHandler implements ITickHandler
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData)
 	{
-
 		GameRenderHandler.HandlePostRender();
 	}
 
