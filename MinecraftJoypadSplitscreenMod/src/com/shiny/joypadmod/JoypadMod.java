@@ -3,25 +3,35 @@ package com.shiny.joypadmod;
 /*
  * Main class for Joypad mod. This initializes everything.
  */
-import java.io.File;
 
-import net.minecraft.client.Minecraft;
-// 1.7.4
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-
+// Common imports
 import org.lwjgl.input.Controllers;
+import java.io.File;
+import net.minecraft.client.Minecraft;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
+// 1.6.4
+// import cpw.mods.fml.common.network.NetworkMod; 
+// import cpw.mods.fml.common.registry.TickRegistry; 
+// import cpw.mods.fml.relauncher.Side; 
+// import net.minecraftforge.common.Configuration;
+// import net.minecraftforge.common.Property;
+ 
+//1.7.4
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION + JoypadMod.MINVERSION)
+// 1.6.4
+// @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
@@ -49,6 +59,9 @@ public class JoypadMod
 		{
 			// 1.7.4
 			FMLCommonHandler.instance().bus().register(this);
+			// 1.6.4
+			// TickRegistry.registerTickHandler(new RenderTickHandler(),
+			// Side.CLIENT);
 		}
 
 	}
