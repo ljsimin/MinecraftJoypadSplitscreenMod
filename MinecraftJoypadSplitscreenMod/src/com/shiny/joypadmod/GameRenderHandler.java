@@ -239,6 +239,7 @@ public class GameRenderHandler
 		// thinks it is always in focus
 		if (Minecraft.getSystemTime() - lastPump > 200)
 		{
+			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 			mc.inGameHasFocus = true;
 			lastPump = Minecraft.getSystemTime();
 		}

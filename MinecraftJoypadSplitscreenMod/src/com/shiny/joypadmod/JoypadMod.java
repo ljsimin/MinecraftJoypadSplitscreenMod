@@ -87,7 +87,6 @@ public class JoypadMod
 				Controllers.clearEvents();
 			}
 		}
-		Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 	}
 
 	public void readConfigFile(File configFile)
