@@ -1,4 +1,4 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.helpers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +48,10 @@ public class MinecraftObfuscationHelper
 
 	public int KeyBindCodeHelper(KeyBinding key)
 	{
-		// de-obfuscated 1.6.4
+
+		// de-obfuscated
 		return key.keyCode;
 
-		// de-obfuscated 1.7.2
-		// return key.getKeyCode();
 		// obfuscated 1.7.2
 		// return key.func_151463_i();
 	}
@@ -74,7 +73,7 @@ public class MinecraftObfuscationHelper
 		if (candidates == null)
 			return new String[] { fieldOrFunctionName, "unknown" };
 
-		switch (JoypadMod.MC_VERSION)
+		switch (ModVersionHelper.MC_VERSION)
 		{
 		case 164:
 			return new String[] { fieldOrFunctionName, candidates[0] };

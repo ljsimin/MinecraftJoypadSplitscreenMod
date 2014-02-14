@@ -4,17 +4,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
-
-import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.JoypadMod;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
+
+import org.lwjgl.input.Controller;
+import org.lwjgl.input.Controllers;
+
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -280,7 +280,7 @@ public class JoypadConfigMenu extends GuiScreen
 	private void UpdateControllerButton()
 	{
 		if (ControllerSettings.inputEnabled && ControllerSettings.joyNo != currentJoyNo)
-			ControllerSettings.SetController(currentJoyNo);
+			ControllerSettings.setController(currentJoyNo);
 		GuiButton button = (GuiButton) buttonList.get(0);
 		button.displayString = getJoystickInfo(currentJoyNo, JoyInfoEnum.name);
 	}

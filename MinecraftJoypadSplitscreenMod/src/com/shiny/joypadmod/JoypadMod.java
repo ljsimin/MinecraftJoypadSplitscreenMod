@@ -4,121 +4,54 @@ package com.shiny.joypadmod;
  * Main class for Joypad mod. This initializes everything.
  */
 
-// Common imports
-import java.io.File;
-
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
-
-import org.lwjgl.input.Controllers;
+import com.shiny.joypadmod.helpers.ConfigFile;
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.MinecraftObfuscationHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-// 1.6.4
 import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.registry.TickRegistry;
-import cpw.mods.fml.relauncher.Side;
 
-// 1.7.4
-// import cpw.mods.fml.common.gameevent.TickEvent;
-// import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
-// import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-// import cpw.mods.fml.common.FMLCommonHandler;
-// import net.minecraftforge.common.config.Configuration;
-// import net.minecraftforge.common.config.Property;
-
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION + JoypadMod.MINVERSION)
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + ModVersionHelper.MINVERSION)
 // 1.6.4
 @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
-	public static final String VERSION = "1.6.4";
-	public static final String MINVERSION = "-0.01pre";
 	public static final String NAME = "Joypad / SplitScreen Mod";
+
 	public static MinecraftObfuscationHelper obfuscationHelper;
-	public static final int MC_VERSION = 164;
 
 	public static ControllerSettings controllerSettings;
-	public int JoyNo = -1;
+
+	private ConfigFile config;
+	private ModVersionHelper modHelper;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		readConfigFile(event.getSuggestedConfigurationFile());
+		LogHelper.Info("preInit");
+		config = new ConfigFile(event.getSuggestedConfigurationFile());
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event)
 	{
-		initialize();
+		LogHelper.Info("init");
 		obfuscationHelper = new MinecraftObfuscationHelper();
-		if (ControllerSettings.inputEnabled)
-		{
-			// 1.7.4
-			// FMLCommonHandler.instance().bus().register(this);
-			// 1.6.4
-			TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
-		}
-
-	}
-
-	public void initialize()
-	{
-		LogHelper.Info("Initializing " + NAME);
 		controllerSettings = new ControllerSettings();
-		if (JoyNo < -1)
-		{
-			LogHelper.Info("Controller disabled");
-			ControllerSettings.inputEnabled = false;
-		}
-		else
-		{
-			int nControllers = ControllerSettings.DetectControllers();
-			if (nControllers > 0)
-			{
-				int selectedController = 0;
-				if (JoyNo >= 0 && JoyNo < ControllerSettings.DetectControllers())
-					selectedController = JoyNo;
-				ControllerSettings.SetController(selectedController);
-				Controllers.clearEvents();
-			}
-		}
-		Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
+		controllerSettings.init(config.preferedJoyNo, config.preferedJoyName);
 	}
 
-	public void readConfigFile(File configFile)
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event)
 	{
-		Configuration config = new Configuration(configFile);
-
-		config.load();
-
-		String userName = "unknown";
-
-		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
-		{
-			userName = Minecraft.getMinecraft().getSession().getUsername();
-		}
-
-		Property joyNo = config.get("Joypad-" + userName, "JoyNo", -1);
-		System.out.println(userName + "'s JoyNo == " + joyNo.getInt());
-		if (joyNo.getInt() != -1)
-			JoyNo = joyNo.getInt();
-		if (joyNo.getInt() == -2)
-			JoyNo = -2;
-
-		config.save();
+		LogHelper.Info("postInit");
+		modHelper = new ModVersionHelper();
+		modHelper.gameInit();
 	}
-
-	// 1.7.2
-	/*
-	 * @SubscribeEvent public void tickRender(RenderTickEvent event) { if
-	 * (event.phase == TickEvent.Phase.START) {
-	 * GameRenderHandler.HandlePreRender(); } else if (event.phase ==
-	 * TickEvent.Phase.END) { GameRenderHandler.HandlePostRender(); } }
-	 */
-
 }

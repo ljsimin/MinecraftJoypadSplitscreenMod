@@ -1,4 +1,4 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.helpers;
 
 import java.util.logging.Level;
 

@@ -11,6 +11,9 @@ import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
+
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class VirtualMouse
@@ -188,7 +191,6 @@ public class VirtualMouse
 			System.out.println("gui_mouseDown disabled due to earlier error");
 			return;
 		}
-
 		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseClicked");
 		Method mouseClicked = null;
 
@@ -329,13 +331,13 @@ public class VirtualMouse
 			return;
 		}
 
-		String functionName = JoypadMod.VERSION == "1.6.4" ? "clickMouse" : "leftClick";
+		String functionName = ModVersionHelper.MC_VERSION == 164 ? "clickMouse" : "leftClick";
 		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames(functionName);
 
 		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
 
 		@SuppressWarnings({ "rawtypes" })
-		Class[] params = JoypadMod.VERSION == "1.6.4" ? new Class[] { int.class } : null;
+		Class[] params = ModVersionHelper.MC_VERSION == 164 ? new Class[] { int.class } : null;
 		Method clickLeftMouse;
 		try
 		{
@@ -349,7 +351,7 @@ public class VirtualMouse
 				glcParam = 1;
 			}
 			clickLeftMouse.setAccessible(true);
-			if (JoypadMod.VERSION == "1.6.4")
+			if (ModVersionHelper.MC_VERSION == 164)
 				clickLeftMouse.invoke((Object) mc, 0);
 			else
 				clickLeftMouse.invoke((Object) mc);

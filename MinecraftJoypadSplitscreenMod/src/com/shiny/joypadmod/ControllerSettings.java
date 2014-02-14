@@ -9,6 +9,8 @@ import java.util.Map;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.AxisInputEvent;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -112,7 +114,7 @@ public class ControllerSettings
 				joyMovementYplus, joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
 	}
 
-	public static int DetectControllers()
+	public static int detectControllers()
 	{
 		validControllers.clear();
 		inValidControllers.clear();
@@ -123,7 +125,7 @@ public class ControllerSettings
 				Controllers.create();
 			if (Controllers.getControllerCount() > 0)
 			{
-				LogHelper.Info("Minecraft Joypad (Controller) Mod v" + JoypadMod.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
+				LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
 				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
 				for (int joyNo = 0; joyNo < Controllers.getControllerCount(); joyNo++)
 				{
@@ -155,7 +157,7 @@ public class ControllerSettings
 		return validControllers.size();
 	}
 
-	public static boolean SetController(int controllerNo)
+	public static boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
 		try
@@ -229,5 +231,33 @@ public class ControllerSettings
 	public static void setControllerBinding(int inputId, ControllerInputEvent inputEvent)
 	{
 		ControllerSettings.joyBindings[inputId].inputEvent = inputEvent;
+	}
+
+	public void init(int preferedJoyNo, String preferedJoyName)
+	{
+		LogHelper.Info("Initializing Controllers");
+
+		if (preferedJoyNo <= -100)
+		{
+			LogHelper.Warn("Controller input disabled due to joypad value set to -100");
+			ControllerSettings.inputEnabled = false;
+			return;
+		}
+
+		int nControllers = ControllerSettings.detectControllers();
+		if (nControllers > 0)
+		{
+			int selectedController = 0;
+			if (preferedJoyNo >= 0 && preferedJoyNo < nControllers)
+				selectedController = preferedJoyNo;
+			ControllerSettings.setController(selectedController);
+			Controllers.clearEvents();
+		}
+		else
+		{
+			LogHelper.Warn("No controllers detected! Disabling joypadmod");
+			ControllerSettings.inputEnabled = false;
+		}
+
 	}
 }
