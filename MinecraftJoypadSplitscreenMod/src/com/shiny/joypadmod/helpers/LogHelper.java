@@ -1,4 +1,4 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.helpers;
 
 import org.apache.logging.log4j.Level;
 

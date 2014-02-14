@@ -1,4 +1,4 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.helpers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +73,7 @@ public class MinecraftObfuscationHelper
 		if (candidates == null)
 			return new String[] { fieldOrFunctionName, "unknown" };
 
-		switch (JoypadMod.MC_VERSION)
+		switch (ModVersionHelper.MC_VERSION)
 		{
 		case 164:
 			return new String[] { fieldOrFunctionName, candidates[0] };

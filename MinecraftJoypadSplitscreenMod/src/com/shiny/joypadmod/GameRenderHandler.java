@@ -9,6 +9,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -87,6 +88,13 @@ public class GameRenderHandler
 
 			if (mc.currentScreen instanceof GuiContainer)
 			{
+				if (ControllerSettings.joyBindShiftClick.wasPressed())
+				{
+					System.out.println("Shift Click");
+					joypadMouse.hack_shiftKey(true);
+					joypadMouse.leftButtonDown();
+					continue;
+				}
 				joypadMouse.hack_shiftKey(ControllerSettings.joyBindSneak.isPressed());
 				System.out.println("Inside Gui Container. do controls different here?");
 			}
