@@ -4,7 +4,6 @@ package com.shiny.joypadmod;
  * Main class for Joypad mod. This initializes everything.
  */
 
-import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.MinecraftObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
@@ -27,14 +26,13 @@ public class JoypadMod
 
 	public static ControllerSettings controllerSettings;
 
-	private ConfigFile config;
 	private ModVersionHelper modHelper;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		LogHelper.Info("preInit");
-		config = new ConfigFile(event.getSuggestedConfigurationFile());
+		controllerSettings = new ControllerSettings(event.getSuggestedConfigurationFile());
 	}
 
 	@EventHandler
@@ -42,8 +40,7 @@ public class JoypadMod
 	{
 		LogHelper.Info("init");
 		obfuscationHelper = new MinecraftObfuscationHelper();
-		controllerSettings = new ControllerSettings();
-		controllerSettings.init(config.preferedJoyNo, config.preferedJoyName);
+		controllerSettings.init();
 	}
 
 	@EventHandler

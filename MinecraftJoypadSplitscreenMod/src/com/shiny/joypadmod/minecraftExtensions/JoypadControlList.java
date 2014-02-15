@@ -1,14 +1,15 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.Tessellator;
+
 import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 
 import cpw.mods.fml.client.GuiScrollingList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.Tessellator;
 
 public class JoypadControlList extends GuiScrollingList
 {
@@ -90,7 +91,7 @@ public class JoypadControlList extends GuiScrollingList
 				}
 			}
 
-			System.out.println("No controller event available");
+			// System.out.println("No controller event available");
 		}
 		catch (Exception ex)
 		{
