@@ -18,7 +18,6 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class VirtualMouse
 {
-
 	// last delta movement of axis
 	public static float deltaX;
 	public static float deltaY;
@@ -33,11 +32,9 @@ public class VirtualMouse
 
 	public boolean leftButtonHeld = false;
 	public boolean rightButtonHeld = false;
-	public boolean ignoreFirstAttackPress = true; // some quirk with xbox
-													// gamepads lights up
-													// this button but
-													// doesn't release it on
-													// init
+	// some quirk with xbox gamepads lights up the trigger button
+	// but doesn't release it on init
+	public boolean ignoreFirstAttackPress = true;
 
 	public boolean usingAxisCoordinates = true;
 	public static boolean debug = false;

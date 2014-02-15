@@ -7,6 +7,7 @@ public class ControllerBinding
 	 * Used as a key for the save file
 	 */
 	public String inputString;
+	public String menuString;
 
 	public ControllerInputEvent inputEvent;
 
@@ -25,10 +26,18 @@ public class ControllerBinding
 		return inputEvent.getAnalogReading();
 	}
 
-	public ControllerBinding(String inputString, ControllerInputEvent inputEvent)
+	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
 	{
 		this.inputString = inputString;
+		this.menuString = menuString;
 		this.inputEvent = inputEvent;
+	}
+
+	public String toConfigFileString()
+	{
+		String s = menuString + "," + inputEvent.getEventType() + "," + inputEvent.getEventIndex();
+		// TODO add axisThreshold, axisDeadzone
+		return s;
 	}
 
 }
