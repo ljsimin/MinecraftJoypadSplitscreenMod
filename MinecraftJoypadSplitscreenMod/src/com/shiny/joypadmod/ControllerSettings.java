@@ -3,8 +3,12 @@ package com.shiny.joypadmod;
 // Common code
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -59,27 +63,38 @@ public class ControllerSettings
 	public static boolean displayHints = false;
 	public static boolean toggleSneak = true;
 	public static Controller joystick;
-	public static int joyNo = 0;
+	public static int joyNo = -1;
 	public static int joyCameraSensitivity = 20;
-	public static boolean inputEnabled = false;
+
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;
 	private static int requiredButtonCount = 12;
 	private static int requiredAxisCount = 4;
 
-	public static Map<Integer, String> validControllers;
-	public static Map<Integer, String> inValidControllers;
+	public static Map<String, List<Integer>> validControllers;
+	public static Map<String, List<Integer>> inValidControllers;
 	public static ControllerUtils controllerUtils;
 
+	// inputEnabled will control whether the mod will continually poll the
+	// selected joystick for data
+	public static boolean inputEnabled = false;
+	// modDisabled will not set up the event handlers and will therefore render
+	// the mod inoperable
+	public static boolean modDisabled = false;
+	// suspending the controller will tell the main controller loop to stop
+	// polling.
+	// this is used during the controller setup screen when listening for
+	// controller events to map to an action
 	private static boolean suspendControllerInput = false;
-	private static ConfigFile config;
+
+	private static ConfigFile config = null;
 
 	public ControllerSettings(File configFile)
 	{
 		config = new ConfigFile(configFile);
 		controllerUtils = new ControllerUtils();
-		validControllers = new HashMap<Integer, String>();
-		inValidControllers = new HashMap<Integer, String>();
+		validControllers = new HashMap<String, List<Integer>>();
+		inValidControllers = new HashMap<String, List<Integer>>();
 	}
 
 	public static ControllerBinding[] getDefaultJoyBindings()
@@ -117,15 +132,60 @@ public class ControllerSettings
 				joyMovementYplus, joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
 	}
 
-	public static int detectControllers()
+	public void init()
+	{
+		config.init();
+
+		if (config.preferedJoyName == "disabled")
+		{
+			LogHelper.Warn("Controller input disabled due to joypad value set to preferedJoyName set to disabled");
+			ControllerSettings.inputEnabled = false;
+			ControllerSettings.modDisabled = true;
+			return;
+		}
+
+		LogHelper.Info("Initializing Controllers");
+
+		// only set a controller as in use on init if they have previously gone
+		// into controls to set it up
+		// and it is detected as present
+
+		int nControllers = detectControllers();
+		if (nControllers > 0)
+		{
+			int selectedController = checkForControllerAtIndex(config.preferedJoyName, config.preferedJoyNo);
+			if (selectedController >= 0)
+			{
+				setController(selectedController);
+				Controllers.clearEvents();
+			}
+			else
+			{
+				LogHelper.Info("No joypad set up for this session.  Must enter controller menu to enable");
+			}
+
+		}
+		else
+		{
+			LogHelper.Warn("No controllers detected!");
+			ControllerSettings.inputEnabled = false;
+		}
+	}
+
+	public int detectControllers()
 	{
 		validControllers.clear();
 		inValidControllers.clear();
 
 		try
 		{
+			// testing to see if this will help to rescan the controllers in
+			// case one is connected mid game
+			Controllers.destroy();
+
 			if (!Controllers.isCreated())
 				Controllers.create();
+
 			if (Controllers.getControllerCount() > 0)
 			{
 				LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
@@ -134,18 +194,17 @@ public class ControllerSettings
 				{
 					Controller thisController = Controllers.getController(joyNo);
 
-					LogHelper.Info("Found controller " + thisController.getName() + " (" + joyNo + ")");
-					LogHelper.Info("It has  " + thisController.getButtonCount() + " buttons.");
-					LogHelper.Info("It has  " + thisController.getAxisCount() + " axes.");
+					logControllerInfo(thisController);
+
 					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount, requiredMinButtonCount, requiredAxisCount))
 					{
 						LogHelper.Info("Controller #" + joyNo + " ( " + thisController.getName() + ") meets the input requirements");
-						validControllers.put(joyNo, thisController.getName());
+						addControllerToList(validControllers, thisController.getName(), joyNo);
 					}
 					else
 					{
-						inValidControllers.put(joyNo, thisController.getName());
 						LogHelper.Info("This controller does not meet the input requirements");
+						addControllerToList(inValidControllers, thisController.getName(), joyNo);
 					}
 					LogHelper.Info("---");
 				}
@@ -160,7 +219,7 @@ public class ControllerSettings
 		return validControllers.size();
 	}
 
-	public static boolean setController(int controllerNo)
+	public boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
 		try
@@ -180,7 +239,7 @@ public class ControllerSettings
 			joyNo = controllerNo;
 			controllerUtils.printDeadZones(joystick);
 
-			joyBindings = config.getControllerBindings(joystick.getName(), controllerNo);
+			joyBindings = config.getControllerBindings(controllerNo, joystick.getName());
 
 			for (ControllerBinding binding : joyBindings)
 			{
@@ -250,31 +309,62 @@ public class ControllerSettings
 		config.saveControllerBinding(joystick.getName(), joyBindings[inputId]);
 	}
 
-	public void init()
+	private static void addControllerToList(Map<String, List<Integer>> listToUse, String name, int id)
 	{
-		LogHelper.Info("Initializing Controllers");
-
-		if (config.preferedJoyNo <= -100)
+		List<Integer> ids = null;
+		if (listToUse.containsKey(name))
 		{
-			LogHelper.Warn("Controller input disabled due to joypad value set to -100");
-			ControllerSettings.inputEnabled = false;
-			return;
-		}
-
-		int nControllers = ControllerSettings.detectControllers();
-		if (nControllers > 0)
-		{
-			int selectedController = 0;
-			if (config.preferedJoyNo >= 0 && config.preferedJoyNo < nControllers)
-				selectedController = config.preferedJoyNo;
-			ControllerSettings.setController(selectedController);
-			Controllers.clearEvents();
+			ids = listToUse.get(name);
 		}
 		else
 		{
-			LogHelper.Warn("No controllers detected! Disabling joypadmod");
-			ControllerSettings.inputEnabled = false;
+			ids = new ArrayList<Integer>();
+		}
+		ids.add(id);
+
+		listToUse.put(name, ids);
+	}
+
+	// look for controllername in valid controllers
+	// if not found return -1 indicating the controller wasn't found at all
+	// if found:
+	// if controller at selected index, then return that index
+	// else return the first index it is found at
+	private int checkForControllerAtIndex(String controllerName, int joyIndex)
+	{
+		if (validControllers.containsKey(controllerName))
+		{
+			List<Integer> ids = validControllers.get(controllerName);
+			if (ids.contains(joyIndex))
+				return joyIndex;
+
+			return ids.get(0);
 		}
 
+		return -1;
 	}
+
+	private void logControllerInfo(Controller controller)
+	{
+		LogHelper.Info("Found controller " + controller.getName() + " (" + joyNo + ")");
+		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
+		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
+	}
+
+	public List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
+	{
+		List<Integer> values = new ArrayList<Integer>();
+		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
+		while (it.hasNext())
+		{
+			List<Integer> ids = it.next().getValue();
+			for (int i = 0; i < ids.size(); i++)
+			{
+				values.add(ids.get(i));
+			}
+		}
+
+		return values;
+	}
+
 }
