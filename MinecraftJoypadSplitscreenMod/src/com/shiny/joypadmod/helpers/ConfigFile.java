@@ -49,9 +49,9 @@ public class ConfigFile
 		config.save();
 	}
 
-	private void UpdatePreferedJoy(int joyNo, String joyName)
+	private void updatePreferedJoy(int joyNo, String joyName)
 	{
-		String category = defaultCategory;
+		String category = defaultCategory.toLowerCase();
 		String[] keys = { "JoyNo", "JoyName" };
 		for (int i = 0; i < 2; i++)
 		{
@@ -88,7 +88,7 @@ public class ConfigFile
 						.getString();
 				System.out.println("Received bindSettings: " + controlBindings[i].inputString + " " + bindSettings);
 			}
-			UpdatePreferedJoy(joyNo, joyName);
+			updatePreferedJoy(joyNo, joyName);
 			config.save();
 		}
 		catch (Exception ex)

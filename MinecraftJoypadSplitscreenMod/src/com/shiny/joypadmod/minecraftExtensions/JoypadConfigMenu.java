@@ -39,8 +39,6 @@ public class JoypadConfigMenu extends GuiScreen
 	GuiScreen parentScr;
 	Minecraft mc = Minecraft.getMinecraft();
 
-	// public Map<String, String> translation;
-
 	private JoypadControlList optionList;
 	private List<Integer> controllers;
 
@@ -141,7 +139,7 @@ public class JoypadConfigMenu extends GuiScreen
 				Controller control = Controllers.getController(joyNo);
 				if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 				{
-					ret += "Controller " + joyIndex + 1 + " of " + controllers.size();
+					ret += "Controller " + (joyIndex + 1) + " of " + controllers.size();
 					ret += "-Buttons: " + control.getButtonCount();
 					ret += " Axis: " + control.getAxisCount();
 				}
@@ -164,7 +162,6 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		drawDefaultBackground();
 		this.optionList.drawScreen(par1, par2, par3);
-		// this.keyBindingList.drawScreen(par1, par2, par3);
 		int heightOffset = labelYStart;
 		this.drawCenteredString(getFontRenderer(), "Controller Settings", width / 2, heightOffset, -1);
 		this.drawCenteredString(getFontRenderer(), "Press SPACE at any time to toggle controller on/off", width / 2, heightOffset + 11, -1);
