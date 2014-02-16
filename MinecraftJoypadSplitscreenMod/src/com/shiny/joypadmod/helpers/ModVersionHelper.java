@@ -16,9 +16,9 @@ public class ModVersionHelper
 
 	public void gameInit()
 	{
-		if (!ControllerSettings.inputEnabled)
+		if (ControllerSettings.modDisabled)
 		{
-			LogHelper.Warn("Mod game initialization ignored due to input disabled.  No in game options will appear to change this unless config file updated");
+			LogHelper.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
 			return;
 		}
 

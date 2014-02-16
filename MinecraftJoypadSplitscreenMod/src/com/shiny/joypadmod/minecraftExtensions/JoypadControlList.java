@@ -37,7 +37,10 @@ public class JoypadControlList extends GuiScrollingList
 	@Override
 	protected int getSize()
 	{
-		return ControllerSettings.joyBindings.length;// parent.translation.size();//.controlLabels.length;
+		if (ControllerSettings.joyBindings == null)
+			return 0;
+
+		return ControllerSettings.joyBindings.length;
 	}
 
 	@Override
@@ -103,7 +106,7 @@ public class JoypadControlList extends GuiScrollingList
 	@Override
 	protected void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5)
 	{
-		String mcActionName = (String) parent.translation.get(ControllerSettings.joyBindings[var1].inputString);
+		String mcActionName = ControllerSettings.joyBindings[var1].menuString;
 
 		String mcActionButton;
 
