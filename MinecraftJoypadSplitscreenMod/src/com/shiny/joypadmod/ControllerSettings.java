@@ -179,10 +179,6 @@ public class ControllerSettings
 
 		try
 		{
-			// testing to see if this will help to rescan the controllers in
-			// case one is connected mid game
-			Controllers.destroy();
-
 			if (!Controllers.isCreated())
 				Controllers.create();
 
@@ -363,6 +359,7 @@ public class ControllerSettings
 				values.add(ids.get(i));
 			}
 		}
+		java.util.Collections.sort(values);
 
 		return values;
 	}
