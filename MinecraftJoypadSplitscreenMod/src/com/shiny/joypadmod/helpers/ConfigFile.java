@@ -39,21 +39,15 @@ public class ConfigFile
 
 		System.out.println(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + ")");
 
-		// user can forcibly disable the joypad code from registering by setting
-		// joyNo to anything less than -99
-		if (preferedJoyNo <= -100)
-		{
-			LogHelper.Warn("Warning, joypad is disabled for user " + userName + " to re-enable, open config file and change joyNo to -1");
-		}
-
 		config.save();
 	}
 
-	private void updatePreferedJoy(int joyNo, String joyName)
+	public void updatePreferedJoy(int joyNo, String joyName)
 	{
 		String category = defaultCategory.toLowerCase();
 		String[] keys = { "JoyNo", "JoyName" };
-		for (int i = 0; i < 2; i++)
+		int numKeys = joyName != null ? keys.length : 1;
+		for (int i = 0; i < numKeys; i++)
 		{
 			if (config.hasKey(category, keys[i]))
 			{
@@ -84,8 +78,8 @@ public class ConfigFile
 		{
 			for (; i < controlBindings.length; i++)
 			{
-				String bindSettings = config.get(createConfigSettingString(joyName, controlBindings[i].inputString), controlBindings[i].inputString, controlBindings[i].toConfigFileString())
-						.getString();
+				String bindSettings = config.get(createConfigSettingString(joyName, controlBindings[i].inputString),
+						controlBindings[i].inputString, controlBindings[i].toConfigFileString()).getString();
 				System.out.println("Received bindSettings: " + controlBindings[i].inputString + " " + bindSettings);
 			}
 			updatePreferedJoy(joyNo, joyName);
@@ -93,7 +87,8 @@ public class ConfigFile
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed trying to get controller bindings in config file:" + category + "-" + controlBindings[i].inputString + " Exception: " + ex.toString());
+			LogHelper.Error("Failed trying to get controller bindings in config file:" + category + "-"
+					+ controlBindings[i].inputString + " Exception: " + ex.toString());
 		}
 
 		return controlBindings;
@@ -101,19 +96,10 @@ public class ConfigFile
 
 	public void saveControllerBinding(String joyName, ControllerBinding binding)
 	{
-		String catToDelete = null;
+		String catToDelete = createConfigSettingString(joyName, binding.inputString).toLowerCase();
 
-		for (String s : config.getCategoryNames())
-		{
-			if (s.contains(binding.inputString))
-			{
-				catToDelete = s;
-				break;
-			}
-			System.out.println(s);
-		}
-
-		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for " + catToDelete);
+		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for "
+				+ catToDelete);
 		try
 		{
 			String key = binding.inputString;
@@ -126,8 +112,8 @@ public class ConfigFile
 		}
 		catch (Exception ex)
 		{
-			LogHelper
-					.Error("Failed trying to save controller binding category " + catToDelete + " value " + binding.inputString + ":" + binding.toConfigFileString() + ". Exception: " + ex.toString());
+			LogHelper.Error("Failed trying to save controller binding category " + catToDelete + " value "
+					+ binding.inputString + ":" + binding.toConfigFileString() + ". Exception: " + ex.toString());
 		}
 
 	}

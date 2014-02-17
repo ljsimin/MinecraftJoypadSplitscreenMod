@@ -57,7 +57,7 @@ public class ControllerSettings
 	public static ControllerBinding joyGuiYplus;
 	public static ControllerBinding joyGuiYminus;
 
-	public static ControllerBinding joyBindings[];
+	public static ControllerBinding joyBindings[] = null;
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
@@ -65,6 +65,7 @@ public class ControllerSettings
 	public static Controller joystick;
 	public static int joyNo = -1;
 	public static int joyCameraSensitivity = 20;
+	public static float sensitivityMultiplier = 1.0F;
 
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;
@@ -75,12 +76,14 @@ public class ControllerSettings
 	public static Map<String, List<Integer>> inValidControllers;
 	public static ControllerUtils controllerUtils;
 
-	// inputEnabled will control whether the mod will continually poll the
-	// selected joystick for data
-	public static boolean inputEnabled = false;
 	// modDisabled will not set up the event handlers and will therefore render
 	// the mod inoperable
 	public static boolean modDisabled = false;
+
+	// inputEnabled will control whether the mod will continually poll the
+	// selected joystick for data
+	private boolean inputEnabled = false;
+
 	// suspending the controller will tell the main controller loop to stop
 	// polling.
 	// this is used during the controller setup screen when listening for
@@ -134,12 +137,14 @@ public class ControllerSettings
 
 	public void init()
 	{
+		LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
+
 		config.init();
 
 		if (config.preferedJoyName == "disabled")
 		{
 			LogHelper.Warn("Controller input disabled due to joypad value set to preferedJoyName set to disabled");
-			ControllerSettings.inputEnabled = false;
+			inputEnabled = false;
 			ControllerSettings.modDisabled = true;
 			return;
 		}
@@ -151,9 +156,10 @@ public class ControllerSettings
 		// and it is detected as present
 
 		int nControllers = detectControllers();
-		if (nControllers > 0)
+		int selectedController = -1;
+		if (nControllers > 0 && config.preferedJoyNo >= 0)
 		{
-			int selectedController = checkForControllerAtIndex(config.preferedJoyName, config.preferedJoyNo);
+			selectedController = checkForControllerAtIndex(config.preferedJoyName, config.preferedJoyNo);
 			if (selectedController >= 0)
 			{
 				setController(selectedController);
@@ -165,10 +171,10 @@ public class ControllerSettings
 			}
 
 		}
-		else
+		if (selectedController < 0)
 		{
-			LogHelper.Warn("No controllers detected!");
-			ControllerSettings.inputEnabled = false;
+			LogHelper.Warn("No joypad set up for this session." + (nControllers > 0 ? " Must enter controller menu to enable." : ""));
+			inputEnabled = false;
 		}
 	}
 
@@ -184,7 +190,6 @@ public class ControllerSettings
 
 			if (Controllers.getControllerCount() > 0)
 			{
-				LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
 				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
 				for (int joyNo = 0; joyNo < Controllers.getControllerCount(); joyNo++)
 				{
@@ -225,7 +230,7 @@ public class ControllerSettings
 
 			LogHelper.Info("Controllers.getControllerCount == " + Controllers.getControllerCount());
 
-			if (controllerNo < 0 || controllerNo > Controllers.getControllerCount())
+			if (controllerNo < 0 || controllerNo >= Controllers.getControllerCount())
 			{
 				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently " + Controllers.getControllerCount() + " controllers detected.");
 				return false;
@@ -288,6 +293,40 @@ public class ControllerSettings
 		return joystick != null;
 	}
 
+	public void setDefaultBindings()
+	{
+		if (joyNo < 0 || joystick == null || joyBindings == null)
+			return;
+
+		ControllerBinding[] bindings = getDefaultJoyBindings();
+		for (int i = 0; i < bindings.length; i++)
+		{
+			if (!bindings[i].equals(joyBindings[i]))
+			{
+				setControllerBinding(i, bindings[i].inputEvent);
+			}
+		}
+	}
+
+	public boolean isInputEnabled()
+	{
+		return inputEnabled;
+	}
+
+	public void setInputEnabled(boolean b)
+	{
+		inputEnabled = b;
+		if (!b)
+		{
+			config.updatePreferedJoy(-1, null);
+		}
+		else
+		{
+			config.updatePreferedJoy(0, null);
+		}
+
+	}
+
 	public static void suspendControllerInput(boolean b)
 	{
 		ControllerSettings.suspendControllerInput = b;
@@ -299,10 +338,10 @@ public class ControllerSettings
 		return ControllerSettings.suspendControllerInput;
 	}
 
-	public static void setControllerBinding(int inputId, ControllerInputEvent inputEvent)
+	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
 	{
-		ControllerSettings.joyBindings[inputId].inputEvent = inputEvent;
-		config.saveControllerBinding(joystick.getName(), joyBindings[inputId]);
+		ControllerSettings.joyBindings[bindingIndex].inputEvent = inputEvent;
+		config.saveControllerBinding(joystick.getName(), joyBindings[bindingIndex]);
 	}
 
 	private static void addControllerToList(Map<String, List<Integer>> listToUse, String name, int id)
@@ -328,7 +367,7 @@ public class ControllerSettings
 	// else return the first index it is found at
 	private int checkForControllerAtIndex(String controllerName, int joyIndex)
 	{
-		if (validControllers.containsKey(controllerName))
+		if (controllerName != null && validControllers.containsKey(controllerName))
 		{
 			List<Integer> ids = validControllers.get(controllerName);
 			if (ids.contains(joyIndex))

@@ -12,6 +12,7 @@ import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.JoypadMod;
 
 public class JoypadConfigMenu extends GuiScreen
@@ -20,32 +21,50 @@ public class JoypadConfigMenu extends GuiScreen
 	public boolean nextClicked = false;
 	private int currentJoyIndex = 0;
 
+	// start of text at top
 	private int labelYStart = 5;
 
-	private int buttonYStart_top = labelYStart + 40; // Y start of the buttons
-														// at the top of the
-														// screen
-	public int buttonYEnd_top; // Y end of the buttons at the top of the screen
-	public int buttonXStart_top; // X start of the buttons at the top of the
-									// screen
+	// top button parameters
+	// Y start of the buttons at the top of the screen
+	private int buttonYStart_top = labelYStart + 40;
+	// Y end of the buttons at the top of the screen
+	public int buttonYEnd_top;
+	// X start of the buttons at the top of the screen
+	public int buttonXStart_top;
 
-	public int controllerButtonWidth; // determined by size of screen
+	// determined by size of screen
+	public int controllerButtonWidth;
 
-	private int buttonYSpacing = 21; // spacing between the buttons
+	// spacing between the buttons
+	private int buttonYSpacing = 21;
 
+	// control list parameters
+	public int controlListYStart;
+	public int controlListXStart;
+	public int controlListWidth;
+	public int controlListHeight;
+
+	// bottom button parameters
 	public int buttonYStart_bottom;
-	private int bottomButtonWidth = 60;
+	private int bottomButtonWidth = 70;
 
-	GuiScreen parentScr;
-	Minecraft mc = Minecraft.getMinecraft();
+	private GuiScreen parentScr;
+	private GuiControls mouseGui;
+	public Minecraft mc = Minecraft.getMinecraft();
 
 	private JoypadControlList optionList;
 	private List<Integer> controllers;
+
+	private enum ButtonsEnum
+	{
+		control, prev, next, reset, calibrate, done, mouseMenu
+	}
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen)
 	{
 		super();
 		parentScr = parent;
+		mouseGui = originalControlScreen;
 		controllers = JoypadMod.controllerSettings.flattenMap(ControllerSettings.validControllers);
 
 		if (ControllerSettings.joyNo >= 0)
@@ -75,10 +94,24 @@ public class JoypadConfigMenu extends GuiScreen
 		// record where we left off with the top
 		buttonYEnd_top = buttonYStart_top + (buttonYSpacing * 2);
 
+		controlListYStart = buttonYEnd_top + 2;
+		controlListXStart = buttonXStart_top + controllerButtonWidth / 5;
+		controlListWidth = (int) (controllerButtonWidth / 1.5);
+		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
+
+		// GameSettings.Options options = GameSettings.Options.SENSITIVITY;
+		// this.buttonList.add(new GuiOptionSlider(options.returnEnumOrdinal(),
+		// 0, 50, options));
+
+		int resetXStart = controlListXStart + controlListWidth + 5;
+		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Reset"));
+
 		// add bottom buttons
-		addButton(new GuiButton(500, width / 2 - 92, buttonYStart_bottom, bottomButtonWidth, 20, "Calibrate"));
-		addButton(new GuiButton(501, width / 2 - 30, buttonYStart_bottom, bottomButtonWidth, 20, "Exit"));
-		addButton(new GuiButton(502, width / 2 + 32, buttonYStart_bottom, bottomButtonWidth, 20, "Reset"));
+		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom, bottomButtonWidth, 20, "Calibrate"));
+		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20, "Done"));
+		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20, "Mouse menu");
+		mouseKeyboardMenuButton.enabled = !JoypadMod.controllerSettings.isInputEnabled();
+		addButton(mouseKeyboardMenuButton);
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
 	}
@@ -102,19 +135,28 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 101: // PREV
 			// disable for safety
-			ControllerSettings.inputEnabled = false;
+			JoypadMod.controllerSettings.setInputEnabled(false);
 			currentJoyIndex = getJoypadIndex(-1);
 			updateControllerButton();
 			break;
 		case 102: // NEXT
 			// disable for safety
-			ControllerSettings.inputEnabled = false;
+			JoypadMod.controllerSettings.setInputEnabled(false);
 			currentJoyIndex = getJoypadIndex(1);
 			updateControllerButton();
 			break;
-		case 501:
-			// TODO replace minecraft game settings with copy
+		case 400: // Reset
+			JoypadMod.controllerSettings.setDefaultBindings();
+			break;
+		case 500: // Calibrate
+			// TODO implement
+			break;
+		case 501: // Done
 			JoypadMod.obfuscationHelper.DisplayGuiScreen(this.parentScr);
+			break;
+		case 502: // Mouse menu
+			GameRenderHandler.allowMouseMenu = true;
+			JoypadMod.obfuscationHelper.DisplayGuiScreen(mouseGui);
 			break;
 
 		}
@@ -146,7 +188,7 @@ public class JoypadConfigMenu extends GuiScreen
 				else if (joyInfo == JoyInfoEnum.name)
 				{
 					ret += control.getName() + ": ";
-					ret += ControllerSettings.inputEnabled ? "on" : "off";
+					ret += JoypadMod.controllerSettings.isInputEnabled() ? "on" : "off";
 				}
 			}
 		}
@@ -163,8 +205,8 @@ public class JoypadConfigMenu extends GuiScreen
 		drawDefaultBackground();
 		this.optionList.drawScreen(par1, par2, par3);
 		int heightOffset = labelYStart;
-		this.drawCenteredString(getFontRenderer(), "Controller Settings", width / 2, heightOffset, -1);
-		this.drawCenteredString(getFontRenderer(), "Press SPACE at any time to toggle controller on/off", width / 2, heightOffset + 11, -1);
+		this.drawCenteredString(getFontRenderer(), "Joypad Mod Controls", width / 2, heightOffset, -1);
+		this.drawCenteredString(getFontRenderer(), "Press SPACE at any time to toggle controller on/off", width / 2, heightOffset + getFontRenderer().FONT_HEIGHT + 2, 0xAAAAAA);
 		heightOffset += 29;
 
 		// output TEXT buttons Axis, POV count here
@@ -180,8 +222,7 @@ public class JoypadConfigMenu extends GuiScreen
 	}
 
 	/**
-	 * Fired when a key is typed. This is the equivalent of
-	 * KeyListener.keyTyped(KeyEvent e).
+	 * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
 	 */
 	protected void keyTyped(char c, int code)
 	{
@@ -213,15 +254,23 @@ public class JoypadConfigMenu extends GuiScreen
 	private void toggleController()
 	{
 		System.out.println("Enable/disable input");
-		ControllerSettings.inputEnabled = !ControllerSettings.inputEnabled;
+		JoypadMod.controllerSettings.setInputEnabled(!JoypadMod.controllerSettings.isInputEnabled());
 		updateControllerButton();
 	}
 
 	private void updateControllerButton()
 	{
-		if (ControllerSettings.inputEnabled && ControllerSettings.joyNo != controllers.get(currentJoyIndex))
-			JoypadMod.controllerSettings.setController(controllers.get(currentJoyIndex));
-		GuiButton button = (GuiButton) buttonList.get(0);
+		GuiButton button = (GuiButton) buttonList.get(ButtonsEnum.mouseMenu.ordinal());
+		if (JoypadMod.controllerSettings.isInputEnabled())
+		{
+			button.enabled = false;
+			if (ControllerSettings.joyNo != controllers.get(currentJoyIndex))
+				JoypadMod.controllerSettings.setController(controllers.get(currentJoyIndex));
+		}
+		else
+			button.enabled = true;
+
+		button = (GuiButton) buttonList.get(ButtonsEnum.control.ordinal());
 		button.displayString = getJoystickInfo(currentJoyIndex, JoyInfoEnum.name);
 	}
 

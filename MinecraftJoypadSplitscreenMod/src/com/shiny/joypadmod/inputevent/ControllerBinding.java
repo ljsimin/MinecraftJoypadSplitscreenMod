@@ -40,4 +40,26 @@ public class ControllerBinding
 		return s;
 	}
 
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == this)
+		{
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass())
+		{
+			return false;
+		}
+
+		ControllerBinding bind = (ControllerBinding) obj;
+
+		if (this.inputString != bind.inputString || !this.toConfigFileString().equals(bind.toConfigFileString()))
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 }

@@ -133,12 +133,17 @@ public class VirtualMouse
 	// this is the equivalent of moving the mouse around on your joypad
 	public static void updateCameraAxisReading()
 	{
-		float var3 = mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+		float var3 = ControllerSettings.sensitivityMultiplier * 0.4F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
-		float var8 = Math.abs(ControllerSettings.joyCameraXplus.getAnalogReading()) > Math.abs(ControllerSettings.joyCameraXminus.getAnalogReading()) ? ControllerSettings.joyCameraXplus
-				.getAnalogReading() : ControllerSettings.joyCameraXminus.getAnalogReading();
-		float var9 = Math.abs(ControllerSettings.joyCameraYplus.getAnalogReading()) > Math.abs(ControllerSettings.joyCameraYminus.getAnalogReading()) ? ControllerSettings.joyCameraYplus
-				.getAnalogReading() : ControllerSettings.joyCameraYminus.getAnalogReading();
+
+		float reading1 = ControllerSettings.joyCameraXplus.getAnalogReading();
+		float reading2 = ControllerSettings.joyCameraXminus.getAnalogReading();
+		float var8 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+
+		reading1 = ControllerSettings.joyCameraYplus.getAnalogReading();
+		reading2 = ControllerSettings.joyCameraYminus.getAnalogReading();
+		float var9 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+
 		deltaX = (float) (Math.round(var8 * (float) ControllerSettings.joyCameraSensitivity) * var4);
 		deltaY = (float) (Math.round(var9 * (float) ControllerSettings.joyCameraSensitivity) * var4 * -1.0F);
 
@@ -150,7 +155,8 @@ public class VirtualMouse
 
 	private void setMouseCoordinatesWithController()
 	{
-		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
+				mc.displayHeight);
 
 		updateCameraAxisReading();
 
@@ -199,8 +205,10 @@ public class VirtualMouse
 		LogHelper.Debug("Calling mouseClicked");
 		try
 		{
-			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, button, eventButtonNames[0], eventButtonNames[1]);
-			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, Minecraft.getSystemTime(), lastMouseEventNames[0], lastMouseEventNames[1]);
+			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, button,
+					eventButtonNames[0], eventButtonNames[1]);
+			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					Minecraft.getSystemTime(), lastMouseEventNames[0], lastMouseEventNames[1]);
 
 			try
 			{
@@ -281,8 +289,10 @@ public class VirtualMouse
 
 		try
 		{
-			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, eventButtonNames[0], eventButtonNames[1]);
-			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, lastMouseEventNames[0], lastMouseEventNames[1]);
+			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					eventButtonNames[0], eventButtonNames[1]);
+			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					lastMouseEventNames[0], lastMouseEventNames[1]);
 		}
 		catch (Exception ex)
 		{

@@ -13,8 +13,6 @@ import cpw.mods.fml.client.GuiScrollingList;
 
 public class JoypadControlList extends GuiScrollingList
 {
-
-	private JoypadConfigMenu parent;
 	private FontRenderer fontRenderer;
 	private int controllerInputTimeout = 5000;
 	private long controllerTickStart = 0;
@@ -24,13 +22,12 @@ public class JoypadControlList extends GuiScrollingList
 
 	public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
 	{
-		super(parent.mc, 200, // width
+		super(parent.mc, parent.controlListWidth, // width
 				parent.height, // height
-				parent.buttonYEnd_top + 2, // top start
-				parent.buttonYStart_bottom, // bottom end
-				parent.width / 2 - 100, // left start
+				parent.controlListYStart, // top start
+				parent.controlListYStart + parent.controlListHeight, // bottom end
+				parent.controlListXStart, // left start
 				20); // entryHeight
-		this.parent = parent;
 		this.fontRenderer = fontRenderer;
 	}
 
