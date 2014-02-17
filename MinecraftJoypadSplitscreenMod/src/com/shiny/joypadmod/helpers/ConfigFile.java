@@ -81,6 +81,7 @@ public class ConfigFile
 				String bindSettings = config.get(createConfigSettingString(joyName, controlBindings[i].inputString),
 						controlBindings[i].inputString, controlBindings[i].toConfigFileString()).getString();
 				System.out.println("Received bindSettings: " + controlBindings[i].inputString + " " + bindSettings);
+				controlBindings[i].setToConfigFileString(bindSettings, joyNo);
 			}
 			updatePreferedJoy(joyNo, joyName);
 			config.save();

@@ -58,7 +58,8 @@ public class PovInputEvent implements ControllerInputEvent
 	@Override
 	public float getAnalogReading()
 	{
-		return povNumber == 0 ? Controllers.getController(controllerNumber).getPovX() : Controllers.getController(controllerNumber).getPovY();
+		return povNumber == 0 ? Controllers.getController(controllerNumber).getPovX() : Controllers.getController(
+				controllerNumber).getPovY();
 	}
 
 	@Override
@@ -76,8 +77,9 @@ public class PovInputEvent implements ControllerInputEvent
 	@Override
 	public String toString()
 	{
-		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(" Max Value: ").append(threshold).append(" Current value: ")
-				.append(getAnalogReading()).append(" Is pressed: ").append(isPressed()).toString();
+		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType())
+				.append(" Max Value: ").append(threshold).append(" Current value: ").append(getAnalogReading())
+				.append(" Is pressed: ").append(isPressed()).toString();
 	}
 
 	@Override
@@ -113,6 +115,12 @@ public class PovInputEvent implements ControllerInputEvent
 			return "+";
 		}
 		return "-";
+	}
+
+	@Override
+	public int getControllerIndex()
+	{
+		return controllerNumber;
 	}
 
 }
