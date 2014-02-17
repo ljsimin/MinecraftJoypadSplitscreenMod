@@ -86,9 +86,12 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonYStart_bottom = height - 20;
 
 		// add top buttons
-		addButton(new GuiButton(100, buttonXStart_top, buttonYStart_top, controllerButtonWidth, 20, getJoystickInfo(currentJoyIndex, JoyInfoEnum.name)));
-		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2, 20, "PREV"));
-		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 2, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2, 20, "NEXT"));
+		addButton(new GuiButton(100, buttonXStart_top, buttonYStart_top, controllerButtonWidth, 20, getJoystickInfo(
+				currentJoyIndex, JoyInfoEnum.name)));
+		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2,
+				20, "PREV"));
+		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 2, buttonYStart_top + buttonYSpacing,
+				controllerButtonWidth / 2, 20, "NEXT"));
 
 		// the middle section will be populated with the controller settings so
 		// record where we left off with the top
@@ -104,12 +107,16 @@ public class JoypadConfigMenu extends GuiScreen
 		// 0, 50, options));
 
 		int resetXStart = controlListXStart + controlListWidth + 5;
-		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Reset"));
+		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top
+				- resetXStart, 20, "Reset"));
 
 		// add bottom buttons
-		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom, bottomButtonWidth, 20, "Calibrate"));
-		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20, "Done"));
-		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20, "Mouse menu");
+		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
+				bottomButtonWidth, 20, "Calibrate"));
+		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
+				"Done"));
+		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2),
+				buttonYStart_bottom, bottomButtonWidth, 20, "Mouse menu");
 		mouseKeyboardMenuButton.enabled = !JoypadMod.controllerSettings.isInputEnabled();
 		addButton(mouseKeyboardMenuButton);
 
@@ -207,7 +214,8 @@ public class JoypadConfigMenu extends GuiScreen
 		this.optionList.drawScreen(par1, par2, par3);
 		int heightOffset = labelYStart;
 		this.drawCenteredString(getFontRenderer(), "Joypad Mod Controls", width / 2, heightOffset, -1);
-		this.drawCenteredString(getFontRenderer(), "Press SPACE at any time to toggle controller on/off", width / 2, heightOffset + getFontRenderer().FONT_HEIGHT + 2, 0xAAAAAA);
+		this.drawCenteredString(getFontRenderer(), "Press SPACE at any time to toggle controller on/off", width / 2,
+				heightOffset + getFontRenderer().FONT_HEIGHT + 2, 0xAAAAAA);
 		heightOffset += 29;
 
 		// output TEXT buttons Axis, POV count here
@@ -223,8 +231,7 @@ public class JoypadConfigMenu extends GuiScreen
 	}
 
 	/**
-	 * Fired when a key is typed. This is the equivalent of
-	 * KeyListener.keyTyped(KeyEvent e).
+	 * Fired when a key is typed. This is the equivalent of KeyListener.keyTyped(KeyEvent e).
 	 */
 	protected void keyTyped(char c, int code)
 	{

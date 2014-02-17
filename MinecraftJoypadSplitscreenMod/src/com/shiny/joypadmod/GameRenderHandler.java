@@ -173,7 +173,8 @@ public class GameRenderHandler
 
 	private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
-	private static int inventoryKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
+	private static int inventoryKeyCode = JoypadMod.obfuscationHelper
+			.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
@@ -299,7 +300,8 @@ public class GameRenderHandler
 			{
 				LogHelper.Debug("Replacing control screen");
 				String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("parentScreen");
-				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui, names[0], names[1]);
+				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui,
+						names[0], names[1]);
 				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, gui));
 			}
 			catch (Exception ex)

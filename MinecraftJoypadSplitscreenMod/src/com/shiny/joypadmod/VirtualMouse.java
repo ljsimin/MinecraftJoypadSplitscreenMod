@@ -153,7 +153,8 @@ public class VirtualMouse
 
 	private void setMouseCoordinatesWithController()
 	{
-		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
+				mc.displayHeight);
 
 		updateCameraAxisReading();
 
@@ -202,8 +203,10 @@ public class VirtualMouse
 		LogHelper.Debug("Calling mouseClicked");
 		try
 		{
-			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, button, eventButtonNames[0], eventButtonNames[1]);
-			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, Minecraft.getSystemTime(), lastMouseEventNames[0], lastMouseEventNames[1]);
+			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, button,
+					eventButtonNames[0], eventButtonNames[1]);
+			ObfuscationReflectionHelper.setPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					Minecraft.getSystemTime(), lastMouseEventNames[0], lastMouseEventNames[1]);
 
 			try
 			{
@@ -284,8 +287,10 @@ public class VirtualMouse
 
 		try
 		{
-			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, eventButtonNames[0], eventButtonNames[1]);
-			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen, lastMouseEventNames[0], lastMouseEventNames[1]);
+			eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					eventButtonNames[0], eventButtonNames[1]);
+			lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+					lastMouseEventNames[0], lastMouseEventNames[1]);
 		}
 		catch (Exception ex)
 		{
