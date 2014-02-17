@@ -77,8 +77,9 @@ public class ButtonInputEvent implements ControllerInputEvent
 	@Override
 	public String toString()
 	{
-		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(" Current value: ").append(getAnalogReading()).append(" Is pressed: ")
-				.append(isPressed()).toString();
+		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType())
+				.append(" Current value: ").append(getAnalogReading()).append(" Is pressed: ").append(isPressed())
+				.toString();
 	}
 
 	@Override
@@ -103,5 +104,11 @@ public class ButtonInputEvent implements ControllerInputEvent
 	public String getDescription()
 	{
 		return getName();
+	}
+
+	@Override
+	public int getControllerIndex()
+	{
+		return controllerNumber;
 	}
 }

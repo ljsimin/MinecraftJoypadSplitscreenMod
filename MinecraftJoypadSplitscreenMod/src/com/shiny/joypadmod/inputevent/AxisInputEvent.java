@@ -103,8 +103,9 @@ public class AxisInputEvent implements ControllerInputEvent
 	@Override
 	public String toString()
 	{
-		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(" Threshold: ").append(threshold).append(" Current value: ")
-				.append(getAnalogReading()).append(" Is pressed: ").append(isPressed()).toString();
+		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType())
+				.append(" Threshold: ").append(threshold).append(" Current value: ").append(getAnalogReading())
+				.append(" Is pressed: ").append(isPressed()).toString();
 	}
 
 	@Override
@@ -141,5 +142,11 @@ public class AxisInputEvent implements ControllerInputEvent
 			return "+";
 		}
 		return "-";
+	}
+
+	@Override
+	public int getControllerIndex()
+	{
+		return controllerNumber;
 	}
 }

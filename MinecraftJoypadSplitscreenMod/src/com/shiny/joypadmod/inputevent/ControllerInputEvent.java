@@ -30,6 +30,8 @@ public interface ControllerInputEvent
 
 	public int getEventIndex();
 
+	public int getControllerIndex();
+
 	public float getThreshold();
 
 	public String getDescription();
