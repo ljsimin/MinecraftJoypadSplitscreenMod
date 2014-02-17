@@ -81,7 +81,8 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				else
 				{
-					inputEvent = ControllerSettings.controllerUtils.getLastEvent(ControllerSettings.joystick, Controllers.getEventControlIndex());
+					inputEvent = ControllerSettings.controllerUtils.getLastEvent(ControllerSettings.joystick,
+							Controllers.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						System.out.println("Received from controller: " + inputEvent.getName());
@@ -113,10 +114,13 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		else
 		{
-			mcActionButton = ControllerSettings.controllerUtils.getHumanReadableInputName(ControllerSettings.joystick, ControllerSettings.joyBindings[var1].inputEvent);
+			mcActionButton = ControllerSettings.controllerUtils.getHumanReadableInputName(ControllerSettings.joystick,
+					ControllerSettings.joyBindings[var1].inputEvent);
 		}
-		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionName, 100), this.left + 3, var3 + 2, 0xFF2222);
-		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionButton, listWidth - 100), this.left + 100, var3 + 2, -1);
+		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionName, 100), this.left + 3, var3 + 2,
+				0xFF2222);
+		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionButton, listWidth - 100),
+				this.left + 100, var3 + 2, -1);
 
 		if (doubleClicked && var1 == selectedIndex)
 		{

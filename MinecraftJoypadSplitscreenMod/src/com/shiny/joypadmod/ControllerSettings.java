@@ -107,8 +107,10 @@ public class ControllerSettings
 		joyBindInventory = new ControllerBinding("joy.inventory", "Open inventory", new ButtonInputEvent(joyNo, 3));
 		joyBindDrop = new ControllerBinding("joy.drop", "Drop", new ButtonInputEvent(joyNo, 6));
 		joyBindSneak = new ControllerBinding("joy.sneak", "Sneak", new ButtonInputEvent(joyNo, 8));
-		joyBindAttack = new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyBindUseItem = new ControllerBinding("joy.use", "Use", new AxisInputEvent(joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone));
+		joyBindAttack = new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyNo, 4,
+				defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		joyBindUseItem = new ControllerBinding("joy.use", "Use", new AxisInputEvent(joyNo, 4, defaultAxisThreshhold,
+				defaultAxisDeadZone));
 		joyBindInteract = new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyNo, 2));
 		joyBindGuiLeftClick = new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyNo, 0));
 		joyBindGuiRightClick = new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyNo, 2));
@@ -117,27 +119,40 @@ public class ControllerSettings
 		joyBindRun = new ControllerBinding("joy.run", "Sprint", new ButtonInputEvent(joyNo, 9));
 		joyBindMenu = new ControllerBinding("joy.menu", "Open menu", new ButtonInputEvent(joyNo, 7));
 		joyBindShiftClick = new ControllerBinding("joy.shiftClick", "Shift-click", new ButtonInputEvent(joyNo, 1));
-		joyCameraXplus = new ControllerBinding("joy.cameraX+", "Look right", new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone));
-		joyCameraXminus = new ControllerBinding("joy.cameraX-", "Look left", new AxisInputEvent(joyNo, 3, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyCameraYplus = new ControllerBinding("joy.cameraY+", "Look down", new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
-		joyCameraYminus = new ControllerBinding("joy.cameraY-", "Look up", new AxisInputEvent(joyNo, 2, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyMovementXplus = new ControllerBinding("joy.movementX+", "Strafe right", new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone));
-		joyMovementXminus = new ControllerBinding("joy.movementX-", "Strafe left", new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyMovementYplus = new ControllerBinding("joy.movementY+", "Move forward", new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone));
-		joyMovementYminus = new ControllerBinding("joy.movementY-", "Move backward", new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		joyCameraXplus = new ControllerBinding("joy.cameraX+", "Look right", new AxisInputEvent(joyNo, 3,
+				defaultAxisThreshhold, defaultAxisDeadZone));
+		joyCameraXminus = new ControllerBinding("joy.cameraX-", "Look left", new AxisInputEvent(joyNo, 3,
+				defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		joyCameraYplus = new ControllerBinding("joy.cameraY+", "Look down", new AxisInputEvent(joyNo, 2,
+				defaultAxisThreshhold, defaultAxisDeadZone));
+		joyCameraYminus = new ControllerBinding("joy.cameraY-", "Look up", new AxisInputEvent(joyNo, 2,
+				defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		joyMovementXplus = new ControllerBinding("joy.movementX+", "Strafe right", new AxisInputEvent(joyNo, 1,
+				defaultAxisThreshhold, defaultAxisDeadZone));
+		joyMovementXminus = new ControllerBinding("joy.movementX-", "Strafe left", new AxisInputEvent(joyNo, 1,
+				defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		joyMovementYplus = new ControllerBinding("joy.movementY+", "Move forward", new AxisInputEvent(joyNo, 0,
+				defaultAxisThreshhold, defaultAxisDeadZone));
+		joyMovementYminus = new ControllerBinding("joy.movementY-", "Move backward", new AxisInputEvent(joyNo, 0,
+				defaultAxisThreshhold * -1, defaultAxisDeadZone));
 		joyGuiXplus = new ControllerBinding("joy.guiX+", "GUI right", new PovInputEvent(joyNo, 0, defaultPovThreshhold));
-		joyGuiXminus = new ControllerBinding("joy.guiX-", "GUI left", new PovInputEvent(joyNo, 0, defaultPovThreshhold * -1));
+		joyGuiXminus = new ControllerBinding("joy.guiX-", "GUI left", new PovInputEvent(joyNo, 0, defaultPovThreshhold
+				* -1));
 		joyGuiYplus = new ControllerBinding("joy.guiY+", "GUI down", new PovInputEvent(joyNo, 1, defaultPovThreshhold));
-		joyGuiYminus = new ControllerBinding("joy.guiY-", "GUI up", new PovInputEvent(joyNo, 1, defaultPovThreshhold * -1));
+		joyGuiYminus = new ControllerBinding("joy.guiY-", "GUI up", new PovInputEvent(joyNo, 1, defaultPovThreshhold
+				* -1));
 
-		return (new ControllerBinding[] { joyBindAttack, joyBindUseItem, joyBindJump, joyBindSneak, joyBindDrop, joyBindInventory, joyBindInteract, joyBindGuiLeftClick, joyBindGuiRightClick,
-				joyBindPrevItem, joyBindNextItem, joyBindRun, joyBindMenu, joyBindShiftClick, joyCameraXplus, joyCameraXminus, joyCameraYplus, joyCameraYminus, joyMovementXplus, joyMovementXminus,
-				joyMovementYplus, joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
+		return (new ControllerBinding[] { joyBindAttack, joyBindUseItem, joyBindJump, joyBindSneak, joyBindDrop,
+				joyBindInventory, joyBindInteract, joyBindGuiLeftClick, joyBindGuiRightClick, joyBindPrevItem,
+				joyBindNextItem, joyBindRun, joyBindMenu, joyBindShiftClick, joyCameraXplus, joyCameraXminus,
+				joyCameraYplus, joyCameraYminus, joyMovementXplus, joyMovementXminus, joyMovementYplus,
+				joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
 	}
 
 	public void init()
 	{
-		LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION + " by Ljubomir Simin & Andrew Hickey\n---");
+		LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION
+				+ " by Ljubomir Simin & Andrew Hickey\n---");
 
 		config.init();
 
@@ -173,7 +188,8 @@ public class ControllerSettings
 		}
 		if (selectedController < 0)
 		{
-			LogHelper.Warn("No joypad set up for this session." + (nControllers > 0 ? " Must enter controller menu to enable." : ""));
+			LogHelper.Warn("No joypad set up for this session."
+					+ (nControllers > 0 ? " Must enter controller menu to enable." : ""));
 			inputEnabled = false;
 		}
 	}
@@ -197,9 +213,11 @@ public class ControllerSettings
 
 					logControllerInfo(thisController);
 
-					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount, requiredMinButtonCount, requiredAxisCount))
+					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
+							requiredMinButtonCount, requiredAxisCount))
 					{
-						LogHelper.Info("Controller #" + joyNo + " ( " + thisController.getName() + ") meets the input requirements");
+						LogHelper.Info("Controller #" + joyNo + " ( " + thisController.getName()
+								+ ") meets the input requirements");
 						addControllerToList(validControllers, thisController.getName(), joyNo);
 					}
 					else
@@ -232,7 +250,8 @@ public class ControllerSettings
 
 			if (controllerNo < 0 || controllerNo >= Controllers.getControllerCount())
 			{
-				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently " + Controllers.getControllerCount() + " controllers detected.");
+				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently "
+						+ Controllers.getControllerCount() + " controllers detected.");
 				return false;
 			}
 
