@@ -20,6 +20,7 @@ public class GameRenderHandler
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
+	public static boolean allowMouseMenu = false;
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
 
@@ -29,9 +30,16 @@ public class GameRenderHandler
 		{
 			try
 			{
-				if (mc.currentScreen instanceof GuiControls && (!(mc.currentScreen instanceof JoypadConfigMenu)))
+				if (mc.currentScreen instanceof GuiControls)
 				{
-					ReplaceControlScreen((GuiControls) mc.currentScreen);
+					if (!allowMouseMenu)
+					{
+						ReplaceControlScreen((GuiControls) mc.currentScreen);
+					}
+				}
+				else if (!(mc.currentScreen instanceof JoypadConfigMenu))
+				{
+					allowMouseMenu = false;
 				}
 
 				if (InGuiCheckNeeded())
@@ -72,7 +80,7 @@ public class GameRenderHandler
 
 	private static void HandleGuiMousePreRender()
 	{
-		if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
+		if (mc.currentScreen == null || !JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
 		// update mouse coordinates
@@ -153,7 +161,7 @@ public class GameRenderHandler
 	private static void HandleGuiMousePostRender()
 	{
 
-		if (mc.currentScreen == null || ControllerSettings.inputEnabled == false)
+		if (mc.currentScreen == null || !JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
 		int x = joypadMouse.x;
@@ -264,7 +272,7 @@ public class GameRenderHandler
 
 	private static void HandlePlayerMovement()
 	{
-		if (ControllerSettings.inputEnabled && ControllerSettings.joystick != null)
+		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
 			float xPlus = ControllerSettings.joyMovementXplus.getAnalogReading();
 			float xMinus = ControllerSettings.joyMovementXminus.getAnalogReading();
@@ -324,7 +332,7 @@ public class GameRenderHandler
 
 	public static boolean CheckIfModEnabled()
 	{
-		if (mc == null || !ControllerSettings.inputEnabled || ControllerSettings.joystick == null)
+		if (mc == null || !JoypadMod.controllerSettings.isInputEnabled() || ControllerSettings.joystick == null)
 		{
 			return false;
 		}

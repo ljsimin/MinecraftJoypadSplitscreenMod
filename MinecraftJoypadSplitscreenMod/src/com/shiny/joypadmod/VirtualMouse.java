@@ -131,12 +131,17 @@ public class VirtualMouse
 	// this is the equivalent of moving the mouse around on your joypad
 	public static void updateCameraAxisReading()
 	{
-		float var3 = mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
+		float var3 = ControllerSettings.sensitivityMultiplier * 0.4F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
-		float var8 = Math.abs(ControllerSettings.joyCameraXplus.getAnalogReading()) > Math.abs(ControllerSettings.joyCameraXminus.getAnalogReading()) ? ControllerSettings.joyCameraXplus
-				.getAnalogReading() : ControllerSettings.joyCameraXminus.getAnalogReading();
-		float var9 = Math.abs(ControllerSettings.joyCameraYplus.getAnalogReading()) > Math.abs(ControllerSettings.joyCameraYminus.getAnalogReading()) ? ControllerSettings.joyCameraYplus
-				.getAnalogReading() : ControllerSettings.joyCameraYminus.getAnalogReading();
+
+		float reading1 = ControllerSettings.joyCameraXplus.getAnalogReading();
+		float reading2 = ControllerSettings.joyCameraXminus.getAnalogReading();
+		float var8 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+
+		reading1 = ControllerSettings.joyCameraYplus.getAnalogReading();
+		reading2 = ControllerSettings.joyCameraYminus.getAnalogReading();
+		float var9 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+
 		deltaX = (float) (Math.round(var8 * (float) ControllerSettings.joyCameraSensitivity) * var4);
 		deltaY = (float) (Math.round(var9 * (float) ControllerSettings.joyCameraSensitivity) * var4 * -1.0F);
 

@@ -39,21 +39,15 @@ public class ConfigFile
 
 		System.out.println(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + ")");
 
-		// user can forcibly disable the joypad code from registering by setting
-		// joyNo to anything less than -99
-		if (preferedJoyNo <= -100)
-		{
-			LogHelper.Warn("Warning, joypad is disabled for user " + userName + " to re-enable, open config file and change joyNo to -1");
-		}
-
 		config.save();
 	}
 
-	private void updatePreferedJoy(int joyNo, String joyName)
+	public void updatePreferedJoy(int joyNo, String joyName)
 	{
 		String category = defaultCategory.toLowerCase();
 		String[] keys = { "JoyNo", "JoyName" };
-		for (int i = 0; i < 2; i++)
+		int numKeys = joyName != null ? keys.length : 1;
+		for (int i = 0; i < numKeys; i++)
 		{
 			if (config.hasKey(category, keys[i]))
 			{
@@ -101,17 +95,7 @@ public class ConfigFile
 
 	public void saveControllerBinding(String joyName, ControllerBinding binding)
 	{
-		String catToDelete = null;
-
-		for (String s : config.getCategoryNames())
-		{
-			if (s.contains(binding.inputString))
-			{
-				catToDelete = s;
-				break;
-			}
-			System.out.println(s);
-		}
+		String catToDelete = createConfigSettingString(joyName, binding.inputString).toLowerCase();
 
 		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for " + catToDelete);
 		try

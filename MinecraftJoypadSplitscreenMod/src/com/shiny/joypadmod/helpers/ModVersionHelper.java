@@ -33,5 +33,4 @@ public class ModVersionHelper
 	 * GameRenderHandler.HandlePreRender(); } else if (event.phase ==
 	 * TickEvent.Phase.END) { GameRenderHandler.HandlePostRender(); } }
 	 */
-
 }
