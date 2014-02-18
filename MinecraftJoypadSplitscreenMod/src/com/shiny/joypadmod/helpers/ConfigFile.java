@@ -38,7 +38,7 @@ public class ConfigFile
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 
-		System.out.println(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + ")");
+		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + ")");
 
 		config.save();
 	}
