@@ -11,14 +11,14 @@ import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 public class ModVersionHelper
 {
 	public static final String VERSION = "1.7.2";
-	public static final String MINVERSION = "-0.01pre";
 	public static final int MC_VERSION = 172;
 
 	public void gameInit()
 	{
 		if (ControllerSettings.modDisabled)
 		{
-			LogHelper.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
+			LogHelper
+					.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
 			return;
 		}
 

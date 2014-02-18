@@ -14,13 +14,14 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + ModVersionHelper.MINVERSION)
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + JoypadMod.MINVERSION)
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
+	public static final String MINVERSION = "-0.05pre";
 
 	public static MinecraftObfuscationHelper obfuscationHelper;
 
@@ -40,13 +41,13 @@ public class JoypadMod
 	{
 		LogHelper.Info("init");
 		obfuscationHelper = new MinecraftObfuscationHelper();
-		controllerSettings.init();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		LogHelper.Info("postInit");
+		controllerSettings.init();
 		modHelper = new ModVersionHelper();
 		modHelper.gameInit();
 	}
