@@ -27,12 +27,13 @@ public class ConfigFile
 		config.load();
 
 		userName = "unknown";
-		defaultCategory = "Joypad-" + userName;
 
 		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
 		{
 			userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
+
+		defaultCategory = "Joypad-" + userName;
 
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
