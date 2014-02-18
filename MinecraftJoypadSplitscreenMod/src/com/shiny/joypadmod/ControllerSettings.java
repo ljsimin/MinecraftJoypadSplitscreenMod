@@ -30,34 +30,46 @@ public class ControllerSettings
 	public static final float defaultAxisThreshhold = 0.75f;
 	public static final float defaultPovThreshhold = 0.9f;
 
-	public static ControllerBinding joyBindJump;
-	public static ControllerBinding joyBindInventory;
-	public static ControllerBinding joyBindDrop;
-	public static ControllerBinding joyBindSneak;
-	public static ControllerBinding joyBindAttack;
-	public static ControllerBinding joyBindUseItem;
-	public static ControllerBinding joyBindInteract;
-	public static ControllerBinding joyBindGuiLeftClick;
-	public static ControllerBinding joyBindGuiRightClick;
-	public static ControllerBinding joyBindRun;
-	public static ControllerBinding joyBindMenu;
-	public static ControllerBinding joyBindShiftClick;
-	public static ControllerBinding joyBindPrevItem;
-	public static ControllerBinding joyBindNextItem;
-	public static ControllerBinding joyCameraXplus;
-	public static ControllerBinding joyCameraXminus;
-	public static ControllerBinding joyCameraYplus;
-	public static ControllerBinding joyCameraYminus;
-	public static ControllerBinding joyMovementXplus;
-	public static ControllerBinding joyMovementXminus;
-	public static ControllerBinding joyMovementYplus;
-	public static ControllerBinding joyMovementYminus;
-	public static ControllerBinding joyGuiXplus;
-	public static ControllerBinding joyGuiXminus;
-	public static ControllerBinding joyGuiYplus;
-	public static ControllerBinding joyGuiYminus;
+	public enum JoyBindingEnum
+	{
+		joyBindAttack,
+		joyBindUseItem,
+		joyMovementYplus,
+		joyMovementYminus,
+		joyMovementXminus,
+		joyMovementXplus,
+		joyCameraYminus,
+		joyCameraYplus,
+		joyCameraXminus,
+		joyCameraXplus,
+		joyBindInteract,
+		joyBindJump,
+		joyBindSneak,
+		joyBindRun,
+		joyBindDrop,
+		joyBindInventory,
+		joyBindShiftClick,
+		joyBindPrevItem,
+		joyBindNextItem,
+		joyBindMenu,
+		joyBindGuiLeftClick,
+		joyBindGuiRightClick,
+		joyGuiYplus,
+		joyGuiYminus,
+		joyGuiXplus,
+		joyGuiXminus
+	}
 
-	public static ControllerBinding joyBindings[] = null;
+	/*
+	 * private static ControllerBinding joyBindJump; private static ControllerBinding joyBindInventory; private static ControllerBinding joyBindDrop; private static ControllerBinding joyBindSneak;
+	 * private static ControllerBinding joyBindAttack; private static ControllerBinding joyBindUseItem; private static ControllerBinding joyBindInteract; private static ControllerBinding
+	 * joyBindGuiLeftClick; private static ControllerBinding joyBindGuiRightClick; private static ControllerBinding joyBindRun; private static ControllerBinding joyBindMenu; private static
+	 * ControllerBinding joyBindShiftClick; private static ControllerBinding joyBindPrevItem; private static ControllerBinding joyBindNextItem; private static ControllerBinding joyCameraXplus; private
+	 * static ControllerBinding joyCameraXminus; private static ControllerBinding joyCameraYplus; private static ControllerBinding joyCameraYminus; private static ControllerBinding joyMovementXplus;
+	 * private static ControllerBinding joyMovementXminus; private static ControllerBinding joyMovementYplus; private static ControllerBinding joyMovementYminus; private static ControllerBinding
+	 * joyGuiXplus; private static ControllerBinding joyGuiXminus; private static ControllerBinding joyGuiYplus; private static ControllerBinding joyGuiYminus;
+	 */
+	private static ControllerBinding joyBindings[] = null;
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
@@ -103,50 +115,87 @@ public class ControllerSettings
 	public static ControllerBinding[] getDefaultJoyBindings()
 	{
 		LogHelper.Info("Setting default joy bindings");
-		joyBindJump = new ControllerBinding("joy.jump", "Jump", new ButtonInputEvent(joyNo, 0));
-		joyBindInventory = new ControllerBinding("joy.inventory", "Open inventory", new ButtonInputEvent(joyNo, 3));
-		joyBindDrop = new ControllerBinding("joy.drop", "Drop", new ButtonInputEvent(joyNo, 6));
-		joyBindSneak = new ControllerBinding("joy.sneak", "Sneak", new ButtonInputEvent(joyNo, 8));
-		joyBindAttack = new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyNo, 4,
-				defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyBindUseItem = new ControllerBinding("joy.use", "Use", new AxisInputEvent(joyNo, 4, defaultAxisThreshhold,
-				defaultAxisDeadZone));
-		joyBindInteract = new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyNo, 2));
-		joyBindGuiLeftClick = new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyNo, 0));
-		joyBindGuiRightClick = new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyNo, 2));
-		joyBindPrevItem = new ControllerBinding("joy.prevItem", "Previous item", new ButtonInputEvent(joyNo, 4));
-		joyBindNextItem = new ControllerBinding("joy.nextItem", "Next item", new ButtonInputEvent(joyNo, 5));
-		joyBindRun = new ControllerBinding("joy.run", "Sprint", new ButtonInputEvent(joyNo, 9));
-		joyBindMenu = new ControllerBinding("joy.menu", "Open menu", new ButtonInputEvent(joyNo, 7));
-		joyBindShiftClick = new ControllerBinding("joy.shiftClick", "Shift-click", new ButtonInputEvent(joyNo, 1));
-		joyCameraXplus = new ControllerBinding("joy.cameraX+", "Look right", new AxisInputEvent(joyNo, 3,
-				defaultAxisThreshhold, defaultAxisDeadZone));
-		joyCameraXminus = new ControllerBinding("joy.cameraX-", "Look left", new AxisInputEvent(joyNo, 3,
-				defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyCameraYplus = new ControllerBinding("joy.cameraY+", "Look down", new AxisInputEvent(joyNo, 2,
-				defaultAxisThreshhold, defaultAxisDeadZone));
-		joyCameraYminus = new ControllerBinding("joy.cameraY-", "Look up", new AxisInputEvent(joyNo, 2,
-				defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyMovementXplus = new ControllerBinding("joy.movementX+", "Strafe right", new AxisInputEvent(joyNo, 1,
-				defaultAxisThreshhold, defaultAxisDeadZone));
-		joyMovementXminus = new ControllerBinding("joy.movementX-", "Strafe left", new AxisInputEvent(joyNo, 1,
-				defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyMovementYplus = new ControllerBinding("joy.movementY+", "Move forward", new AxisInputEvent(joyNo, 0,
-				defaultAxisThreshhold, defaultAxisDeadZone));
-		joyMovementYminus = new ControllerBinding("joy.movementY-", "Move backward", new AxisInputEvent(joyNo, 0,
-				defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		joyGuiXplus = new ControllerBinding("joy.guiX+", "GUI right", new PovInputEvent(joyNo, 0, defaultPovThreshhold));
-		joyGuiXminus = new ControllerBinding("joy.guiX-", "GUI left", new PovInputEvent(joyNo, 0, defaultPovThreshhold
-				* -1));
-		joyGuiYplus = new ControllerBinding("joy.guiY+", "GUI down", new PovInputEvent(joyNo, 1, defaultPovThreshhold));
-		joyGuiYminus = new ControllerBinding("joy.guiY-", "GUI up", new PovInputEvent(joyNo, 1, defaultPovThreshhold
-				* -1));
+		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
+		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
+				new ButtonInputEvent(joyNo, 0));
+		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
+				new ButtonInputEvent(joyNo, 3));
+		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
+				new ButtonInputEvent(joyNo, 6));
+		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
+				new ButtonInputEvent(joyNo, 8));
+		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
+				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
+				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyBindInteract.ordinal()] = new ControllerBinding("joy.interact", "Interact",
+				new ButtonInputEvent(joyNo, 2));
+		bindings[JoyBindingEnum.joyBindGuiLeftClick.ordinal()] = new ControllerBinding("joy.guiLeftClick",
+				"Left click", new ButtonInputEvent(joyNo, 0));
+		bindings[JoyBindingEnum.joyBindGuiRightClick.ordinal()] = new ControllerBinding("joy.guiRightClick",
+				"Right click", new ButtonInputEvent(joyNo, 2));
+		bindings[JoyBindingEnum.joyBindPrevItem.ordinal()] = new ControllerBinding("joy.prevItem", "Previous item",
+				new ButtonInputEvent(joyNo, 4));
+		bindings[JoyBindingEnum.joyBindNextItem.ordinal()] = new ControllerBinding("joy.nextItem", "Next item",
+				new ButtonInputEvent(joyNo, 5));
+		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
+				new ButtonInputEvent(joyNo, 9));
+		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
+				new ButtonInputEvent(joyNo, 7));
+		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
+				new ButtonInputEvent(joyNo, 1));
+		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
+				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyCameraXminus.ordinal()] = new ControllerBinding("joy.cameraX-", "Look left",
+				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
+				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyCameraYminus.ordinal()] = new ControllerBinding("joy.cameraY-", "Look up",
+				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move forward",
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move backward",
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
+				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
+		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
+				new PovInputEvent(joyNo, 0, defaultPovThreshhold * -1));
+		bindings[JoyBindingEnum.joyGuiYplus.ordinal()] = new ControllerBinding("joy.guiY+", "GUI down",
+				new PovInputEvent(joyNo, 1, defaultPovThreshhold));
+		bindings[JoyBindingEnum.joyGuiYminus.ordinal()] = new ControllerBinding("joy.guiY-", "GUI up",
+				new PovInputEvent(joyNo, 1, defaultPovThreshhold * -1));
 
-		return (new ControllerBinding[] { joyBindAttack, joyBindUseItem, joyBindJump, joyBindSneak, joyBindDrop,
-				joyBindInventory, joyBindInteract, joyBindGuiLeftClick, joyBindGuiRightClick, joyBindPrevItem,
-				joyBindNextItem, joyBindRun, joyBindMenu, joyBindShiftClick, joyCameraXplus, joyCameraXminus,
-				joyCameraYplus, joyCameraYminus, joyMovementXplus, joyMovementXminus, joyMovementYplus,
-				joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
+		return bindings;
+
+		/*
+		 * return (new ControllerBinding[] { joyBindAttack, joyBindUseItem, joyBindJump, joyBindSneak, joyBindDrop, joyBindInventory, joyBindInteract, joyBindGuiLeftClick, joyBindGuiRightClick,
+		 * joyBindPrevItem, joyBindNextItem, joyBindRun, joyBindMenu, joyBindShiftClick, joyCameraXplus, joyCameraXminus, joyCameraYplus, joyCameraYminus, joyMovementXplus, joyMovementXminus,
+		 * joyMovementYplus, joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
+		 */
+	}
+
+	public static ControllerBinding get(JoyBindingEnum joyBinding)
+	{
+		return get(joyBinding.ordinal());
+	}
+
+	public static ControllerBinding get(int joyBindingIndex)
+	{
+		if (joyBindings != null)
+			return joyBindings[joyBindingIndex];
+
+		return null;
+	}
+
+	public static int bindingListSize()
+	{
+		if (joyBindings == null)
+			return 0;
+		return joyBindings.length;
 	}
 
 	public void init()

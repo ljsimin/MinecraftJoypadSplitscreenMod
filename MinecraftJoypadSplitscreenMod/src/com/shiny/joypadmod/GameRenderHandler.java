@@ -9,6 +9,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -96,24 +97,24 @@ public class GameRenderHandler
 
 			if (mc.currentScreen instanceof GuiContainer)
 			{
-				if (ControllerSettings.joyBindShiftClick.wasPressed())
+				if (ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).wasPressed())
 				{
 					System.out.println("Shift Click");
 					joypadMouse.hack_shiftKey(true);
 					joypadMouse.leftButtonDown();
 					continue;
 				}
-				joypadMouse.hack_shiftKey(ControllerSettings.joyBindSneak.isPressed());
+				joypadMouse.hack_shiftKey(ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
 				System.out.println("Inside Gui Container. do controls different here?");
 			}
 
-			if (joypadMouse.leftButtonHeld && !ControllerSettings.joyBindAttack.isPressed())
+			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
 				joypadMouse.leftButtonUp();
 
-			if (joypadMouse.rightButtonHeld && !ControllerSettings.joyBindUseItem.isPressed())
+			if (joypadMouse.rightButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed())
 				joypadMouse.rightButtonUp();
 
-			if (ControllerSettings.joyBindInventory.wasPressed())
+			if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
 			{
 				LogHelper.Debug("Inventory control pressed");
 
@@ -126,12 +127,12 @@ public class GameRenderHandler
 					mc.setIngameFocus();
 				}
 			}
-			else if (ControllerSettings.joyBindAttack.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
 				joypadMouse.leftButtonDown();
 
 			}
-			else if (ControllerSettings.joyBindUseItem.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
 				joypadMouse.rightButtonDown();
 
@@ -187,7 +188,7 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGuiTick < 200)
 				continue;
 
-			if (ControllerSettings.joyBindAttack.wasPressed())
+			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
 				// need this for "air punch"
 				System.out.println("Initiating attack ontick");
@@ -198,29 +199,29 @@ public class GameRenderHandler
 				// won't work but leftclick will
 				// VirtualMouse.leftClick();
 			}
-			else if (ControllerSettings.joyBindUseItem.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
 				// this call is probably unnecessary but keeping here in case it
 				// solves some edge case
 				System.out.println("Initiating use ontick");
 				KeyBinding.onTick(useKeyCode);
 			}
-			else if (ControllerSettings.joyBindInventory.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
 			{
 				LogHelper.Debug("Inventory control pressed");
 				KeyBinding.onTick(inventoryKeyCode);
 			}
-			else if (ControllerSettings.joyBindNextItem.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
 			{
 				LogHelper.Debug("NextItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(-1);
 			}
-			else if (ControllerSettings.joyBindPrevItem.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).wasPressed())
 			{
 				LogHelper.Debug("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
-			else if (ControllerSettings.joyBindMenu.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed())
 			{
 				if (mc.currentScreen != null)
 				{
@@ -232,13 +233,13 @@ public class GameRenderHandler
 					mc.displayInGameMenu();
 				}
 			}
-			else if (ControllerSettings.joyBindDrop.wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindDrop).wasPressed())
 			{
 				// TODO: add option to drop more than 1 item
 				mc.thePlayer.dropOneItem(true);
 			}
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.joyBindUseItem.isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.joyBindAttack.isPressed());
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
 			UpdateFocusState();
 			HandlePlayerMovement();
 		}
@@ -275,20 +276,20 @@ public class GameRenderHandler
 	{
 		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
-			float xPlus = ControllerSettings.joyMovementXplus.getAnalogReading();
-			float xMinus = ControllerSettings.joyMovementXminus.getAnalogReading();
+			float xPlus = ControllerSettings.get(JoyBindingEnum.joyMovementXplus).getAnalogReading();
+			float xMinus = ControllerSettings.get(JoyBindingEnum.joyMovementXminus).getAnalogReading();
 			float xAxisValue = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
 
-			float yPlus = ControllerSettings.joyMovementYplus.getAnalogReading();
-			float yMinus = ControllerSettings.joyMovementYminus.getAnalogReading();
+			float yPlus = ControllerSettings.get(JoyBindingEnum.joyMovementYplus).getAnalogReading();
+			float yMinus = ControllerSettings.get(JoyBindingEnum.joyMovementYminus).getAnalogReading();
 			float yAxisValue = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
 			KeyBinding.setKeyBindState(forwardKeyCode, yAxisValue < 0);
 			KeyBinding.setKeyBindState(backKeyCode, yAxisValue > 0);
 			KeyBinding.setKeyBindState(leftKeyCode, xAxisValue < 0);
 			KeyBinding.setKeyBindState(rightKeyCode, xAxisValue > 0);
-			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.joyBindSneak.isPressed());
-			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.joyBindJump.isPressed());
+			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
+			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed());
 		}
 	}
 

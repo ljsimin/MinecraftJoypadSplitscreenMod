@@ -11,6 +11,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 
@@ -134,12 +135,12 @@ public class VirtualMouse
 		float var3 = ControllerSettings.sensitivityMultiplier * 0.4F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
 
-		float reading1 = ControllerSettings.joyCameraXplus.getAnalogReading();
-		float reading2 = ControllerSettings.joyCameraXminus.getAnalogReading();
+		float reading1 = ControllerSettings.get(JoyBindingEnum.joyCameraXplus).getAnalogReading();
+		float reading2 = ControllerSettings.get(JoyBindingEnum.joyCameraXminus).getAnalogReading();
 		float var8 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
 
-		reading1 = ControllerSettings.joyCameraYplus.getAnalogReading();
-		reading2 = ControllerSettings.joyCameraYminus.getAnalogReading();
+		reading1 = ControllerSettings.get(JoyBindingEnum.joyCameraYplus).getAnalogReading();
+		reading2 = ControllerSettings.get(JoyBindingEnum.joyCameraYminus).getAnalogReading();
 		float var9 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
 
 		deltaX = (float) (Math.round(var8 * (float) ControllerSettings.joyCameraSensitivity) * var4);
@@ -159,7 +160,7 @@ public class VirtualMouse
 		updateCameraAxisReading();
 
 		int dx = (int) (sensitivity * deltaX);
-		int dy = (int) (sensitivity * deltaY) * (mc.gameSettings.invertMouse ? 1 : -1);
+		int dy = (int) (sensitivity * deltaY) * -1; // gamepad cannot invert
 		x += dx;
 		y += dy;
 
