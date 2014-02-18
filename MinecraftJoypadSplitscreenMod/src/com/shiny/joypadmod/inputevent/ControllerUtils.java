@@ -31,8 +31,8 @@ public class ControllerUtils
 		xinputNamesMap.put("Y Axis -", "LS Down");
 		xinputNamesMap.put("X Rotation +", "RS right");
 		xinputNamesMap.put("X Rotation -", "RS left");
-		xinputNamesMap.put("Y Rotation +", "LS down");
-		xinputNamesMap.put("Y Rotation -", "LS up");
+		xinputNamesMap.put("Y Rotation +", "RS down");
+		xinputNamesMap.put("Y Rotation -", "RS up");
 		xinputNamesMap.put("POV X -", "Dpad left");
 		xinputNamesMap.put("POV X +", "Dpad right");
 		xinputNamesMap.put("POV Y -", "Dpad up");
@@ -73,16 +73,21 @@ public class ControllerUtils
 		}
 	}
 
-	public boolean checkJoypadRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount)
+	public boolean checkJoypadRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount,
+			int requiredAxisCount)
 	{
-		boolean meetsRequirements = meetsInputRequirements(controller, requiredButtonCount, requiredMinButtonCount, requiredAxisCount);
+		boolean meetsRequirements = meetsInputRequirements(controller, requiredButtonCount, requiredMinButtonCount,
+				requiredAxisCount);
 		StringBuilder msg = new StringBuilder("");
 
 		if (!meetsRequirements)
 		{
-			msg.append("Selected controller ").append(controller.getName()).append(" has less than required number of axes or buttons \n").append("Buttons required - ").append(requiredButtonCount)
-					.append(" , detected - ").append(controller.getButtonCount()).append("\n").append("Axes required - ").append(requiredAxisCount).append(" , detected - ")
-					.append(controller.getAxisCount()).append("\n").append("Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n")
+			msg.append("Selected controller ").append(controller.getName())
+					.append(" has less than required number of axes or buttons \n").append("Buttons required - ")
+					.append(requiredButtonCount).append(" , detected - ").append(controller.getButtonCount())
+					.append("\n").append("Axes required - ").append(requiredAxisCount).append(" , detected - ")
+					.append(controller.getAxisCount()).append("\n")
+					.append("Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n")
 					.append("Total number of controllers detected: ").append(Controllers.getControllerCount());
 			System.out.println(msg.toString());
 			// throw new Exception(msg.toString());
@@ -90,10 +95,12 @@ public class ControllerUtils
 		return meetsRequirements;
 	}
 
-	public boolean meetsInputRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount, int requiredAxisCount)
+	public boolean meetsInputRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount,
+			int requiredAxisCount)
 	{
 		boolean meetsRequirements = true;
-		if ((controller.getButtonCount() < requiredMinButtonCount) || (controller.getButtonCount() < requiredButtonCount && controller.getAxisCount() < requiredAxisCount))
+		if ((controller.getButtonCount() < requiredMinButtonCount)
+				|| (controller.getButtonCount() < requiredButtonCount && controller.getAxisCount() < requiredAxisCount))
 		{
 			meetsRequirements = false;
 		}
@@ -106,7 +113,8 @@ public class ControllerUtils
 		{
 			if (Math.abs(controller.getAxisValue(eventIndex)) > 0.75f)
 			{
-				return new AxisInputEvent(controller.getIndex(), eventIndex, controller.getAxisValue(eventIndex), controller.getDeadZone(eventIndex));
+				return new AxisInputEvent(controller.getIndex(), eventIndex, controller.getAxisValue(eventIndex),
+						controller.getDeadZone(eventIndex));
 			}
 		}
 		else if (Controllers.isEventButton())
@@ -136,7 +144,9 @@ public class ControllerUtils
 
 	public String getHumanReadableInputName(Controller controller, ControllerInputEvent inputEvent)
 	{
-		if (controller.getName().toLowerCase().contains("xinput") || controller.getName().toLowerCase().contains("xusb") || controller.getName().toLowerCase().contains("xbox"))
+		if (controller.getName().toLowerCase().contains("xinput")
+				|| controller.getName().toLowerCase().contains("xusb")
+				|| controller.getName().toLowerCase().contains("xbox"))
 		{
 			String result = xinputNamesMap.get(inputEvent.getDescription());
 			if (result != null)
@@ -149,9 +159,7 @@ public class ControllerUtils
 	}
 
 	/**
-	 * Returns true if any two controller axes read "-1" at the same time. Used
-	 * to work around the issue with LWJGL which initializes axes at -1 until
-	 * the axes are moved by the player.
+	 * Returns true if any two controller axes read "-1" at the same time. Used to work around the issue with LWJGL which initializes axes at -1 until the axes are moved by the player.
 	 * 
 	 * @param controller
 	 * @return

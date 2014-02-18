@@ -1,7 +1,5 @@
 package com.shiny.joypadmod.inputevent;
 
-import scala.NotImplementedError;
-
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 
@@ -40,48 +38,73 @@ public class ControllerBinding
 
 	public String toConfigFileString()
 	{
-		String s = menuString + "," + inputEvent.getEventType() + "," + inputEvent.getEventIndex();
-		// TODO add axisThreshold, axisDeadzone
+		String s = menuString + "," + inputEvent.toConfigFileString();
 		return s;
 	}
 
-	public void setToConfigFileString(String s, int joyNo)
+	// returns boolean - whether the input string was accepted and bound
+	public boolean setToConfigFileString(String s, int joyNo)
 	{
-		if (s == null || this.toConfigFileString().equalsIgnoreCase(s))
-			return;
+		if (s == null)
+			return false;
 
+		if (this.toConfigFileString().equalsIgnoreCase(s))
+			return true;
+
+		LogHelper.Info("setToConfigFileString called with following values: " + s);
+
+		// TODO, verify using regex
 		String[] settings = s.split(",");
-		int numToProcess = 3;
-		if (settings.length != numToProcess)
+		int minToProcess = 5;
+		if (settings.length < minToProcess)
 		{
-			LogHelper.Error("Expected 3 arguments when parsing config setting: \"" + s + "\" Received "
-					+ settings.length);
-			return;
+			LogHelper.Error("Expected " + minToProcess + " arguments when parsing config setting: \"" + s
+					+ "\" Received " + settings.length);
+			return false;
 		}
 
 		ControllerInputEvent.EventType event;
 		int eventIndex;
+		float threshold;
+		float deadzone;
 
 		try
 		{
 			event = ControllerInputEvent.EventType.valueOf(settings[1]);
 			eventIndex = Integer.parseInt(settings[2]);
+			threshold = Float.parseFloat(settings[3]);
+			deadzone = Float.parseFloat(settings[4]);
 		}
 		catch (Exception ex)
 		{
 			LogHelper.Error("Failed parsing string: " + s + " Exception: " + ex.toString());
-			return;
+			return false;
 		}
 
-		if (event == EventType.BUTTON)
+		try
 		{
 			this.menuString = settings[0];
-			this.inputEvent = new ButtonInputEvent(this.inputEvent.getControllerIndex(), eventIndex);
+
+			if (event == EventType.BUTTON)
+			{
+				this.inputEvent = new ButtonInputEvent(joyNo, eventIndex);
+			}
+			else if (event == EventType.POV)
+			{
+				this.inputEvent = new PovInputEvent(joyNo, eventIndex, threshold);
+			}
+			else if (event == EventType.AXIS)
+			{
+				this.inputEvent = new AxisInputEvent(joyNo, eventIndex, threshold, deadzone);
+			}
 		}
-		else
+		catch (Exception ex)
 		{
-			throw new NotImplementedError();
+			LogHelper.Error("Failed setting bindings using config string: " + s + ". Exception: " + ex.toString());
+			return false;
 		}
+
+		return true;
 
 	}
 
