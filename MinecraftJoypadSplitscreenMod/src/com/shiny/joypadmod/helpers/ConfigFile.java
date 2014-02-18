@@ -69,19 +69,28 @@ public class ConfigFile
 
 	public ControllerBinding[] getControllerBindings(int joyNo, String joyName)
 	{
-		ControllerBinding[] controlBindings = ControllerSettings.getDefaultJoyBindings();
+		ControllerBinding[] controlBindingsDefault = ControllerSettings.getDefaultJoyBindings();
 		String category = defaultCategory + "." + joyName;
 		int i = 0;
 		LogHelper.Info("Attempting to get joy info for " + category);
 
 		try
 		{
-			for (; i < controlBindings.length; i++)
+			for (; i < controlBindingsDefault.length; i++)
 			{
-				String bindSettings = config.get(createConfigSettingString(joyName, controlBindings[i].inputString),
-						controlBindings[i].inputString, controlBindings[i].toConfigFileString()).getString();
-				System.out.println("Received bindSettings: " + controlBindings[i].inputString + " " + bindSettings);
-				controlBindings[i].setToConfigFileString(bindSettings, joyNo);
+				String bindSettings = config.get(
+						createConfigSettingString(joyName, controlBindingsDefault[i].inputString),
+						controlBindingsDefault[i].inputString, controlBindingsDefault[i].toConfigFileString())
+						.getString();
+				System.out.println("Received bindSettings: " + controlBindingsDefault[i].inputString + " "
+						+ bindSettings);
+				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo))
+				{
+					LogHelper.Warn("Config file binding not accepted.  Resetting to default.  Config setting: "
+							+ bindSettings);
+					// reset to default in the file
+					saveControllerBinding(joyName, controlBindingsDefault[i]);
+				}
 			}
 			updatePreferedJoy(joyNo, joyName);
 			config.save();
@@ -89,10 +98,11 @@ public class ConfigFile
 		catch (Exception ex)
 		{
 			LogHelper.Error("Failed trying to get controller bindings in config file:" + category + "-"
-					+ controlBindings[i].inputString + " Exception: " + ex.toString());
+					+ controlBindingsDefault[i].inputString + " Exception: " + ex.toString());
 		}
 
-		return controlBindings;
+		// note: these may not actually be the default bindings depending on what was found in the config file
+		return controlBindingsDefault;
 	}
 
 	public void saveControllerBinding(String joyName, ControllerBinding binding)

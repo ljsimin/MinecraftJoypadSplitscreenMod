@@ -149,4 +149,11 @@ public class AxisInputEvent implements ControllerInputEvent
 	{
 		return controllerNumber;
 	}
+
+	@Override
+	public String toConfigFileString()
+	{
+		String s = getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + "," + getDeadZone();
+		return s;
+	}
 }

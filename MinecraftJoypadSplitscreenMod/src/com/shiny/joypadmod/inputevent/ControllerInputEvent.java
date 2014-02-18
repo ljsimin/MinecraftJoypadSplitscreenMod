@@ -35,4 +35,6 @@ public interface ControllerInputEvent
 	public float getThreshold();
 
 	public String getDescription();
+
+	public String toConfigFileString();
 }

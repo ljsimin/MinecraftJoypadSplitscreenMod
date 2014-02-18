@@ -111,4 +111,10 @@ public class ButtonInputEvent implements ControllerInputEvent
 	{
 		return controllerNumber;
 	}
+
+	@Override
+	public String toConfigFileString()
+	{
+		return getEventType().toString() + "," + getEventIndex() + ",0,0";
+	}
 }

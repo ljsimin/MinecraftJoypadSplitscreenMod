@@ -123,4 +123,11 @@ public class PovInputEvent implements ControllerInputEvent
 		return controllerNumber;
 	}
 
+	@Override
+	public String toConfigFileString()
+	{
+		String s = getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + ",0";
+		return s;
+	}
+
 }
