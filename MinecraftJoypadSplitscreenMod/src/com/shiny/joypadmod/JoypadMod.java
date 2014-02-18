@@ -21,7 +21,7 @@ public class JoypadMod
 {
 	public static final String MODID = "joypadmod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final String MINVERSION = "-0.05pre";
+	public static final String MINVERSION = "-0.06pre";
 
 	public static MinecraftObfuscationHelper obfuscationHelper;
 

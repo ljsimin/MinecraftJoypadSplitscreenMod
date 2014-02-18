@@ -49,7 +49,7 @@ public class JoypadControlList extends GuiScrollingList
 		if (doubleClick)
 		{
 			controllerTickStart = Minecraft.getSystemTime();
-			ControllerSettings.suspendControllerInput(true);
+			ControllerSettings.suspendControllerInput(true, 10000);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class JoypadControlList extends GuiScrollingList
 			if (getControllerInput() || Minecraft.getSystemTime() - controllerTickStart > controllerInputTimeout)
 			{
 				doubleClicked = false;
-				ControllerSettings.suspendControllerInput(false);
+				ControllerSettings.suspendControllerInput(false, 0);
 			}
 		}
 	}

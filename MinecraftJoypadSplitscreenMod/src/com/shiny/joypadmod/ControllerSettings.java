@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.client.Minecraft;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
@@ -346,14 +348,29 @@ public class ControllerSettings
 
 	}
 
-	public static void suspendControllerInput(boolean b)
+	private static long suspendMax;
+	private static long suspendStart;
+
+	public static void suspendControllerInput(boolean suspend, long maxTicksToSuspend)
 	{
-		ControllerSettings.suspendControllerInput = b;
+		if (suspend)
+		{
+			suspendStart = Minecraft.getSystemTime();
+			suspendMax = maxTicksToSuspend;
+		}
+		ControllerSettings.suspendControllerInput = suspend;
 		GameRenderHandler.joypadMouse.UnpressButtons();
 	}
 
 	public static boolean isSuspended()
 	{
+		if (ControllerSettings.suspendControllerInput)
+		{
+			if (Minecraft.getSystemTime() - suspendStart > suspendMax)
+			{
+				ControllerSettings.suspendControllerInput = false;
+			}
+		}
 		return ControllerSettings.suspendControllerInput;
 	}
 
