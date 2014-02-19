@@ -17,7 +17,6 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class GameRenderHandler
 {
-
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
@@ -124,7 +123,6 @@ public class GameRenderHandler
 				{
 					// backup
 					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
-					mc.setIngameFocus();
 				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
@@ -181,6 +179,15 @@ public class GameRenderHandler
 	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
 	{
+		if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
+		{
+			mc.inGameHasFocus = true;
+		}
+		else
+		{
+			mc.inGameHasFocus = false;
+		}
+
 		while (Controllers.next())
 		{
 			// ignore controller events in the milliseconds following in GUI
@@ -192,12 +199,8 @@ public class GameRenderHandler
 			{
 				// need this for "air punch"
 				System.out.println("Initiating attack ontick");
-				KeyBinding.onTick(attackKeyCode);
-				// virtual mouse left click appears to not do anything the
-				// ontick won't
-				// keeping it here in case the future holds cases where ontick
-				// won't work but leftclick will
 				// VirtualMouse.leftClick();
+				KeyBinding.onTick(attackKeyCode);
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
@@ -208,6 +211,7 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
 			{
+				mc.inGameHasFocus = false;
 				LogHelper.Debug("Inventory control pressed");
 				KeyBinding.onTick(inventoryKeyCode);
 			}
@@ -223,10 +227,10 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed())
 			{
+				mc.inGameHasFocus = false;
 				if (mc.currentScreen != null)
 				{
 					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
-					mc.setIngameFocus();
 				}
 				else
 				{
@@ -238,12 +242,20 @@ public class GameRenderHandler
 				// TODO: add option to drop more than 1 item
 				mc.thePlayer.dropOneItem(true);
 			}
+
 			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
 			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
-			UpdateFocusState();
+
+			// UpdateFocusState();
 			HandlePlayerMovement();
 		}
 
+		/*
+		 * if (!mc.inGameHasFocus && ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed()) { if (leftClickCounter <= 0) { System.out.println("Sending click block");
+		 * VirtualMouse.game_sendClickBlockToController(0, true); leftClickCounter = LEFTCLICK_COUNTER; } else leftClickCounter--;
+		 * 
+		 * // VirtualMouse.leftClick(); // VirtualMouse.game_sendClickBlockToController(0, true); }
+		 */
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading();
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
@@ -251,18 +263,12 @@ public class GameRenderHandler
 
 	private static long lastPump = 0;
 
-	private static void UpdateFocusState()
-	{
-		// losing focus happens when playing split screen, make sure minecraft
-		// thinks it is always in focus
-		if (Minecraft.getSystemTime() - lastPump > 200)
-		{
-			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
-			mc.inGameHasFocus = true;
-			lastPump = Minecraft.getSystemTime();
-		}
-
-	}
+	/*
+	 * private static void UpdateFocusState() { // losing focus happens when playing split screen, make sure minecraft // thinks it is always in focus if (Minecraft.getSystemTime() - lastPump > 200) {
+	 * Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false; // mc.inGameHasFocus = true; lastPump = Minecraft.getSystemTime(); }
+	 * 
+	 * }
+	 */
 
 	// TODO this is almost getting big enough to warrant its own class
 	private static int forwardKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindForward);

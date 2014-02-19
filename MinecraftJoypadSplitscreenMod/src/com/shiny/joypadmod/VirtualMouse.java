@@ -373,6 +373,51 @@ public class VirtualMouse
 		}
 	}
 
+	// many apologies for this
+	private static int scbtcParam = 0;
+
+	@SuppressWarnings("unused")
+	public static void game_sendClickBlockToController(int i, boolean b)
+	{
+		if (scbtcParam == -1)
+		{
+			LogHelper.Error("sendClickBlockToController disabled due to earlier error");
+			return;
+		}
+
+		// String functionName = ModVersionHelper.MC_VERSION == 164 ? "clickMouse" : "leftClick";
+		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("sendClickBlockToController");
+
+		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
+
+		@SuppressWarnings({ "rawtypes" })
+		Class[] params = ModVersionHelper.MC_VERSION == 164 ? new Class[] { int.class, boolean.class }
+				: new Class[] { boolean.class };
+		Method sendClickBlockToController;
+		try
+		{
+			try
+			{
+				sendClickBlockToController = Minecraft.class.getDeclaredMethod(names[scbtcParam], params);
+			}
+			catch (Exception ex)
+			{
+				sendClickBlockToController = Minecraft.class.getDeclaredMethod(names[1], params);
+				scbtcParam = 1;
+			}
+			sendClickBlockToController.setAccessible(true);
+			if (ModVersionHelper.MC_VERSION == 164)
+				sendClickBlockToController.invoke((Object) mc, i, b);
+			else
+				sendClickBlockToController.invoke((Object) mc, b);
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Error("Failed calling " + names[0] + "(" + names[1] + ") : " + ex.toString());
+			scbtcParam = -1;
+		}
+	}
+
 	public boolean hack_mouseXY(int x, int y)
 	{
 		LogHelper.Debug("Hacking mouse position to x:" + x + " y:" + y);
