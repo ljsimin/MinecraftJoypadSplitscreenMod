@@ -62,15 +62,6 @@ public class ControllerSettings
 		joyGuiXminus
 	}
 
-	/*
-	 * private static ControllerBinding joyBindJump; private static ControllerBinding joyBindInventory; private static ControllerBinding joyBindDrop; private static ControllerBinding joyBindSneak;
-	 * private static ControllerBinding joyBindAttack; private static ControllerBinding joyBindUseItem; private static ControllerBinding joyBindInteract; private static ControllerBinding
-	 * joyBindGuiLeftClick; private static ControllerBinding joyBindGuiRightClick; private static ControllerBinding joyBindRun; private static ControllerBinding joyBindMenu; private static
-	 * ControllerBinding joyBindShiftClick; private static ControllerBinding joyBindPrevItem; private static ControllerBinding joyBindNextItem; private static ControllerBinding joyCameraXplus; private
-	 * static ControllerBinding joyCameraXminus; private static ControllerBinding joyCameraYplus; private static ControllerBinding joyCameraYminus; private static ControllerBinding joyMovementXplus;
-	 * private static ControllerBinding joyMovementXminus; private static ControllerBinding joyMovementYplus; private static ControllerBinding joyMovementYminus; private static ControllerBinding
-	 * joyGuiXplus; private static ControllerBinding joyGuiXminus; private static ControllerBinding joyGuiYplus; private static ControllerBinding joyGuiYminus;
-	 */
 	private static ControllerBinding joyBindings[] = null;
 
 	public static boolean useConstantCameraMovement = false;
@@ -172,12 +163,6 @@ public class ControllerSettings
 				new PovInputEvent(joyNo, 1, defaultPovThreshhold * -1));
 
 		return bindings;
-
-		/*
-		 * return (new ControllerBinding[] { joyBindAttack, joyBindUseItem, joyBindJump, joyBindSneak, joyBindDrop, joyBindInventory, joyBindInteract, joyBindGuiLeftClick, joyBindGuiRightClick,
-		 * joyBindPrevItem, joyBindNextItem, joyBindRun, joyBindMenu, joyBindShiftClick, joyCameraXplus, joyCameraXminus, joyCameraYplus, joyCameraYminus, joyMovementXplus, joyMovementXminus,
-		 * joyMovementYplus, joyMovementYminus, joyGuiXplus, joyGuiXminus, joyGuiYplus, joyGuiYminus });
-		 */
 	}
 
 	public static ControllerBinding get(JoyBindingEnum joyBinding)
@@ -319,7 +304,6 @@ public class ControllerSettings
 
 			inputEnabled = true;
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
-			System.setProperty("fml.noGrab", "true");
 		}
 		catch (Exception e)
 		{
@@ -390,12 +374,10 @@ public class ControllerSettings
 		inputEnabled = b;
 		if (!b)
 		{
-			System.setProperty("fml.noGrab", "false");
 			config.updatePreferedJoy(-1, null);
 		}
 		else
 		{
-			System.setProperty("fml.noGrab", "true");
 			config.updatePreferedJoy(0, null);
 		}
 
