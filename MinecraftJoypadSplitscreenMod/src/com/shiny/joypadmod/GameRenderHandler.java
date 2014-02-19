@@ -84,7 +84,7 @@ public class GameRenderHandler
 			return;
 
 		// fixes issue with transitioning from inGame to Gui movement continuing
-		if (Minecraft.getSystemTime() - lastInGameTick < 200)
+		if (Minecraft.getSystemTime() - lastInGameTick < 100)
 			KeyBinding.unPressAllKeys();
 
 		// update mouse coordinates
@@ -108,7 +108,6 @@ public class GameRenderHandler
 					continue;
 				}
 				joypadMouse.hack_shiftKey(ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
-				System.out.println("Inside Gui Container. do controls different here?");
 			}
 
 			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
@@ -145,8 +144,7 @@ public class GameRenderHandler
 		{
 
 			// This call here re-points the mouse position that Minecraft picks
-			// up to
-			// determine if it should do the Hover over button effect.
+			// up to determine if it should do the Hover over button effect.
 			joypadMouse.hack_mouseXY(joypadMouse.mcX, joypadMouse.mcY);
 
 			if (joypadMouse.leftButtonHeld || joypadMouse.rightButtonHeld)
@@ -185,25 +183,20 @@ public class GameRenderHandler
 	{
 		if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
 		{
+			// this call ensures that you can break blocks in non-creative!
 			mc.inGameHasFocus = true;
-		}
-		else
-		{
-			mc.inGameHasFocus = false;
 		}
 
 		while (Controllers.next())
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
-			if (Minecraft.getSystemTime() - lastInGuiTick < 200)
+			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
-				// need this for "air punch"
 				System.out.println("Initiating attack ontick");
-				// VirtualMouse.leftClick();
 				KeyBinding.onTick(attackKeyCode);
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
@@ -215,7 +208,6 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
 			{
-				mc.inGameHasFocus = false;
 				LogHelper.Debug("Inventory control pressed");
 				KeyBinding.onTick(inventoryKeyCode);
 			}
@@ -231,7 +223,6 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed())
 			{
-				mc.inGameHasFocus = false;
 				if (mc.currentScreen != null)
 				{
 					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
@@ -258,13 +249,6 @@ public class GameRenderHandler
 		VirtualMouse.updateCameraAxisReading();
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
 	}
-
-	/*
-	 * private static void UpdateFocusState() { // losing focus happens when playing split screen, make sure minecraft // thinks it is always in focus if (Minecraft.getSystemTime() - lastPump > 200) {
-	 * Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false; // mc.inGameHasFocus = true; lastPump = Minecraft.getSystemTime(); }
-	 * 
-	 * }
-	 */
 
 	// TODO this is almost getting big enough to warrant its own class
 	private static int forwardKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindForward);

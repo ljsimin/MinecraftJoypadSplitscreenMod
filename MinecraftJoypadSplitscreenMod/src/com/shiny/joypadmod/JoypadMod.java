@@ -4,9 +4,12 @@ package com.shiny.joypadmod;
  * Main class for Joypad mod. This initializes everything.
  */
 
+import net.minecraft.client.Minecraft;
+
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.MinecraftObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
+import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -41,6 +44,19 @@ public class JoypadMod
 	public void init(FMLInitializationEvent event)
 	{
 		LogHelper.Info("init");
+		try
+		{
+			if (!(Minecraft.getMinecraft().mouseHelper instanceof net.minecraft.util.MouseHelper))
+			{
+				LogHelper.Warn("Replacing Mousehelper that may have already been replaced by another mod!");
+			}
+			Minecraft.getMinecraft().mouseHelper = new JoypadMouseHelper();
+			LogHelper.Info("Replaced mousehelper in Minecraft with JoypadMouseHelper");
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
+		}
 		obfuscationHelper = new MinecraftObfuscationHelper();
 	}
 
