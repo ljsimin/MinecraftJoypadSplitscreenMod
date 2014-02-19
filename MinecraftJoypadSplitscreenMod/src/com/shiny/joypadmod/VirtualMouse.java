@@ -60,17 +60,17 @@ public class VirtualMouse
 
 	}
 
-	public int getX()
+	public int getX(boolean inGui)
 	{
 		if (this.usingAxisCoordinates)
-			this.setMouseCoordinatesWithController();
+			this.setMouseCoordinatesWithController(inGui);
 		return this.x;
 	}
 
-	public int getY()
+	public int getY(boolean inGui)
 	{
 		if (this.usingAxisCoordinates)
-			this.setMouseCoordinatesWithController();
+			this.setMouseCoordinatesWithController(inGui);
 		return this.y;
 	}
 
@@ -130,17 +130,21 @@ public class VirtualMouse
 	}
 
 	// this is the equivalent of moving the mouse around on your joypad
-	public static void updateCameraAxisReading()
+	public static void updateCameraAxisReading(boolean inGui)
 	{
 		float var3 = mc.gameSettings.mouseSensitivity * 0.8F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
 
-		float reading1 = ControllerSettings.get(JoyBindingEnum.joyCameraXplus).getAnalogReading();
-		float reading2 = ControllerSettings.get(JoyBindingEnum.joyCameraXminus).getAnalogReading();
+		float reading1 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus)
+				.getAnalogReading();
+		float reading2 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXminus : JoyBindingEnum.joyCameraXminus)
+				.getAnalogReading();
 		float var8 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
 
-		reading1 = ControllerSettings.get(JoyBindingEnum.joyCameraYplus).getAnalogReading();
-		reading2 = ControllerSettings.get(JoyBindingEnum.joyCameraYminus).getAnalogReading();
+		reading1 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYplus : JoyBindingEnum.joyCameraYplus)
+				.getAnalogReading();
+		reading2 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYminus : JoyBindingEnum.joyCameraYminus)
+				.getAnalogReading();
 		float var9 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
 
 		deltaX = (float) (Math.round(var8 * (float) ControllerSettings.joyCameraSensitivity) * var4);
@@ -152,12 +156,12 @@ public class VirtualMouse
 		}
 	}
 
-	private void setMouseCoordinatesWithController()
+	private void setMouseCoordinatesWithController(boolean inGui)
 	{
 		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
 				mc.displayHeight);
 
-		updateCameraAxisReading();
+		updateCameraAxisReading(inGui);
 
 		int dx = (int) (sensitivity * deltaX);
 		int dy = (int) (sensitivity * deltaY) * -1; // gamepad cannot invert
