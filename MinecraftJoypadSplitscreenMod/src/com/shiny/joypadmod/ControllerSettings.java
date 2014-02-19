@@ -318,6 +318,8 @@ public class ControllerSettings
 			}
 
 			inputEnabled = true;
+			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
+			System.setProperty("fml.noGrab", "true");
 		}
 		catch (Exception e)
 		{
@@ -388,10 +390,12 @@ public class ControllerSettings
 		inputEnabled = b;
 		if (!b)
 		{
+			System.setProperty("fml.noGrab", "false");
 			config.updatePreferedJoy(-1, null);
 		}
 		else
 		{
+			System.setProperty("fml.noGrab", "true");
 			config.updatePreferedJoy(0, null);
 		}
 
