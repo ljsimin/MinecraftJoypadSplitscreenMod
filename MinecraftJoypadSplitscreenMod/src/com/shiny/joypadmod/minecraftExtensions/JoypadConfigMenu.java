@@ -103,8 +103,8 @@ public class JoypadConfigMenu extends GuiScreen
 		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
 
 		// GameSettings.Options options = GameSettings.Options.SENSITIVITY;
-		// this.buttonList.add(new GuiOptionSlider(options.returnEnumOrdinal(),
-		// 0, 50, options));
+		// addButton(new GuiOptionSlider(options.returnEnumOrdinal(), width / 2 + 23, labelYStart
+		// + getFontRenderer().FONT_HEIGHT * 2 + 3, options));
 
 		int resetXStart = controlListXStart + controlListWidth + 5;
 		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top

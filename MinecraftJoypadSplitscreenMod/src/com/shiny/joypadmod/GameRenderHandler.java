@@ -83,6 +83,10 @@ public class GameRenderHandler
 		if (mc.currentScreen == null || !JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
+		// fixes issue with transitioning from inGame to Gui movement continuing
+		if (Minecraft.getSystemTime() - lastInGameTick < 200)
+			KeyBinding.unPressAllKeys();
+
 		// update mouse coordinates
 		joypadMouse.getX();
 		joypadMouse.getY();
@@ -250,18 +254,10 @@ public class GameRenderHandler
 			HandlePlayerMovement();
 		}
 
-		/*
-		 * if (!mc.inGameHasFocus && ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed()) { if (leftClickCounter <= 0) { System.out.println("Sending click block");
-		 * VirtualMouse.game_sendClickBlockToController(0, true); leftClickCounter = LEFTCLICK_COUNTER; } else leftClickCounter--;
-		 * 
-		 * // VirtualMouse.leftClick(); // VirtualMouse.game_sendClickBlockToController(0, true); }
-		 */
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading();
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
 	}
-
-	private static long lastPump = 0;
 
 	/*
 	 * private static void UpdateFocusState() { // losing focus happens when playing split screen, make sure minecraft // thinks it is always in focus if (Minecraft.getSystemTime() - lastPump > 200) {
