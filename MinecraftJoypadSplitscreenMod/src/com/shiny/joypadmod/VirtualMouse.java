@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
 import org.lwjgl.input.Keyboard;
-// import org.apache.logging.log4j.LogManager;
-// import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
