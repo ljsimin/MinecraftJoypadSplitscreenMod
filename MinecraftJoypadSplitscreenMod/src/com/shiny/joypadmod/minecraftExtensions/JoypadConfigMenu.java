@@ -113,8 +113,11 @@ public class JoypadConfigMenu extends GuiScreen
 		// add bottom buttons
 		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
 				bottomButtonWidth, 20, "Calibrate"));
+		// TODO calibration
+		((GuiButton) buttonList.get(ButtonsEnum.calibrate.ordinal())).enabled = false;
+				
 		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
-				"Done"));
+				"Done"));		
 		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2),
 				buttonYStart_bottom, bottomButtonWidth, 20, "Mouse menu");
 		mouseKeyboardMenuButton.enabled = !JoypadMod.controllerSettings.isInputEnabled();
