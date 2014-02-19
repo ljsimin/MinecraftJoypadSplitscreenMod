@@ -22,7 +22,7 @@ public class JoypadConfigMenu extends GuiScreen
 	private int currentJoyIndex = 0;
 
 	// start of text at top
-	private int labelYStart = 5;
+	private int labelYStart = 3;
 
 	// top button parameters
 	// Y start of the buttons at the top of the screen
@@ -127,7 +127,7 @@ public class JoypadConfigMenu extends GuiScreen
 	public void onGuiClosed()
 	{
 		System.out.println("JoypadConfigMenu OnGuiClosed");
-		ControllerSettings.suspendControllerInput(false);
+		ControllerSettings.suspendControllerInput(false, 0);
 	}
 
 	@Override

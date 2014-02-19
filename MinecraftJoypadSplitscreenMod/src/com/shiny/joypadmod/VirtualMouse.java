@@ -132,7 +132,7 @@ public class VirtualMouse
 	// this is the equivalent of moving the mouse around on your joypad
 	public static void updateCameraAxisReading()
 	{
-		float var3 = ControllerSettings.sensitivityMultiplier * 0.4F + 0.2F;
+		float var3 = mc.gameSettings.mouseSensitivity * 0.8F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
 
 		float reading1 = ControllerSettings.get(JoyBindingEnum.joyCameraXplus).getAnalogReading();
