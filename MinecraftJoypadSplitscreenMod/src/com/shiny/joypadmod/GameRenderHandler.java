@@ -88,8 +88,8 @@ public class GameRenderHandler
 			KeyBinding.unPressAllKeys();
 
 		// update mouse coordinates
-		joypadMouse.getX();
-		joypadMouse.getY();
+		joypadMouse.getX(true);
+		joypadMouse.getY(true);
 
 		while (Controllers.next() && mc.currentScreen != null)
 		{
@@ -110,10 +110,10 @@ public class GameRenderHandler
 				joypadMouse.hack_shiftKey(ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
 			}
 
-			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
+			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())
 				joypadMouse.leftButtonUp();
 
-			if (joypadMouse.rightButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed())
+			if (joypadMouse.rightButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).isPressed())
 				joypadMouse.rightButtonUp();
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
@@ -128,12 +128,12 @@ public class GameRenderHandler
 					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
 				}
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).wasPressed())
 			{
 				joypadMouse.leftButtonDown();
 
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).wasPressed())
 			{
 				joypadMouse.rightButtonDown();
 
@@ -199,10 +199,9 @@ public class GameRenderHandler
 				System.out.println("Initiating attack ontick");
 				KeyBinding.onTick(attackKeyCode);
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindInteract).wasPressed()
+					|| ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
-				// this call is probably unnecessary but keeping here in case it
-				// solves some edge case
 				System.out.println("Initiating use ontick");
 				KeyBinding.onTick(useKeyCode);
 			}
@@ -246,7 +245,7 @@ public class GameRenderHandler
 		}
 
 		// Read joypad movement
-		VirtualMouse.updateCameraAxisReading();
+		VirtualMouse.updateCameraAxisReading(false);
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
 	}
 
