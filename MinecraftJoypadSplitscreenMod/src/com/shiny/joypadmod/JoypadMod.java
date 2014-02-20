@@ -22,7 +22,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
-	public static final String MODID = "joypadmod";
+	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static final String MINVERSION = "-0.07pre";
 
