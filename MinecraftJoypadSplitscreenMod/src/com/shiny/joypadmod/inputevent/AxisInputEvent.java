@@ -18,6 +18,7 @@ public class AxisInputEvent implements ControllerInputEvent
 		this.axisNumber = axisNumber;
 		this.threshold = threshold;
 		this.deadzone = deadzone;
+		this.setDeadZone();
 	}
 
 	@Override

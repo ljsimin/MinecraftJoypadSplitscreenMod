@@ -72,17 +72,17 @@ public class ConfigFile
 	{
 		ControllerBinding[] controlBindingsDefault = ControllerSettings.getDefaultJoyBindings();
 		String category = defaultCategory + "." + joyName;
+		String bindingComment = "S:<actionID>=<Menu String>,<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>";
 		int i = 0;
 		LogHelper.Info("Attempting to get joy info for " + category);
-
 		try
 		{
 			for (; i < controlBindingsDefault.length; i++)
 			{
-				String bindSettings = config.get(
-						createConfigSettingString(joyName, controlBindingsDefault[i].inputString),
-						controlBindingsDefault[i].inputString, controlBindingsDefault[i].toConfigFileString())
-						.getString();
+				String bindingCategory = createConfigSettingString(joyName, controlBindingsDefault[i].inputString);
+				String bindSettings = config.get(bindingCategory, controlBindingsDefault[i].inputString,
+						controlBindingsDefault[i].toConfigFileString()).getString();
+				config.addCustomCategoryComment(bindingCategory, bindingComment);
 				System.out.println("Received bindSettings: " + controlBindingsDefault[i].inputString + " "
 						+ bindSettings);
 				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo))
@@ -93,6 +93,7 @@ public class ConfigFile
 					saveControllerBinding(joyName, controlBindingsDefault[i]);
 				}
 			}
+
 			updatePreferedJoy(joyNo, joyName);
 			config.save();
 		}
