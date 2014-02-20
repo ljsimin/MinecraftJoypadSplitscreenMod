@@ -297,11 +297,6 @@ public class ControllerSettings
 
 			joyBindings = config.getControllerBindings(controllerNo, joystick.getName());
 
-			for (ControllerBinding binding : joyBindings)
-			{
-				binding.inputEvent.setDeadZone();
-			}
-
 			inputEnabled = true;
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 		}

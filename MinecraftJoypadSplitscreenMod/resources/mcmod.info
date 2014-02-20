@@ -8,6 +8,6 @@
   "updateUrl": "github.com/ljsimin/MinecraftJoypadSplitscreenMod",  
   "credits": "Forge, FML, MCP & everyone at Mojang",
   "logoFile": "",
-  "authorlist": ["Freeshiny", "Eastsider"]
+  "authors": ["Freeshiny", "Eastsider"]
 }
 ]
