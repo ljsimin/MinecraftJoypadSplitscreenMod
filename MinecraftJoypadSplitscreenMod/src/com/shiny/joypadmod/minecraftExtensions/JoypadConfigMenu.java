@@ -59,7 +59,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control, prev, next, sensitivity, reset, calibrate, done, mouseMenu
+		control, prev, next, sensitivity, reset, invert, calibrate, done, mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen)
@@ -101,7 +101,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 		controlListYStart = buttonYEnd_top + 2;
 		controlListXStart = buttonXStart_top + controllerButtonWidth / 5;
-		controlListWidth = (int) (controllerButtonWidth / 1.5);
+		controlListWidth = (int) (controllerButtonWidth / 1.7);
 		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
 
 		GameSettings.Options options = GameSettings.Options.SENSITIVITY;
@@ -112,12 +112,13 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top
 				- resetXStart, 20, "Reset"));
 
+		addButton(new GuiButton(401, resetXStart, controlListYStart + 21, controllerButtonWidth + buttonXStart_top
+				- resetXStart, 20, "Invert : " + (ControllerSettings.getInvertYAxis() ? "on" : "off")));
 		// add bottom buttons
 		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
 				bottomButtonWidth, 20, "Calibrate"));
 		// TODO calibration
 		((GuiButton) buttonList.get(ButtonsEnum.calibrate.ordinal())).enabled = false;
-
 		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
 				"Done"));
 		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2),
@@ -162,6 +163,10 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 400: // Reset
 			JoypadMod.controllerSettings.setDefaultBindings();
+			break;
+		case 401: // invert
+			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
+			toggleInvertButton(ControllerSettings.getInvertYAxis());
 			break;
 		case 500: // Calibrate
 			// TODO implement
@@ -266,6 +271,12 @@ public class JoypadConfigMenu extends GuiScreen
 			i = controllers.size() - 1;
 
 		return i;
+	}
+
+	private void toggleInvertButton(boolean b)
+	{
+		String s = "Invert: " + (b ? "on" : "off");
+		((GuiButton) buttonList.get(ButtonsEnum.invert.ordinal())).displayString = s;
 	}
 
 	private void toggleController()

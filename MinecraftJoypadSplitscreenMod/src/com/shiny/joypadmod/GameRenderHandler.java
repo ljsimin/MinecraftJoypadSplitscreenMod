@@ -174,8 +174,7 @@ public class GameRenderHandler
 
 	private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
-	private static int inventoryKeyCode = JoypadMod.obfuscationHelper
-			.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
+	private static int inventoryKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
@@ -246,7 +245,8 @@ public class GameRenderHandler
 
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading(false);
-		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY);
+		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY
+				* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
 	}
 
 	// TODO this is almost getting big enough to warrant its own class
@@ -261,18 +261,13 @@ public class GameRenderHandler
 	{
 		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
-			float xPlus = ControllerSettings.get(JoyBindingEnum.joyMovementXplus).getAnalogReading();
-			float xMinus = ControllerSettings.get(JoyBindingEnum.joyMovementXminus).getAnalogReading();
-			float xAxisValue = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
-
-			float yPlus = ControllerSettings.get(JoyBindingEnum.joyMovementYplus).getAnalogReading();
-			float yMinus = ControllerSettings.get(JoyBindingEnum.joyMovementYminus).getAnalogReading();
-			float yAxisValue = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
-
-			KeyBinding.setKeyBindState(forwardKeyCode, yAxisValue < 0);
-			KeyBinding.setKeyBindState(backKeyCode, yAxisValue > 0);
-			KeyBinding.setKeyBindState(leftKeyCode, xAxisValue < 0);
-			KeyBinding.setKeyBindState(rightKeyCode, xAxisValue > 0);
+			KeyBinding.setKeyBindState(forwardKeyCode,
+					ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed());
+			KeyBinding.setKeyBindState(backKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed());
+			KeyBinding.setKeyBindState(rightKeyCode,
+					ControllerSettings.get(JoyBindingEnum.joyMovementXplus).isPressed());
+			KeyBinding.setKeyBindState(leftKeyCode,
+					ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed());
 			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
 			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed());
 		}
