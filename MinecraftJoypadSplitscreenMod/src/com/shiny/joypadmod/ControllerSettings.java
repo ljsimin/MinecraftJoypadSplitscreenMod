@@ -32,12 +32,14 @@ public class ControllerSettings
 	public static final float defaultAxisThreshhold = 0.75f;
 	public static final float defaultPovThreshhold = 0.9f;
 
+	private static boolean invertYAxis = false;
+
 	public enum JoyBindingEnum
 	{
 		joyBindAttack,
 		joyBindUseItem,
-		joyMovementYplus,
 		joyMovementYminus,
+		joyMovementYplus,
 		joyMovementXminus,
 		joyMovementXplus,
 		joyCameraYminus,
@@ -56,10 +58,10 @@ public class ControllerSettings
 		joyBindMenu,
 		joyBindGuiLeftClick,
 		joyBindGuiRightClick,
-		joyGuiYplus,
 		joyGuiYminus,
-		joyGuiXplus,
-		joyGuiXminus
+		joyGuiYplus,
+		joyGuiXminus,
+		joyGuiXplus
 	}
 
 	private static ControllerBinding joyBindings[] = null;
@@ -141,17 +143,17 @@ public class ControllerSettings
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyCameraXminus.ordinal()] = new ControllerBinding("joy.cameraX-", "Look left",
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
-				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyCameraYminus.ordinal()] = new ControllerBinding("joy.cameraY-", "Look up",
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
+				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone));
-		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move forward",
+		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone));
-		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move backward",
+		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
@@ -222,6 +224,9 @@ public class ControllerSettings
 			}
 
 		}
+
+		invertYAxis = config.invertYAxis;
+
 		if (selectedController < 0)
 		{
 			LogHelper.Warn("No joypad set up for this session."
@@ -373,7 +378,7 @@ public class ControllerSettings
 		}
 		else
 		{
-			config.updatePreferedJoy(0, null);
+			config.updatePreferedJoy(joyNo, null);
 		}
 
 	}
@@ -467,6 +472,20 @@ public class ControllerSettings
 		java.util.Collections.sort(values);
 
 		return values;
+	}
+
+	public static boolean getInvertYAxis()
+	{
+		return invertYAxis;
+	}
+
+	public static void setInvertYAxis(boolean b)
+	{
+		if (invertYAxis != b)
+		{
+			invertYAxis = b;
+			config.updateInvertJoypad(b);
+		}
 	}
 
 }

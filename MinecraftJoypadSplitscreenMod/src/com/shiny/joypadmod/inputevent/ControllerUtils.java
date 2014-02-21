@@ -6,6 +6,8 @@ import java.util.Map;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+
 public class ControllerUtils
 {
 	private static Map<String, String> xinputNamesMap;
@@ -27,16 +29,16 @@ public class ControllerUtils
 		xinputNamesMap.put("Z Axis +", "LT");
 		xinputNamesMap.put("X Axis +", "LS Right");
 		xinputNamesMap.put("X Axis -", "LS Left");
-		xinputNamesMap.put("Y Axis +", "LS Up");
-		xinputNamesMap.put("Y Axis -", "LS Down");
+		xinputNamesMap.put("Y Axis +", "LS Down");
+		xinputNamesMap.put("Y Axis -", "LS Up");
 		xinputNamesMap.put("X Rotation +", "RS right");
 		xinputNamesMap.put("X Rotation -", "RS left");
 		xinputNamesMap.put("Y Rotation +", "RS down");
 		xinputNamesMap.put("Y Rotation -", "RS up");
-		xinputNamesMap.put("POV X -", "Dpad left");
 		xinputNamesMap.put("POV X +", "Dpad right");
-		xinputNamesMap.put("POV Y -", "Dpad up");
+		xinputNamesMap.put("POV X -", "Dpad left");
 		xinputNamesMap.put("POV Y +", "Dpad down");
+		xinputNamesMap.put("POV Y -", "Dpad up");
 		xinputNamesMap.put("X Axis", "Left stick horizontal");
 		xinputNamesMap.put("Y Axis", "Left stick vertical");
 		xinputNamesMap.put("X Rotation", "Right stick horizontal");
@@ -82,15 +84,14 @@ public class ControllerUtils
 
 		if (!meetsRequirements)
 		{
-			msg.append("Selected controller ").append(controller.getName())
-					.append(" has less than required number of axes or buttons \n").append("Buttons required - ")
-					.append(requiredButtonCount).append(" , detected - ").append(controller.getButtonCount())
-					.append("\n").append("Axes required - ").append(requiredAxisCount).append(" , detected - ")
-					.append(controller.getAxisCount()).append("\n")
-					.append("Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n")
-					.append("Total number of controllers detected: ").append(Controllers.getControllerCount());
-			System.out.println(msg.toString());
-			// throw new Exception(msg.toString());
+			msg.append("Selected controller ").append(controller.getName()).append(
+					" has less than required number of axes or buttons \n").append("Buttons required - ").append(
+					requiredButtonCount).append(" , detected - ").append(controller.getButtonCount()).append("\n").append(
+					"Axes required - ").append(requiredAxisCount).append(" , detected - ").append(
+					controller.getAxisCount()).append("\n").append(
+					"Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n").append(
+					"Total number of controllers detected: ").append(Controllers.getControllerCount());
+			LogHelper.Info(msg.toString());
 		}
 		return meetsRequirements;
 	}
@@ -153,7 +154,6 @@ public class ControllerUtils
 			{
 				return result;
 			}
-			return inputEvent.getDescription();
 		}
 		return inputEvent.getDescription();
 	}

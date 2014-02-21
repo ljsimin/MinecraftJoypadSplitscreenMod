@@ -135,25 +135,18 @@ public class VirtualMouse
 		float var3 = mc.gameSettings.mouseSensitivity * 0.8F + 0.2F;
 		float var4 = var3 * var3 * var3 * 8.0F;
 
-		float reading1 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus)
-				.getAnalogReading();
-		float reading2 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXminus : JoyBindingEnum.joyCameraXminus)
-				.getAnalogReading();
-		float var8 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+		float xPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus).getAnalogReading();
+		float xMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXminus : JoyBindingEnum.joyCameraXminus).getAnalogReading();
+		float horizontalMovement = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
 
-		reading1 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYplus : JoyBindingEnum.joyCameraYplus)
-				.getAnalogReading();
-		reading2 = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYminus : JoyBindingEnum.joyCameraYminus)
-				.getAnalogReading();
-		float var9 = Math.abs(reading1) > Math.abs(reading2) ? reading1 : reading2;
+		float yPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYplus : JoyBindingEnum.joyCameraYplus).getAnalogReading();
+		float yMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYminus : JoyBindingEnum.joyCameraYminus).getAnalogReading();
+		float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
-		deltaX = (float) (Math.round(var8 * (float) ControllerSettings.joyCameraSensitivity) * var4);
-		deltaY = (float) (Math.round(var9 * (float) ControllerSettings.joyCameraSensitivity) * var4 * -1.0F);
+		deltaX = (float) (Math.round(horizontalMovement * (float) ControllerSettings.joyCameraSensitivity) * var4);
+		deltaY = (float) (Math.round(verticalMovement * (float) ControllerSettings.joyCameraSensitivity) * var4);
 
-		if (debug)
-		{
-			LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
-		}
+		LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
 	}
 
 	private void setMouseCoordinatesWithController(boolean inGui)
@@ -164,7 +157,7 @@ public class VirtualMouse
 		updateCameraAxisReading(inGui);
 
 		int dx = (int) (sensitivity * deltaX);
-		int dy = (int) (sensitivity * deltaY) * -1; // gamepad cannot invert
+		int dy = (int) (sensitivity * deltaY);
 		x += dx;
 		y += dy;
 
