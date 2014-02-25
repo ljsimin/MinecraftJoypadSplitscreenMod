@@ -123,7 +123,7 @@ public class ControllerUtils
 			int id = Controllers.getEventControlIndex();
 			if (controller.isButtonPressed(id))
 			{
-				return new ButtonInputEvent(controller.getIndex(), id);
+				return new ButtonInputEvent(controller.getIndex(), id, 1);
 			}
 		}
 		else if (Controllers.isEventPovX())

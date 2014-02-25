@@ -7,7 +7,9 @@ import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 
 import cpw.mods.fml.client.GuiScrollingList;
 
@@ -42,7 +44,7 @@ public class JoypadControlList extends GuiScrollingList
 	protected void elementClicked(int index, boolean doubleClick)
 	{
 		selectedIndex = index;
-		System.out.println("Element " + index + " clicked! Double: " + doubleClick);
+		LogHelper.Info("Element " + index + " clicked! Double: " + doubleClick);
 		doubleClicked = doubleClick;
 		if (doubleClick)
 		{
@@ -71,11 +73,9 @@ public class JoypadControlList extends GuiScrollingList
 		{
 			while (Controllers.next())
 			{
-				System.out.println("Controllers.next triggered");
-
 				if (Minecraft.getSystemTime() - controllerTickStart < 200)
 				{
-					System.out.println("Discarding events that occured too soon after last button click");
+					LogHelper.Debug("Discarding events that occured too soon after last button click");
 				}
 				else
 				{
@@ -83,18 +83,26 @@ public class JoypadControlList extends GuiScrollingList
 							Controllers.getEventControlIndex());
 					if (inputEvent != null)
 					{
-						System.out.println("Received from controller: " + inputEvent.getName());
+						LogHelper.Info("Received from controller: " + inputEvent.getName());
+						float threshold = 0;
+						if (inputEvent.getEventType() == EventType.AXIS)
+						{
+							threshold = ControllerSettings.defaultAxisThreshhold;
+						}
+						else if (inputEvent.getEventType() == EventType.POV)
+						{
+							threshold = ControllerSettings.defaultPovThreshhold;
+						}
+						inputEvent.setThreshold(threshold);
 						ControllerSettings.setControllerBinding(selectedIndex, inputEvent);
 						return true;
 					}
 				}
 			}
-
-			// System.out.println("No controller event available");
 		}
 		catch (Exception ex)
 		{
-			System.out.println("Caught exception while trying to set controller button! " + ex.toString());
+			LogHelper.Error("Caught exception while trying to set controller button! " + ex.toString());
 		}
 		return false;
 	};

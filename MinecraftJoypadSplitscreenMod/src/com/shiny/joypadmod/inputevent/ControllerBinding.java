@@ -14,6 +14,13 @@ public class ControllerBinding
 
 	public ControllerInputEvent inputEvent;
 
+	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
+	{
+		this.inputString = inputString;
+		this.menuString = menuString;
+		this.inputEvent = inputEvent;
+	}
+
 	public boolean isPressed()
 	{
 		return inputEvent.isPressed();
@@ -29,13 +36,6 @@ public class ControllerBinding
 		return inputEvent.getAnalogReading();
 	}
 
-	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
-	{
-		this.inputString = inputString;
-		this.menuString = menuString;
-		this.inputEvent = inputEvent;
-	}
-
 	public String toConfigFileString()
 	{
 		String s = menuString + "," + inputEvent.toConfigFileString();
@@ -43,7 +43,7 @@ public class ControllerBinding
 	}
 
 	// returns boolean - whether the input string was accepted and bound
-	public boolean setToConfigFileString(String s, int joyNo)
+	public boolean setToConfigFileString(String s, int joyNo, double lastConfigFileVersion)
 	{
 		if (s == null)
 			return false;
@@ -87,7 +87,10 @@ public class ControllerBinding
 
 			if (event == EventType.BUTTON)
 			{
-				this.inputEvent = new ButtonInputEvent(joyNo, eventIndex);
+				// thresholds for buttons were set at 0 prior to version .08, so set these to 1
+				if (lastConfigFileVersion < 0.08)
+					threshold = 1;
+				this.inputEvent = new ButtonInputEvent(joyNo, eventIndex, threshold);
 			}
 			else if (event == EventType.POV)
 			{

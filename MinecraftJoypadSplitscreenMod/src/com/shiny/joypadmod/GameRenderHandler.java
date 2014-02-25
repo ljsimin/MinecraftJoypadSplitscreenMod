@@ -180,14 +180,13 @@ public class GameRenderHandler
 	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
 	{
-		if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
-		{
-			// this call ensures that you can break blocks in non-creative!
-			mc.inGameHasFocus = true;
-		}
-
 		while (Controllers.next())
 		{
+			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
+			{
+				// this call ensures that you can break blocks in non-creative!
+				mc.inGameHasFocus = true;
+			}
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
@@ -256,6 +255,7 @@ public class GameRenderHandler
 	private static int rightKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindRight);
 	private static int jumpKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindJump);
 	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
+	private static int sprintKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSprint);
 
 	private static void HandlePlayerMovement()
 	{
@@ -270,6 +270,7 @@ public class GameRenderHandler
 					ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed());
 			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
 			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed());
+			KeyBinding.setKeyBindState(sprintKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed());
 		}
 	}
 

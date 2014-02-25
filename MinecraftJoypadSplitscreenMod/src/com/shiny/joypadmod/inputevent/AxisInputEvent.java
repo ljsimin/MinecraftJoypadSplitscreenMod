@@ -2,132 +2,57 @@ package com.shiny.joypadmod.inputevent;
 
 import org.lwjgl.input.Controllers;
 
-public class AxisInputEvent implements ControllerInputEvent
+public class AxisInputEvent extends ControllerInputEvent
 {
-
-	int controllerNumber;
 	int axisNumber;
-	float threshold;
-	float deadzone;
 
 	boolean pressed = false; // used for input limiting
 
 	public AxisInputEvent(int controllerId, int axisNumber, float threshold, float deadzone)
 	{
-		this.controllerNumber = controllerId;
+		// check if valid axis
+		super(EventType.AXIS, controllerId, axisNumber, threshold, deadzone);
 		this.axisNumber = axisNumber;
-		this.threshold = threshold;
-		this.deadzone = deadzone;
-		this.setDeadZone();
+		this.setDeadZone(deadzone);
 	}
 
 	@Override
-	public EventType getEventType()
+	protected boolean isTargetEvent()
 	{
-		return EventType.AXIS;
-	}
-
-	@Override
-	public boolean isPressed()
-	{
-		boolean result = false;
-
-		if (threshold > 0)
-		{
-			result = getAnalogReading() >= threshold;
-		}
-		else
-		{
-			result = getAnalogReading() <= threshold;
-		}
-
-		if (!result)
-			pressed = false;
-		return result;
-	}
-
-	@Override
-	public boolean wasPressed()
-	{
-		boolean isValidEventType = false;
-		try
-		{
-			isValidEventType = Controllers.isEventAxis() && Controllers.getEventSource().getIndex() == controllerNumber;
-		}
-		catch (NullPointerException e)
-		{
-			// cant determine event type
-		}
-		if (isValidEventType && isPressed())
-		{
-			if (!pressed)
-			{
-				pressed = true;
-				return true;
-			}
-			return false;
-		}
-		isPressed();
-		return false;
+		return Controllers.isEventAxis();
 	}
 
 	@Override
 	public float getAnalogReading()
 	{
-		if (axisNumber < Controllers.getController(controllerNumber).getAxisCount())
-		{
-			return Controllers.getController(controllerNumber).getAxisValue(axisNumber);
-		}
-		return 0.0f;
+		return Controllers.getController(controllerNumber).getAxisValue(axisNumber);
 	}
 
 	@Override
 	public float getDeadZone()
 	{
-		if (axisNumber < Controllers.getController(controllerNumber).getAxisCount())
-		{
-			return Controllers.getController(controllerNumber).getDeadZone(axisNumber);
-		}
-		return 0.0f;
+		return Controllers.getController(controllerNumber).getDeadZone(axisNumber);
 	}
 
 	@Override
 	public String getName()
 	{
-		if (axisNumber < Controllers.getController(controllerNumber).getAxisCount())
-		{
-			return Controllers.getController(controllerNumber).getAxisName(axisNumber);
-		}
-		return "Unknown";
+		return Controllers.getController(controllerNumber).getAxisName(axisNumber);
 	}
 
 	@Override
 	public String toString()
 	{
-		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType())
-				.append(" Threshold: ").append(threshold).append(" Current value: ").append(getAnalogReading())
-				.append(" Is pressed: ").append(isPressed()).toString();
+		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(
+				" Threshold: ").append(threshold).append(" Current value: ").append(getAnalogReading()).append(
+				" Is pressed: ").append(isPressed()).toString();
 	}
 
 	@Override
-	public int getEventIndex()
+	public void setDeadZone(float deadzone)
 	{
-		return axisNumber;
-	}
-
-	@Override
-	public float getThreshold()
-	{
-		return threshold;
-	}
-
-	@Override
-	public void setDeadZone()
-	{
-		if (axisNumber < Controllers.getController(controllerNumber).getAxisCount())
-		{
-			Controllers.getController(controllerNumber).setDeadZone(this.axisNumber, this.deadzone);
-		}
+		Controllers.getController(controllerNumber).setDeadZone(this.axisNumber, deadzone);
+		this.deadzone = deadzone;
 	}
 
 	@Override
@@ -146,15 +71,8 @@ public class AxisInputEvent implements ControllerInputEvent
 	}
 
 	@Override
-	public int getControllerIndex()
+	protected boolean isValid()
 	{
-		return controllerNumber;
-	}
-
-	@Override
-	public String toConfigFileString()
-	{
-		String s = getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + "," + getDeadZone();
-		return s;
+		return axisNumber < Controllers.getController(controllerNumber).getAxisCount();
 	}
 }
