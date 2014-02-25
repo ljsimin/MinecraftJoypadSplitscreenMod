@@ -174,7 +174,8 @@ public class GameRenderHandler
 
 	private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
-	private static int inventoryKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
+	private static int inventoryKeyCode = JoypadMod.obfuscationHelper
+			.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
@@ -255,22 +256,28 @@ public class GameRenderHandler
 	private static int rightKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindRight);
 	private static int jumpKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindJump);
 	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
-	private static int sprintKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSprint);
+
+	// 1.7.2 private static int sprintKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSprint);
 
 	private static void HandlePlayerMovement()
 	{
 		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
-			KeyBinding.setKeyBindState(forwardKeyCode,
-					ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed());
-			KeyBinding.setKeyBindState(backKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed());
-			KeyBinding.setKeyBindState(rightKeyCode,
-					ControllerSettings.get(JoyBindingEnum.joyMovementXplus).isPressed());
-			KeyBinding.setKeyBindState(leftKeyCode,
-					ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed());
+			KeyBinding.setKeyBindState(forwardKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementYminus)
+					.isPressed());
+			KeyBinding
+					.setKeyBindState(backKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed());
+			KeyBinding.setKeyBindState(rightKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementXplus)
+					.isPressed());
+			KeyBinding.setKeyBindState(leftKeyCode, ControllerSettings.get(JoyBindingEnum.joyMovementXminus)
+					.isPressed());
 			KeyBinding.setKeyBindState(sneakKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
 			KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed());
-			KeyBinding.setKeyBindState(sprintKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed());
+			// KeyBinding.setKeyBindState(sprintKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed());
+			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
+			{
+				mc.thePlayer.setSprinting(true);
+			}
 		}
 	}
 
