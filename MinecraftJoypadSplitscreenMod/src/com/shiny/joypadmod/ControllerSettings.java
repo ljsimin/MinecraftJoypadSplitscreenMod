@@ -28,8 +28,8 @@ import com.shiny.joypadmod.inputevent.PovInputEvent;
 public class ControllerSettings
 {
 
-	public static final float defaultAxisDeadZone = 0.25f;
-	public static final float defaultAxisThreshhold = 0.75f;
+	public static final float defaultAxisDeadZone = 0.20f;
+	public static final float defaultAxisThreshhold = 0.7f;
 	public static final float defaultPovThreshhold = 0.9f;
 
 	private static boolean invertYAxis = false;
@@ -72,7 +72,6 @@ public class ControllerSettings
 	public static Controller joystick;
 	public static int joyNo = -1;
 	public static int joyCameraSensitivity = 20;
-	public static float sensitivityMultiplier = 1.0F;
 
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;
@@ -112,33 +111,33 @@ public class ControllerSettings
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0));
+				new ButtonInputEvent(joyNo, 0, 1));
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
-				new ButtonInputEvent(joyNo, 3));
+				new ButtonInputEvent(joyNo, 3, 1));
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6));
+				new ButtonInputEvent(joyNo, 6, 1));
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8));
+				new ButtonInputEvent(joyNo, 8, 1));
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
 				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
 				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyBindInteract.ordinal()] = new ControllerBinding("joy.interact", "Interact",
-				new ButtonInputEvent(joyNo, 2));
+				new ButtonInputEvent(joyNo, 2, 1));
 		bindings[JoyBindingEnum.joyBindGuiLeftClick.ordinal()] = new ControllerBinding("joy.guiLeftClick",
-				"Left click", new ButtonInputEvent(joyNo, 0));
+				"Left click", new ButtonInputEvent(joyNo, 0, 1));
 		bindings[JoyBindingEnum.joyBindGuiRightClick.ordinal()] = new ControllerBinding("joy.guiRightClick",
-				"Right click", new ButtonInputEvent(joyNo, 2));
+				"Right click", new ButtonInputEvent(joyNo, 2, 1));
 		bindings[JoyBindingEnum.joyBindPrevItem.ordinal()] = new ControllerBinding("joy.prevItem", "Previous item",
-				new ButtonInputEvent(joyNo, 4));
+				new ButtonInputEvent(joyNo, 4, 1));
 		bindings[JoyBindingEnum.joyBindNextItem.ordinal()] = new ControllerBinding("joy.nextItem", "Next item",
-				new ButtonInputEvent(joyNo, 5));
+				new ButtonInputEvent(joyNo, 5, 1));
 		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
-				new ButtonInputEvent(joyNo, 9));
+				new ButtonInputEvent(joyNo, 9, 1));
 		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
-				new ButtonInputEvent(joyNo, 7));
+				new ButtonInputEvent(joyNo, 7, 1));
 		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
-				new ButtonInputEvent(joyNo, 1));
+				new ButtonInputEvent(joyNo, 1, 1));
 		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyCameraXminus.ordinal()] = new ControllerBinding("joy.cameraX-", "Look left",

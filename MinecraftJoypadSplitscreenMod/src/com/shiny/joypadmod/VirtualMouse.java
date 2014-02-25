@@ -33,9 +33,6 @@ public class VirtualMouse
 
 	public boolean leftButtonHeld = false;
 	public boolean rightButtonHeld = false;
-	// some quirk with xbox gamepads lights up the trigger button
-	// but doesn't release it on init
-	public boolean ignoreFirstAttackPress = true;
 
 	public boolean usingAxisCoordinates = true;
 	public static boolean debug = false;
@@ -76,11 +73,6 @@ public class VirtualMouse
 
 	public void leftButtonDown()
 	{
-		if (ignoreFirstAttackPress)
-		{
-			ignoreFirstAttackPress = false;
-			return;
-		}
 		if (!this.leftButtonHeld)
 		{
 			this.gui_mouseDown(x, y, 0);
@@ -132,7 +124,8 @@ public class VirtualMouse
 	// this is the equivalent of moving the mouse around on your joypad
 	public static void updateCameraAxisReading(boolean inGui)
 	{
-		float var3 = mc.gameSettings.mouseSensitivity * 0.8F + 0.2F;
+		// minecrafts original crazy calculation has found its way here
+		float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.5F;
 		float var4 = var3 * var3 * var3 * 8.0F;
 
 		float xPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus).getAnalogReading();

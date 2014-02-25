@@ -17,14 +17,14 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + JoypadMod.MINVERSION)
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION)
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final String MINVERSION = "-0.075pre";
+	public static final float MINVERSION = 0.08f;
 
 	public static MinecraftObfuscationHelper obfuscationHelper;
 

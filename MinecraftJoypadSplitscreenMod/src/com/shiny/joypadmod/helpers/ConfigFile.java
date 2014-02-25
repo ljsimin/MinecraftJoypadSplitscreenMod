@@ -6,7 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.Configuration;
 
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 
 public class ConfigFile
 {
@@ -17,6 +19,7 @@ public class ConfigFile
 	private Configuration config;
 	private String userName;
 	private String defaultCategory;
+	private double lastConfigFileVersion;
 
 	public ConfigFile(File configFile)
 	{
@@ -45,8 +48,10 @@ public class ConfigFile
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
+		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.7).getDouble(0.7);
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + ")");
+		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ConfigVersion "
+				+ lastConfigFileVersion);
 
 		config.save();
 	}
@@ -83,16 +88,23 @@ public class ConfigFile
 						controlBindingsDefault[i].toConfigFileString()).getString();
 				config.addCustomCategoryComment(bindingCategory, bindingComment);
 				LogHelper.Info("Received bindSettings: " + controlBindingsDefault[i].inputString + " " + bindSettings);
-				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo))
+				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo, lastConfigFileVersion))
 				{
 					LogHelper.Warn("Config file binding not accepted.  Resetting to default.  Config setting: "
 							+ bindSettings);
 					// reset to default in the file
 					saveControllerBinding(joyName, controlBindingsDefault[i]);
 				}
+				// last time the config file changed how it interprets values
+				else if (lastConfigFileVersion < 0.08)
+				{
+					if (controlBindingsDefault[i].inputEvent.getEventType() == ControllerInputEvent.EventType.BUTTON)
+						saveControllerBinding(joyName, controlBindingsDefault[i]);
+				}
 			}
 
 			updatePreferedJoy(joyNo, joyName);
+			updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION));
 			config.save();
 		}
 		catch (Exception ex)
