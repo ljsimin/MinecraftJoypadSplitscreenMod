@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
@@ -38,24 +37,10 @@ public class VirtualMouse
 	public static boolean debug = false;
 	public float sensitivity = 0.07f;
 
-	private Field keyDownField;
-
 	private static Minecraft mc = Minecraft.getMinecraft();
 
 	public VirtualMouse()
-	{
-		// TODO: Move other reflected fields/methods initialization here
-		try
-		{
-			keyDownField = Keyboard.class.getDeclaredField("keyDownBuffer");
-			keyDownField.setAccessible(true);
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Fatal("Unable to hack keyboard events. " + ex.toString());
-		}
-
-	}
+	{}
 
 	public int getX(boolean inGui)
 	{
@@ -452,22 +437,4 @@ public class VirtualMouse
 		return true;
 	}
 
-	public void hack_shiftKey(boolean down)
-	{
-		LogHelper.Debug("Hacking shift key");
-		if (keyDownField != null)
-		{
-			try
-			{
-				byte b = (byte) (down ? 1 : 0);
-				((ByteBuffer) keyDownField.get(null)).put(Keyboard.KEY_LSHIFT, b);
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Error("Failed putting value in shift key buffer" + ex.toString());
-			}
-
-		}
-
-	}
 }
