@@ -2,6 +2,7 @@ package com.shiny.joypadmod.inputevent;
 
 import net.minecraft.client.settings.KeyBinding;
 
+import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.VirtualKeyboard;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
@@ -38,11 +39,11 @@ public class ControllerBinding
 		{
 			if (bRet)
 			{
-				VirtualKeyboard.holdKey(keybinding.keyCode, true);
+				VirtualKeyboard.holdKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding), true);
 			}
 			else
 			{
-				VirtualKeyboard.releaseKey(keybinding.keyCode, true);
+				VirtualKeyboard.releaseKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding), true);
 			}
 		}
 		return bRet;
@@ -53,7 +54,7 @@ public class ControllerBinding
 		boolean bRet = inputEvent.wasPressed();
 		if (bRet && keybinding != null)
 		{
-			VirtualKeyboard.pressKey(keybinding.keyCode);
+			VirtualKeyboard.pressKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding));
 		}
 		return bRet;
 	}
