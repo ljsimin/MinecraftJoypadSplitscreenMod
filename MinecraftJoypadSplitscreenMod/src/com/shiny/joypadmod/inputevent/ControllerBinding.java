@@ -1,5 +1,8 @@
 package com.shiny.joypadmod.inputevent;
 
+import net.minecraft.client.settings.KeyBinding;
+
+import com.shiny.joypadmod.VirtualKeyboard;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 
@@ -11,6 +14,7 @@ public class ControllerBinding
 	 */
 	public String inputString;
 	public String menuString;
+	public KeyBinding keybinding;
 
 	public ControllerInputEvent inputEvent;
 
@@ -19,16 +23,39 @@ public class ControllerBinding
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
+		this.keybinding = null;
+	}
+
+	public void setKeybinding(KeyBinding keybinding)
+	{
+		this.keybinding = keybinding;
 	}
 
 	public boolean isPressed()
 	{
-		return inputEvent.isPressed();
+		boolean bRet = inputEvent.isPressed();
+		if (keybinding != null)
+		{
+			if (bRet)
+			{
+				VirtualKeyboard.holdKey(keybinding.getKeyCode(), true);
+			}
+			else
+			{
+				VirtualKeyboard.releaseKey(keybinding.getKeyCode(), true);
+			}
+		}
+		return bRet;
 	}
 
 	public boolean wasPressed()
 	{
-		return inputEvent.wasPressed();
+		boolean bRet = inputEvent.wasPressed();
+		if (bRet && keybinding != null)
+		{
+			VirtualKeyboard.pressKey(keybinding.getKeyCode());
+		}
+		return bRet;
 	}
 
 	public float getAnalogReading()

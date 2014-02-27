@@ -9,48 +9,49 @@ import com.shiny.joypadmod.helpers.LogHelper;
 
 public class VirtualKeyboard
 {
-	public boolean enabled;
+	private static Field keyDownField;
+	private static Field keyBufferField;
+	private static Byte[] keyState;
+	private static boolean created = false;
 
-	private Field keyDownField;
-	private Field keyBufferField;
-	private Byte[] keyState;
-
-	public VirtualKeyboard()
+	public static void create() throws NoSuchFieldException, SecurityException
 	{
-		try
-		{
-			keyBufferField = Keyboard.class.getDeclaredField("readBuffer");
-			keyDownField = Keyboard.class.getDeclaredField("keyDownBuffer");
-			keyDownField.setAccessible(true);
-			keyBufferField.setAccessible(true);
-			keyState = new Byte[Keyboard.KEYBOARD_SIZE];
-			for (int i = 0; i < Keyboard.KEYBOARD_SIZE; i++)
-				keyState[i] = 0;
-			enabled = true;
-		}
-		catch (Exception ex)
-		{
-			enabled = false;
-			LogHelper.Fatal("Unable to hack keyboard events. " + ex.toString());
-		}
+		keyBufferField = Keyboard.class.getDeclaredField("readBuffer");
+		keyDownField = Keyboard.class.getDeclaredField("keyDownBuffer");
+		keyDownField.setAccessible(true);
+		keyBufferField.setAccessible(true);
+		keyState = new Byte[Keyboard.KEYBOARD_SIZE];
+		for (int i = 0; i < Keyboard.KEYBOARD_SIZE; i++)
+			keyState[i] = 0;
+		created = true;
+	}
+
+	public static boolean isCreated()
+	{
+		return created;
 	}
 
 	// send a press key event to the keyboard buffer
-	public void pressKey(int keycode)
+	public static void pressKey(int keycode)
 	{
+		if (!checkCreated())
+		{
+			return;
+		}
+
 		if (keyHelper(keycode, 1))
 		{
 			keyState[keycode] = 1;
+			holdKey(keycode, true);
 		}
 	}
 
 	// send a release key event to the keyboard buffer
 	// give option to only send the event if a pressKey event was recorded prior
-	public void releaseKey(int keycode, boolean onlyIfPressed)
+	public static void releaseKey(int keycode, boolean onlyIfPressed)
 	{
-		if (!enabled)
+		if (!checkCreated())
 		{
-			LogHelper.Error("Virtual Keyboard failed to initialize and cannot be used");
 			return;
 		}
 
@@ -58,17 +59,23 @@ public class VirtualKeyboard
 		{
 			keyHelper(keycode, 0);
 			keyState[keycode] = 0;
+			holdKey(keycode, false);
 		}
 	}
 
-	public void holdKey(int keycode, boolean down)
+	public static void holdKey(int keycode, boolean down)
 	{
+		if (!checkCreated())
+		{
+			return;
+		}
+
 		if (!isValidKey(keycode, true))
 		{
 			return;
 		}
 
-		LogHelper.Debug("Holding key " + keycode);
+		LogHelper.Debug("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try
@@ -80,12 +87,20 @@ public class VirtualKeyboard
 			{
 				LogHelper.Error("Failed putting value in key buffer" + ex.toString());
 			}
-
 		}
-
 	}
 
-	private boolean isValidKey(int keycode, boolean logError)
+	private static boolean checkCreated()
+	{
+		if (!created)
+		{
+			LogHelper.Error("Virtual Keyboard has not been created or failed to initialize and cannot be used");
+			return false;
+		}
+		return true;
+	}
+
+	private static boolean isValidKey(int keycode, boolean logError)
 	{
 		if (keycode < 0 || keycode > Keyboard.KEYBOARD_SIZE)
 		{
@@ -99,11 +114,10 @@ public class VirtualKeyboard
 		return true;
 	}
 
-	private boolean keyHelper(int keycode, int state)
+	private static boolean keyHelper(int keycode, int state)
 	{
-		if (!enabled)
+		if (!checkCreated())
 		{
-			LogHelper.Error("Virtual Keyboard failed to initialize and cannot be used");
 			return false;
 		}
 		if (!isValidKey(keycode, true))
@@ -113,7 +127,7 @@ public class VirtualKeyboard
 
 		if (keyBufferField != null)
 		{
-			LogHelper.Info("Hacking key " + keycode + " state: " + state);
+			LogHelper.Info("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
 			try
 			{
 				((ByteBuffer) keyBufferField.get(null)).compact();

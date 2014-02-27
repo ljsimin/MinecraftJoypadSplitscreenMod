@@ -66,6 +66,15 @@ public class JoypadMod
 		controllerSettings.init();
 		modHelper = new ModVersionHelper();
 		modHelper.gameInit();
+		try
+		{
+			VirtualKeyboard.create();
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Fatal("Unable to initialize VirtualKeyboard.  Limited compatibility with some mods likely. "
+					+ ex.toString());
+		}
 	}
 
 }
