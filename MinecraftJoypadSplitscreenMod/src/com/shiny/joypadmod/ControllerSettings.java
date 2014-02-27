@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -108,16 +109,17 @@ public class ControllerSettings
 
 	public static ControllerBinding[] getDefaultJoyBindings()
 	{
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1));
+				new ButtonInputEvent(joyNo, 0, 1), settings.keyBindJump);
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
 				new ButtonInputEvent(joyNo, 3, 1));
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
 				new ButtonInputEvent(joyNo, 6, 1));
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1));
+				new ButtonInputEvent(joyNo, 8, 1), settings.keyBindSneak);
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
 				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
@@ -147,13 +149,13 @@ public class ControllerSettings
 		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone));
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindRight);
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone), settings.keyBindLeft);
 		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone));
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindBack);
 		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone), settings.keyBindForward);
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
 		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
@@ -487,4 +489,15 @@ public class ControllerSettings
 		}
 	}
 
+	public static List<ControllerBinding> getGameBindings()
+	{
+		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
+		for (ControllerBinding binding : joyBindings)
+		{
+			if (binding.keybinding != null)
+				gameBindings.add(binding);
+		}
+
+		return gameBindings;
+	}
 }

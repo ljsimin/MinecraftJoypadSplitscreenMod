@@ -21,10 +21,16 @@ public class ControllerBinding
 
 	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
 	{
+		this(inputString, menuString, inputEvent, null);
+	}
+
+	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent,
+			KeyBinding keybinding)
+	{
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
-		this.keybinding = null;
+		this.keybinding = keybinding;
 	}
 
 	public void setKeybinding(KeyBinding keybinding)
@@ -37,13 +43,29 @@ public class ControllerBinding
 		boolean bRet = inputEvent.isPressed();
 		if (keybinding != null)
 		{
+			int keyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding);
 			if (bRet)
 			{
-				VirtualKeyboard.holdKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding), true);
+				if (VirtualKeyboard.isCreated())
+				{
+					VirtualKeyboard.holdKey(keyCode, true);
+				}
+				else
+				{
+					// less compatible method
+					KeyBinding.setKeyBindState(keyCode, true);
+				}
 			}
 			else
 			{
-				VirtualKeyboard.releaseKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding), true);
+				if (VirtualKeyboard.isCreated())
+				{
+					VirtualKeyboard.releaseKey(keyCode, true);
+				}
+				else
+				{
+					KeyBinding.setKeyBindState(keyCode, false);
+				}
 			}
 		}
 		return bRet;
@@ -54,7 +76,16 @@ public class ControllerBinding
 		boolean bRet = inputEvent.wasPressed();
 		if (bRet && keybinding != null)
 		{
-			VirtualKeyboard.pressKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding));
+			int keyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding);
+
+			if (VirtualKeyboard.isCreated())
+			{
+				VirtualKeyboard.pressKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding));
+			}
+			else
+			{
+				KeyBinding.setKeyBindState(keyCode, true);
+			}
 		}
 		return bRet;
 	}
