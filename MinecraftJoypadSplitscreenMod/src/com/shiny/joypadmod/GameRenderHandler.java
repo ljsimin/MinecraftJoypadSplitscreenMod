@@ -1,5 +1,7 @@
 package com.shiny.joypadmod;
 
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
@@ -12,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -21,6 +24,7 @@ public class GameRenderHandler
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
+	public static List<ControllerBinding> inGameBindings = null;
 	// boolean to allow the original controls menu.
 	// normally we override the controls menu when seen
 	public static boolean allowOrigControlsMenu = false;
@@ -70,7 +74,15 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
+				if (inGameBindings == null)
+				{
+					inGameBindings = ControllerSettings.getGameBindings();
+				}
 				HandleJoystickInGame();
+				for (ControllerBinding binding : inGameBindings)
+				{
+					binding.isPressed();
+				}
 				lastInGameTick = Minecraft.getSystemTime();
 			}
 		}
@@ -252,70 +264,13 @@ public class GameRenderHandler
 				* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
 	}
 
-	// TODO this is almost getting big enough to warrant its own class
-	private static int forwardKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindForward);
-	private static int backKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindBack);
-	private static int leftKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindLeft);
-	private static int rightKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindRight);
-	private static int jumpKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindJump);
-	private static int sneakKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindSneak);
-
 	private static void HandlePlayerMovement()
 	{
 		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
-			if (VirtualKeyboard.isCreated())
+			for (ControllerBinding binding : inGameBindings)
 			{
-				// more verbose but overall better compatibility method of movement
-				if (ControllerSettings.get(JoyBindingEnum.joyMovementYminus).wasPressed())
-					VirtualKeyboard.pressKey(forwardKeyCode);
-				else if (ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed())
-					VirtualKeyboard.holdKey(forwardKeyCode, true);
-				else
-					VirtualKeyboard.releaseKey(forwardKeyCode, true);
-
-				if (ControllerSettings.get(JoyBindingEnum.joyMovementYplus).wasPressed())
-					VirtualKeyboard.pressKey(backKeyCode);
-				else if (ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed())
-					VirtualKeyboard.holdKey(backKeyCode, true);
-				else
-					VirtualKeyboard.releaseKey(backKeyCode, true);
-
-				if (ControllerSettings.get(JoyBindingEnum.joyMovementXplus).wasPressed())
-					VirtualKeyboard.pressKey(rightKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementXplus).isPressed())
-					VirtualKeyboard.releaseKey(rightKeyCode, true);
-
-				if (ControllerSettings.get(JoyBindingEnum.joyMovementXminus).wasPressed())
-					VirtualKeyboard.pressKey(leftKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed())
-					VirtualKeyboard.releaseKey(leftKeyCode, true);
-
-				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).wasPressed())
-					VirtualKeyboard.pressKey(sneakKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
-					VirtualKeyboard.releaseKey(sneakKeyCode, true);
-
-				if (ControllerSettings.get(JoyBindingEnum.joyBindJump).wasPressed())
-					VirtualKeyboard.pressKey(jumpKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed())
-					VirtualKeyboard.releaseKey(jumpKeyCode, true);
-
-			}
-			else
-			{
-				// fall back to less compatible method
-				KeyBinding.setKeyBindState(forwardKeyCode,
-						ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed());
-				KeyBinding.setKeyBindState(backKeyCode,
-						ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed());
-				KeyBinding.setKeyBindState(rightKeyCode,
-						ControllerSettings.get(JoyBindingEnum.joyMovementXplus).isPressed());
-				KeyBinding.setKeyBindState(leftKeyCode,
-						ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed());
-				KeyBinding.setKeyBindState(sneakKeyCode,
-						ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
-				KeyBinding.setKeyBindState(jumpKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed());
+				binding.wasPressed();
 			}
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
