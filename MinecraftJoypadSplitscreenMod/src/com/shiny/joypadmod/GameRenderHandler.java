@@ -21,8 +21,9 @@ public class GameRenderHandler
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
-	public static VirtualKeyboard joypadKeyboard = new VirtualKeyboard();
-	public static boolean allowMouseMenu = false;
+	// boolean to allow the original controls menu.
+	// normally we override the controls menu when seen
+	public static boolean allowOrigControlsMenu = false;
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
 
@@ -34,14 +35,14 @@ public class GameRenderHandler
 			{
 				if (mc.currentScreen instanceof GuiControls)
 				{
-					if (!allowMouseMenu)
+					if (!allowOrigControlsMenu)
 					{
 						ReplaceControlScreen((GuiControls) mc.currentScreen);
 					}
 				}
 				else if (!(mc.currentScreen instanceof JoypadConfigMenu))
 				{
-					allowMouseMenu = false;
+					allowOrigControlsMenu = false;
 				}
 
 				if (InGuiCheckNeeded())
@@ -105,11 +106,11 @@ public class GameRenderHandler
 				if (ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).wasPressed())
 				{
 					System.out.println("Shift Click");
-					joypadKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
+					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 					joypadMouse.leftButtonDown();
 					continue;
 				}
-				joypadKeyboard.holdKey(Keyboard.KEY_LSHIFT, ControllerSettings.get(JoyBindingEnum.joyBindSneak)
+				VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, ControllerSettings.get(JoyBindingEnum.joyBindSneak)
 						.isPressed());
 			}
 
@@ -264,38 +265,42 @@ public class GameRenderHandler
 	{
 		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
 		{
-			if (joypadKeyboard.enabled)
+			if (VirtualKeyboard.isCreated())
 			{
 				// more verbose but overall better compatibility method of movement
 				if (ControllerSettings.get(JoyBindingEnum.joyMovementYminus).wasPressed())
-					joypadKeyboard.pressKey(forwardKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed())
-					joypadKeyboard.releaseKey(forwardKeyCode, true);
+					VirtualKeyboard.pressKey(forwardKeyCode);
+				else if (ControllerSettings.get(JoyBindingEnum.joyMovementYminus).isPressed())
+					VirtualKeyboard.holdKey(forwardKeyCode, true);
+				else
+					VirtualKeyboard.releaseKey(forwardKeyCode, true);
 
 				if (ControllerSettings.get(JoyBindingEnum.joyMovementYplus).wasPressed())
-					joypadKeyboard.pressKey(backKeyCode);
-				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed())
-					joypadKeyboard.releaseKey(backKeyCode, true);
+					VirtualKeyboard.pressKey(backKeyCode);
+				else if (ControllerSettings.get(JoyBindingEnum.joyMovementYplus).isPressed())
+					VirtualKeyboard.holdKey(backKeyCode, true);
+				else
+					VirtualKeyboard.releaseKey(backKeyCode, true);
 
 				if (ControllerSettings.get(JoyBindingEnum.joyMovementXplus).wasPressed())
-					joypadKeyboard.pressKey(rightKeyCode);
+					VirtualKeyboard.pressKey(rightKeyCode);
 				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementXplus).isPressed())
-					joypadKeyboard.releaseKey(rightKeyCode, true);
+					VirtualKeyboard.releaseKey(rightKeyCode, true);
 
 				if (ControllerSettings.get(JoyBindingEnum.joyMovementXminus).wasPressed())
-					joypadKeyboard.pressKey(leftKeyCode);
+					VirtualKeyboard.pressKey(leftKeyCode);
 				else if (!ControllerSettings.get(JoyBindingEnum.joyMovementXminus).isPressed())
-					joypadKeyboard.releaseKey(leftKeyCode, true);
+					VirtualKeyboard.releaseKey(leftKeyCode, true);
 
 				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).wasPressed())
-					joypadKeyboard.pressKey(sneakKeyCode);
+					VirtualKeyboard.pressKey(sneakKeyCode);
 				else if (!ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
-					joypadKeyboard.releaseKey(sneakKeyCode, true);
+					VirtualKeyboard.releaseKey(sneakKeyCode, true);
 
 				if (ControllerSettings.get(JoyBindingEnum.joyBindJump).wasPressed())
-					joypadKeyboard.pressKey(jumpKeyCode);
+					VirtualKeyboard.pressKey(jumpKeyCode);
 				else if (!ControllerSettings.get(JoyBindingEnum.joyBindJump).isPressed())
-					joypadKeyboard.releaseKey(jumpKeyCode, true);
+					VirtualKeyboard.releaseKey(jumpKeyCode, true);
 
 			}
 			else
