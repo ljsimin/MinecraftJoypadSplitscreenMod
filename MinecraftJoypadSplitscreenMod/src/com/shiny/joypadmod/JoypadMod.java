@@ -7,7 +7,6 @@ package com.shiny.joypadmod;
 import net.minecraft.client.Minecraft;
 
 import com.shiny.joypadmod.helpers.LogHelper;
-import com.shiny.joypadmod.helpers.MinecraftObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
@@ -26,8 +25,6 @@ public class JoypadMod
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static final float MINVERSION = 0.08f;
-
-	public static MinecraftObfuscationHelper obfuscationHelper;
 
 	public static ControllerSettings controllerSettings;
 
@@ -57,7 +54,6 @@ public class JoypadMod
 		{
 			LogHelper.Warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
 		}
-		obfuscationHelper = new MinecraftObfuscationHelper();
 	}
 
 	@EventHandler

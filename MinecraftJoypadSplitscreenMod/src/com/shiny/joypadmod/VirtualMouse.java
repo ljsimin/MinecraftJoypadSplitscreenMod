@@ -12,6 +12,7 @@ import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -155,8 +156,8 @@ public class VirtualMouse
 		mcX = x * scaledResolution.getScaleFactor();
 	}
 
-	String[] eventButtonNames = JoypadMod.obfuscationHelper.GetMinecraftVarNames("eventButton");
-	String[] lastMouseEventNames = JoypadMod.obfuscationHelper.GetMinecraftVarNames("lastMouseEvent");
+	String[] eventButtonNames = McObfuscationHelper.getMcVarNames("eventButton");
+	String[] lastMouseEventNames = McObfuscationHelper.getMcVarNames("lastMouseEvent");
 
 	// todo: look at this variable!!?!
 	int gMdParam = 0;
@@ -170,7 +171,7 @@ public class VirtualMouse
 			System.out.println("gui_mouseDown disabled due to earlier error");
 			return;
 		}
-		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseClicked");
+		String[] names = McObfuscationHelper.getMcVarNames("mouseClicked");
 		Method mouseClicked = null;
 
 		@SuppressWarnings("rawtypes")
@@ -214,7 +215,7 @@ public class VirtualMouse
 			return;
 		}
 
-		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseMovedOrUp");
+		String[] names = McObfuscationHelper.getMcVarNames("mouseMovedOrUp");
 
 		Method mouseMovedOrUp = null;
 		@SuppressWarnings("rawtypes")
@@ -255,7 +256,7 @@ public class VirtualMouse
 
 		long lastEvent = -1;
 		int eventButton = -1;
-		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("mouseClickMove");
+		String[] names = McObfuscationHelper.getMcVarNames("mouseClickMove");
 		Method mouseButtonMove = null;
 		@SuppressWarnings("rawtypes")
 		Class[] params = new Class[] { int.class, int.class, int.class, long.class };
@@ -315,7 +316,7 @@ public class VirtualMouse
 		}
 
 		String functionName = ModVersionHelper.MC_VERSION == 164 ? "clickMouse" : "leftClick";
-		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames(functionName);
+		String[] names = McObfuscationHelper.getMcVarNames(functionName);
 
 		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
 
@@ -359,7 +360,7 @@ public class VirtualMouse
 		}
 
 		// String functionName = ModVersionHelper.MC_VERSION == 164 ? "clickMouse" : "leftClick";
-		String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("sendClickBlockToController");
+		String[] names = McObfuscationHelper.getMcVarNames("sendClickBlockToController");
 
 		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
 

@@ -3,8 +3,6 @@ package com.shiny.joypadmod.helpers;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.settings.KeyBinding;
 
 // the point of this class is to have a central location for calls to all the
@@ -19,19 +17,16 @@ import net.minecraft.client.settings.KeyBinding;
 // you will note that it is primarily only useful for the functions that are
 // currently obfuscated in Forge 1.7.2 but a central location
 // for all Minecraft calls may be a good practice going forward
-public class MinecraftObfuscationHelper
+public class McObfuscationHelper
 {
-
-	private Minecraft mc = Minecraft.getMinecraft();
-
 	// format of Map
 	// key = de-obfuscated function or field Name
 	// values = str1=164Name, str2=1.7.2,str3=nextVersionName etc
 
 	// currently supported versions 1.6.4, 1.7.2
-	public Map<String, String[]> versionNameMap;
+	public static Map<String, String[]> versionNameMap;
 
-	public MinecraftObfuscationHelper()
+	static
 	{
 		versionNameMap = new HashMap<String, String[]>();
 		versionNameMap.put("mouseClicked", new String[] { "func_73864_a", "func_73864_a" });
@@ -47,7 +42,7 @@ public class MinecraftObfuscationHelper
 		versionNameMap.put("parentScreen", new String[] { "field_73909_b", "field_146496_h" });
 	}
 
-	public int KeyBindCodeHelper(KeyBinding key)
+	public static int keyCode(KeyBinding key)
 	{
 
 		// de-obfuscated
@@ -57,17 +52,8 @@ public class MinecraftObfuscationHelper
 		// return key.func_151463_i();
 	}
 
-	public void DisplayGuiScreen(GuiScreen guiScreen)
-	{
-		// de-obfuscated
-		mc.displayGuiScreen(guiScreen);
-
-		// obfuscated 1.7.2
-		// mc.func_147108_a(guiScreen);
-	}
-
 	// returns de-obfuscated and obfuscated names for that version
-	public String[] GetMinecraftVarNames(String fieldOrFunctionName)
+	public static String[] getMcVarNames(String fieldOrFunctionName)
 	{
 		String[] candidates = versionNameMap.get(fieldOrFunctionName);
 
