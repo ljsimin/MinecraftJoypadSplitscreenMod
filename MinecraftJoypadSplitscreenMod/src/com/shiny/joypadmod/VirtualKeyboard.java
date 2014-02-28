@@ -14,6 +14,12 @@ public class VirtualKeyboard
 	private static Byte[] keyState;
 	private static boolean created = false;
 
+	/**
+	 * VirtualKeyboard cannot be constructed.
+	 */
+	private VirtualKeyboard()
+	{}
+
 	public static void create() throws NoSuchFieldException, SecurityException
 	{
 		keyBufferField = Keyboard.class.getDeclaredField("readBuffer");
@@ -42,7 +48,7 @@ public class VirtualKeyboard
 		if (keyHelper(keycode, 1))
 		{
 			keyState[keycode] = 1;
-			holdKey(keycode, true);
+			// holdKey(keycode, true);
 		}
 	}
 
@@ -75,7 +81,7 @@ public class VirtualKeyboard
 			return;
 		}
 
-		LogHelper.Debug("Holding key " + Keyboard.getKeyName(keycode));
+		LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try
