@@ -2,8 +2,6 @@ package com.shiny.joypadmod.inputevent;
 
 import org.lwjgl.input.Controllers;
 
-import com.shiny.joypadmod.helpers.LogHelper;
-
 /**
  * Input event that encapsulates the button press, pov and axis movement
  * 
@@ -55,13 +53,13 @@ public abstract class ControllerInputEvent
 
 	public boolean isPressed()
 	{
-		// this block will go straight to meetsThreshold after a single event at least has been received from Controllers
-		if (!pressEventReceived && !wasPressedRaw())
+		if (!pressEventReceived || !isValid())
 			return false;
 
 		return meetsThreshold();
 	}
 
+	// this should only be called when a Controllers.next call has returned true
 	public boolean wasPressed()
 	{
 		if (!isValid())
@@ -73,18 +71,12 @@ public abstract class ControllerInputEvent
 	// just checks the event to see if it matches, not using threshold values
 	public boolean wasPressedRaw()
 	{
-		try
+
+		if (Controllers.getEventSource().getIndex() == controllerNumber
+				&& Controllers.getEventControlIndex() == buttonNumber && isTargetEvent())
 		{
-			if (Controllers.getEventSource().getIndex() == controllerNumber
-					&& Controllers.getEventControlIndex() == buttonNumber && isTargetEvent())
-			{
-				pressEventReceived = true;
-				return true;
-			}
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Info("Trying to call wasPressed on controllerInput that hasn't been triggered yet. Ignoring.");
+			pressEventReceived = true;
+			return true;
 		}
 
 		return false;

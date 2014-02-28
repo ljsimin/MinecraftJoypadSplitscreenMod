@@ -79,10 +79,6 @@ public class GameRenderHandler
 					inGameBindings = ControllerSettings.getGameBindings();
 				}
 				HandleJoystickInGame();
-				for (ControllerBinding binding : inGameBindings)
-				{
-					binding.isPressed();
-				}
 				lastInGameTick = Minecraft.getSystemTime();
 			}
 		}
@@ -122,8 +118,8 @@ public class GameRenderHandler
 					joypadMouse.leftButtonDown();
 					continue;
 				}
-				VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, ControllerSettings.get(JoyBindingEnum.joyBindSneak)
-						.isPressed());
+				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
+					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 			}
 
 			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())
@@ -132,9 +128,9 @@ public class GameRenderHandler
 			if (joypadMouse.rightButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).isPressed())
 				joypadMouse.rightButtonUp();
 
-			if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
+			if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed(false))
 			{
-				LogHelper.Debug("Inventory control pressed");
+				LogHelper.Info("Inventory dismiss pressed");
 
 				if (mc.thePlayer != null)
 					mc.thePlayer.closeScreen();
@@ -147,13 +143,13 @@ public class GameRenderHandler
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).wasPressed())
 			{
 				joypadMouse.leftButtonDown();
-
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).wasPressed())
 			{
 				joypadMouse.rightButtonDown();
-
 			}
+			else
+				ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed(); // auto handled
 		}
 
 		if (mc.currentScreen != null)
@@ -190,26 +186,56 @@ public class GameRenderHandler
 
 	private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
-	private static int inventoryKeyCode = JoypadMod.obfuscationHelper
-			.KeyBindCodeHelper(mc.gameSettings.keyBindInventory);
 
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
 	{
+		if (Minecraft.getSystemTime() - lastInGuiTick > 200)
+		{
+			for (ControllerBinding binding : inGameBindings)
+			{
+				binding.isPressed();
+			}
+
+			// hacking in the ctrl option and attaching to the run button for now that will
+			// enable dropping of all items
+			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed())
+				VirtualKeyboard.holdKey(Keyboard.KEY_LCONTROL, true);
+
+		}
+
 		while (Controllers.next())
 		{
+			// ignore controller events in the milliseconds following in GUI
+			// controlling
+			if (Minecraft.getSystemTime() - lastInGuiTick < 200)
+				continue;
+
 			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
 			{
 				// this call ensures that you can break blocks in non-creative!
 				mc.inGameHasFocus = true;
 			}
-			// ignore controller events in the milliseconds following in GUI
-			// controlling
-			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
+
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
+
+			boolean eventRead = false;
+			for (ControllerBinding binding : inGameBindings)
+			{
+				if (eventRead = binding.wasPressed())
+					break;
+			}
+
+			if (eventRead)
 				continue;
 
-			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
+			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
+			{
+				mc.thePlayer.setSprinting(true);
+			}
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
 				System.out.println("Initiating attack ontick");
 				KeyBinding.onTick(attackKeyCode);
@@ -219,11 +245,6 @@ public class GameRenderHandler
 			{
 				System.out.println("Initiating use ontick");
 				KeyBinding.onTick(useKeyCode);
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed())
-			{
-				LogHelper.Debug("Inventory control pressed");
-				KeyBinding.onTick(inventoryKeyCode);
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
 			{
@@ -235,50 +256,18 @@ public class GameRenderHandler
 				LogHelper.Debug("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed())
-			{
-				if (mc.currentScreen != null)
-				{
-					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
-				}
-				else
-				{
-					mc.displayInGameMenu();
-				}
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindDrop).wasPressed())
-			{
-				// TODO: add option to drop more than 1 item
-				mc.thePlayer.dropOneItem(true);
-			}
+			/*
+			 * else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed()) { if (mc.currentScreen != null) { JoypadMod.obfuscationHelper.DisplayGuiScreen(null); } else {
+			 * mc.displayInGameMenu(); } }
+			 */
 
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
-
-			// UpdateFocusState();
-			HandlePlayerMovement();
 		}
 
 		// Read joypad movement
 		VirtualMouse.updateCameraAxisReading(false);
 		mc.thePlayer.setAngles(VirtualMouse.deltaX, VirtualMouse.deltaY
 				* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
-	}
 
-	private static void HandlePlayerMovement()
-	{
-		if (JoypadMod.controllerSettings.isInputEnabled() && ControllerSettings.joystick != null)
-		{
-			for (ControllerBinding binding : inGameBindings)
-			{
-				binding.wasPressed();
-			}
-
-			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
-			{
-				mc.thePlayer.setSprinting(true);
-			}
-		}
 	}
 
 	private static void ReplaceControlScreen(GuiControls gui)

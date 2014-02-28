@@ -24,6 +24,7 @@ goto end
 
 erase %mcMod%\JoypadMod1.6.4.zip
 copy reobf\minecraft\JoypadMod1.6.4.zip %mcMod%
+rmdir /s %dest%\shiny
 
 :end
 popd

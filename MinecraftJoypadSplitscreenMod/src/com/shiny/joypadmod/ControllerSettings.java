@@ -15,6 +15,7 @@ import net.minecraft.client.settings.GameSettings;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -113,13 +114,13 @@ public class ControllerSettings
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1), settings.keyBindJump);
+				new ButtonInputEvent(joyNo, 0, 1), settings.keyBindJump.keyCode, true);
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
-				new ButtonInputEvent(joyNo, 3, 1));
+				new ButtonInputEvent(joyNo, 3, 1), settings.keyBindInventory.keyCode, false);
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6, 1));
+				new ButtonInputEvent(joyNo, 6, 1), settings.keyBindDrop.keyCode, false);
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1), settings.keyBindSneak);
+				new ButtonInputEvent(joyNo, 8, 1), settings.keyBindSneak.keyCode, true);
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
 				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
@@ -137,7 +138,7 @@ public class ControllerSettings
 		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
 				new ButtonInputEvent(joyNo, 9, 1));
 		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
-				new ButtonInputEvent(joyNo, 7, 1));
+				new ButtonInputEvent(joyNo, 7, 1), Keyboard.KEY_ESCAPE, false);
 		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
 				new ButtonInputEvent(joyNo, 1, 1));
 		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
@@ -149,13 +150,17 @@ public class ControllerSettings
 		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindRight);
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
+				settings.keyBindRight.keyCode, true);
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone), settings.keyBindLeft);
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
+				settings.keyBindLeft.keyCode, true);
 		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindBack);
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindBack.keyCode,
+				true);
 		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone), settings.keyBindForward);
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
+				settings.keyBindForward.keyCode, true);
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
 		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
@@ -494,7 +499,7 @@ public class ControllerSettings
 		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
 		for (ControllerBinding binding : joyBindings)
 		{
-			if (binding.keybinding != null)
+			if (binding.keyCode != -1)
 				gameBindings.add(binding);
 		}
 

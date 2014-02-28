@@ -2,7 +2,6 @@ package com.shiny.joypadmod.inputevent;
 
 import net.minecraft.client.settings.KeyBinding;
 
-import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.VirtualKeyboard;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
@@ -15,35 +14,41 @@ public class ControllerBinding
 	 */
 	public String inputString;
 	public String menuString;
-	public KeyBinding keybinding;
+	public boolean doIsPressed;
+	public int keyCode;
 
 	public ControllerInputEvent inputEvent;
 
 	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
 	{
-		this(inputString, menuString, inputEvent, null);
+		this(inputString, menuString, inputEvent, -1, false);
 	}
 
-	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent,
-			KeyBinding keybinding)
+	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent, int keyCode,
+			boolean doIsPressed)
 	{
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
-		this.keybinding = keybinding;
+		this.keyCode = keyCode;
+		this.doIsPressed = doIsPressed;
 	}
 
-	public void setKeybinding(KeyBinding keybinding)
+	public void setKeybinding(int keyCode)
 	{
-		this.keybinding = keybinding;
+		this.keyCode = keyCode;
 	}
 
 	public boolean isPressed()
 	{
+		return isPressed(doIsPressed);
+	}
+
+	public boolean isPressed(boolean autoHandle)
+	{
 		boolean bRet = inputEvent.isPressed();
-		if (keybinding != null)
+		if (autoHandle)
 		{
-			int keyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding);
 			if (bRet)
 			{
 				if (VirtualKeyboard.isCreated())
@@ -73,14 +78,17 @@ public class ControllerBinding
 
 	public boolean wasPressed()
 	{
-		boolean bRet = inputEvent.wasPressed();
-		if (bRet && keybinding != null)
-		{
-			int keyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding);
+		return wasPressed(keyCode != -1);
+	}
 
+	public boolean wasPressed(boolean autoHandle)
+	{
+		boolean bRet = inputEvent.wasPressed();
+		if (bRet && autoHandle)
+		{
 			if (VirtualKeyboard.isCreated())
 			{
-				VirtualKeyboard.pressKey(JoypadMod.obfuscationHelper.KeyBindCodeHelper(keybinding));
+				VirtualKeyboard.pressKey(keyCode);
 			}
 			else
 			{
