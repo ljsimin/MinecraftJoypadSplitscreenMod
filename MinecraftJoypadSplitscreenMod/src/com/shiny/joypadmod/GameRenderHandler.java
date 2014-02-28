@@ -118,6 +118,7 @@ public class GameRenderHandler
 					joypadMouse.leftButtonDown();
 					continue;
 				}
+
 				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
 					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 			}

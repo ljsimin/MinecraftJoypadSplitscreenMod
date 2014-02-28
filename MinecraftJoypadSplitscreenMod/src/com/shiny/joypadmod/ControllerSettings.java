@@ -114,59 +114,88 @@ public class ControllerSettings
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1), settings.keyBindJump.keyCode, true);
+				new ButtonInputEvent(joyNo, 0, 1), JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindJump),
+				true);
+
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
-				new ButtonInputEvent(joyNo, 3, 1), settings.keyBindInventory.keyCode, false);
+				new ButtonInputEvent(joyNo, 3, 1),
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindInventory), false);
+
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6, 1), settings.keyBindDrop.keyCode, false);
+				new ButtonInputEvent(joyNo, 6, 1), JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindDrop),
+				false);
+
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1), settings.keyBindSneak.keyCode, true);
+				new ButtonInputEvent(joyNo, 8, 1),
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindSneak), true);
+
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
 				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
 				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyBindInteract.ordinal()] = new ControllerBinding("joy.interact", "Interact",
 				new ButtonInputEvent(joyNo, 2, 1));
+
 		bindings[JoyBindingEnum.joyBindGuiLeftClick.ordinal()] = new ControllerBinding("joy.guiLeftClick",
 				"Left click", new ButtonInputEvent(joyNo, 0, 1));
+
 		bindings[JoyBindingEnum.joyBindGuiRightClick.ordinal()] = new ControllerBinding("joy.guiRightClick",
 				"Right click", new ButtonInputEvent(joyNo, 2, 1));
+
 		bindings[JoyBindingEnum.joyBindPrevItem.ordinal()] = new ControllerBinding("joy.prevItem", "Previous item",
 				new ButtonInputEvent(joyNo, 4, 1));
+
 		bindings[JoyBindingEnum.joyBindNextItem.ordinal()] = new ControllerBinding("joy.nextItem", "Next item",
 				new ButtonInputEvent(joyNo, 5, 1));
+
 		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
 				new ButtonInputEvent(joyNo, 9, 1));
+
 		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
 				new ButtonInputEvent(joyNo, 7, 1), Keyboard.KEY_ESCAPE, false);
+
 		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
 				new ButtonInputEvent(joyNo, 1, 1));
+
 		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyCameraXminus.ordinal()] = new ControllerBinding("joy.cameraX-", "Look left",
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyCameraYminus.ordinal()] = new ControllerBinding("joy.cameraY-", "Look up",
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold * -1, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone));
+
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
-				settings.keyBindRight.keyCode, true);
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindRight), true);
+
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				settings.keyBindLeft.keyCode, true);
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindLeft), true);
+
 		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), settings.keyBindBack.keyCode,
-				true);
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone),
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindBack), true);
+
 		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				settings.keyBindForward.keyCode, true);
+				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindForward), true);
+
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
+
 		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold * -1));
+
 		bindings[JoyBindingEnum.joyGuiYplus.ordinal()] = new ControllerBinding("joy.guiY+", "GUI down",
 				new PovInputEvent(joyNo, 1, defaultPovThreshhold));
+
 		bindings[JoyBindingEnum.joyGuiYminus.ordinal()] = new ControllerBinding("joy.guiY-", "GUI up",
 				new PovInputEvent(joyNo, 1, defaultPovThreshhold * -1));
 
