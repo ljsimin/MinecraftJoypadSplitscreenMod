@@ -14,6 +14,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -139,7 +140,7 @@ public class GameRenderHandler
 				else
 				{
 					// backup
-					JoypadMod.obfuscationHelper.DisplayGuiScreen(null);
+					mc.displayGuiScreen(null);
 				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).wasPressed())
@@ -186,8 +187,8 @@ public class GameRenderHandler
 		Gui.drawRect(x, y - 3, x + 1, y + 4, reticalColor);
 	}
 
-	private static int attackKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindAttack);
-	private static int useKeyCode = JoypadMod.obfuscationHelper.KeyBindCodeHelper(mc.gameSettings.keyBindUseItem);
+	private static int attackKeyCode = McObfuscationHelper.keyCode(mc.gameSettings.keyBindAttack);
+	private static int useKeyCode = McObfuscationHelper.keyCode(mc.gameSettings.keyBindUseItem);
 
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
@@ -279,10 +280,10 @@ public class GameRenderHandler
 			try
 			{
 				LogHelper.Debug("Replacing control screen");
-				String[] names = JoypadMod.obfuscationHelper.GetMinecraftVarNames("parentScreen");
+				String[] names = McObfuscationHelper.getMcVarNames("parentScreen");
 				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui,
 						names[0], names[1]);
-				JoypadMod.obfuscationHelper.DisplayGuiScreen(new JoypadConfigMenu(parent, gui));
+				mc.displayGuiScreen(new JoypadConfigMenu(parent, gui));
 			}
 			catch (Exception ex)
 			{

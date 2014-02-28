@@ -19,6 +19,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.AxisInputEvent;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
@@ -114,20 +115,20 @@ public class ControllerSettings
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1), JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindJump),
+				new ButtonInputEvent(joyNo, 0, 1), McObfuscationHelper.keyCode(settings.keyBindJump),
 				true);
 
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
 				new ButtonInputEvent(joyNo, 3, 1),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindInventory), false);
+				McObfuscationHelper.keyCode(settings.keyBindInventory), false);
 
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6, 1), JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindDrop),
+				new ButtonInputEvent(joyNo, 6, 1), McObfuscationHelper.keyCode(settings.keyBindDrop),
 				false);
 
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindSneak), true);
+				new ButtonInputEvent(joyNo, 8, 1), McObfuscationHelper.keyCode(settings.keyBindSneak),
+				true);
 
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
 				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone));
@@ -173,19 +174,19 @@ public class ControllerSettings
 
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindRight), true);
+				McObfuscationHelper.keyCode(settings.keyBindRight), true);
 
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindLeft), true);
+				McObfuscationHelper.keyCode(settings.keyBindLeft), true);
 
 		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindBack), true);
+				McObfuscationHelper.keyCode(settings.keyBindBack), true);
 
 		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				JoypadMod.obfuscationHelper.KeyBindCodeHelper(settings.keyBindForward), true);
+				McObfuscationHelper.keyCode(settings.keyBindForward), true);
 
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));

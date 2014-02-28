@@ -172,11 +172,11 @@ public class JoypadConfigMenu extends GuiScreen
 			// TODO implement
 			break;
 		case 501: // Done
-			JoypadMod.obfuscationHelper.DisplayGuiScreen(this.parentScr);
+			mc.displayGuiScreen(this.parentScr);
 			break;
 		case 502: // Mouse menu
 			GameRenderHandler.allowOrigControlsMenu = true;
-			JoypadMod.obfuscationHelper.DisplayGuiScreen(mouseGui);
+			mc.displayGuiScreen(mouseGui);
 			break;
 
 		}
