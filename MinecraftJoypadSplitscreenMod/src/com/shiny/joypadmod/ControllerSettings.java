@@ -115,19 +115,19 @@ public class ControllerSettings
 		LogHelper.Info("Setting default joy bindings");
 		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
 		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1), McObfuscationHelper.keyCode(settings.keyBindJump),
+				new ButtonInputEvent(joyNo, 0, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindJump) },
 				true);
 
 		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
 				new ButtonInputEvent(joyNo, 3, 1),
-				McObfuscationHelper.keyCode(settings.keyBindInventory), false);
+				new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, false);
 
 		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6, 1), McObfuscationHelper.keyCode(settings.keyBindDrop),
+				new ButtonInputEvent(joyNo, 6, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindDrop) },
 				false);
 
 		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1), McObfuscationHelper.keyCode(settings.keyBindSneak),
+				new ButtonInputEvent(joyNo, 8, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) },
 				true);
 
 		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
@@ -152,10 +152,10 @@ public class ControllerSettings
 				new ButtonInputEvent(joyNo, 5, 1));
 
 		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
-				new ButtonInputEvent(joyNo, 9, 1));
+				new ButtonInputEvent(joyNo, 9, 1), new int[] { Keyboard.KEY_LCONTROL, Keyboard.KEY_RCONTROL }, true);
 
 		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
-				new ButtonInputEvent(joyNo, 7, 1), Keyboard.KEY_ESCAPE, false);
+				new ButtonInputEvent(joyNo, 7, 1), new int[] { Keyboard.KEY_ESCAPE }, false);
 
 		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
 				new ButtonInputEvent(joyNo, 1, 1));
@@ -174,19 +174,19 @@ public class ControllerSettings
 
 		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
-				McObfuscationHelper.keyCode(settings.keyBindRight), true);
+				new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, true);
 
 		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				McObfuscationHelper.keyCode(settings.keyBindLeft), true);
+				new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, true);
 
 		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone),
-				McObfuscationHelper.keyCode(settings.keyBindBack), true);
+				new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, true);
 
 		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				McObfuscationHelper.keyCode(settings.keyBindForward), true);
+				new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, true);
 
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
 				new PovInputEvent(joyNo, 0, defaultPovThreshhold));
@@ -529,7 +529,7 @@ public class ControllerSettings
 		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
 		for (ControllerBinding binding : joyBindings)
 		{
-			if (binding.keyCode != -1)
+			if (binding.keyCodes != null && binding.keyCodes.length != 0)
 				gameBindings.add(binding);
 		}
 
