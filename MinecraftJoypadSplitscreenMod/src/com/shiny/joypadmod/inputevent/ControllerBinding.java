@@ -15,28 +15,28 @@ public class ControllerBinding
 	public String inputString;
 	public String menuString;
 	public boolean doIsPressed;
-	public int keyCode;
+	public int[] keyCodes;
 
 	public ControllerInputEvent inputEvent;
 
 	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
 	{
-		this(inputString, menuString, inputEvent, -1, false);
+		this(inputString, menuString, inputEvent, null, false);
 	}
 
-	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent, int keyCode,
+	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent, int[] keyCodes,
 			boolean doIsPressed)
 	{
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
-		this.keyCode = keyCode;
+		this.keyCodes = keyCodes;
 		this.doIsPressed = doIsPressed;
 	}
 
-	public void setKeybinding(int keyCode)
+	public void setKeybinding(int[] keyCodes)
 	{
-		this.keyCode = keyCode;
+		this.keyCodes = keyCodes;
 	}
 
 	public boolean isPressed()
@@ -49,28 +49,32 @@ public class ControllerBinding
 		boolean bRet = inputEvent.isPressed();
 		if (autoHandle)
 		{
-			if (bRet)
+			for (int i : keyCodes)
 			{
-				if (VirtualKeyboard.isCreated())
+				if (bRet)
 				{
-					VirtualKeyboard.holdKey(keyCode, true);
+					if (VirtualKeyboard.isCreated())
+					{
+						VirtualKeyboard.holdKey(i, true);
+					}
+					else
+					{
+						// less compatible method
+						KeyBinding.setKeyBindState(i, true);
+					}
 				}
 				else
 				{
-					// less compatible method
-					KeyBinding.setKeyBindState(keyCode, true);
+					if (VirtualKeyboard.isCreated())
+					{
+						VirtualKeyboard.releaseKey(i, true);
+					}
+					else
+					{
+						KeyBinding.setKeyBindState(i, false);
+					}
 				}
-			}
-			else
-			{
-				if (VirtualKeyboard.isCreated())
-				{
-					VirtualKeyboard.releaseKey(keyCode, true);
-				}
-				else
-				{
-					KeyBinding.setKeyBindState(keyCode, false);
-				}
+
 			}
 		}
 		return bRet;
@@ -78,7 +82,7 @@ public class ControllerBinding
 
 	public boolean wasPressed()
 	{
-		return wasPressed(keyCode != -1);
+		return wasPressed(keyCodes != null && keyCodes.length != 0);
 	}
 
 	public boolean wasPressed(boolean autoHandle)
@@ -86,13 +90,16 @@ public class ControllerBinding
 		boolean bRet = inputEvent.wasPressed();
 		if (bRet && autoHandle)
 		{
-			if (VirtualKeyboard.isCreated())
+			for (int i : keyCodes)
 			{
-				VirtualKeyboard.pressKey(keyCode);
-			}
-			else
-			{
-				KeyBinding.setKeyBindState(keyCode, true);
+				if (VirtualKeyboard.isCreated())
+				{
+					VirtualKeyboard.pressKey(i);
+				}
+				else
+				{
+					KeyBinding.setKeyBindState(i, true);
+				}
 			}
 		}
 		return bRet;

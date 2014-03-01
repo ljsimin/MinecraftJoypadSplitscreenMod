@@ -200,12 +200,6 @@ public class GameRenderHandler
 			{
 				binding.isPressed();
 			}
-
-			// hacking in the ctrl option and attaching to the run button for now that will
-			// enable dropping of all items
-			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed())
-				VirtualKeyboard.holdKey(Keyboard.KEY_LCONTROL, true);
-
 		}
 
 		while (Controllers.next())
@@ -234,11 +228,7 @@ public class GameRenderHandler
 			if (eventRead)
 				continue;
 
-			if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
-			{
-				mc.thePlayer.setSprinting(true);
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
+			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
 				System.out.println("Initiating attack ontick");
 				KeyBinding.onTick(attackKeyCode);
@@ -259,10 +249,6 @@ public class GameRenderHandler
 				LogHelper.Debug("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
-			/*
-			 * else if (ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed()) { if (mc.currentScreen != null) { JoypadMod.obfuscationHelper.DisplayGuiScreen(null); } else {
-			 * mc.displayInGameMenu(); } }
-			 */
 
 		}
 

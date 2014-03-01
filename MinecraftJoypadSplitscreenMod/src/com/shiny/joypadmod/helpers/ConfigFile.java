@@ -19,7 +19,6 @@ public class ConfigFile
 	private Configuration config;
 	private String userName;
 	private String defaultCategory;
-	private double lastConfigFileVersion;
 
 	public ConfigFile(File configFile)
 	{
@@ -48,7 +47,7 @@ public class ConfigFile
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
-		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.7).getDouble(0.7);
+		double lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
 		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ConfigVersion "
 				+ lastConfigFileVersion);
@@ -81,6 +80,9 @@ public class ConfigFile
 		LogHelper.Info("Attempting to get joy info for " + category);
 		try
 		{
+			// this section of code needs comments or refactoring
+			String versionCategory = defaultCategory + "." + joyName;
+			double lastJoyConfigVersion = config.get(versionCategory, "ConfigVersion", 0.07).getDouble(0.07);
 			for (; i < controlBindingsDefault.length; i++)
 			{
 				String bindingCategory = createConfigSettingString(joyName, controlBindingsDefault[i].inputString);
@@ -88,7 +90,7 @@ public class ConfigFile
 						controlBindingsDefault[i].toConfigFileString()).getString();
 				config.addCustomCategoryComment(bindingCategory, bindingComment);
 				LogHelper.Info("Received bindSettings: " + controlBindingsDefault[i].inputString + " " + bindSettings);
-				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo, lastConfigFileVersion))
+				if (!controlBindingsDefault[i].setToConfigFileString(bindSettings, joyNo, lastJoyConfigVersion))
 				{
 					LogHelper.Warn("Config file binding not accepted.  Resetting to default.  Config setting: "
 							+ bindSettings);
@@ -96,7 +98,7 @@ public class ConfigFile
 					saveControllerBinding(joyName, controlBindingsDefault[i]);
 				}
 				// last time the config file changed how it interprets values
-				else if (lastConfigFileVersion < 0.08)
+				else if (lastJoyConfigVersion < 0.08)
 				{
 					if (controlBindingsDefault[i].inputEvent.getEventType() == ControllerInputEvent.EventType.BUTTON)
 						saveControllerBinding(joyName, controlBindingsDefault[i]);
@@ -104,6 +106,7 @@ public class ConfigFile
 			}
 
 			updatePreferedJoy(joyNo, joyName);
+			updateKey(versionCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION));
 			updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION));
 			config.save();
 		}
