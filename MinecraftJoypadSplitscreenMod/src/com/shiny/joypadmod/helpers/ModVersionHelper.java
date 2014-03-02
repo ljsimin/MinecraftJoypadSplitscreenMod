@@ -17,8 +17,7 @@ public class ModVersionHelper
 	{
 		if (ControllerSettings.modDisabled)
 		{
-			LogHelper
-					.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
+			LogHelper.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
 			return;
 		}
 
@@ -27,6 +26,11 @@ public class ModVersionHelper
 		// 1.6.4
 		// TickRegistry.registerTickHandler(new RenderTickHandler(),
 		// Side.CLIENT);
+	}
+
+	public static int getVersion()
+	{
+		return MC_VERSION;
 	}
 
 	// 1.7.2

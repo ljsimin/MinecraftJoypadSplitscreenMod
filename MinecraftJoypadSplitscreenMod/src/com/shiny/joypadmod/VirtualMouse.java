@@ -305,7 +305,6 @@ public class VirtualMouse
 
 	// note clicking functions updated in 1.7.2+, separate function calls for
 	// left vs right click
-	@SuppressWarnings("unused")
 	private static void game_leftClick()
 	{
 
@@ -315,13 +314,13 @@ public class VirtualMouse
 			return;
 		}
 
-		String functionName = ModVersionHelper.MC_VERSION == 164 ? "clickMouse" : "leftClick";
+		String functionName = ModVersionHelper.getVersion() == 164 ? "clickMouse" : "leftClick";
 		String[] names = McObfuscationHelper.getMcVarNames(functionName);
 
 		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
 
 		@SuppressWarnings({ "rawtypes" })
-		Class[] params = ModVersionHelper.MC_VERSION == 164 ? new Class[] { int.class } : null;
+		Class[] params = ModVersionHelper.getVersion() == 164 ? new Class[] { int.class } : null;
 		Method clickLeftMouse;
 		try
 		{
@@ -335,7 +334,7 @@ public class VirtualMouse
 				glcParam = 1;
 			}
 			clickLeftMouse.setAccessible(true);
-			if (ModVersionHelper.MC_VERSION == 164)
+			if (ModVersionHelper.getVersion() == 164)
 				clickLeftMouse.invoke((Object) mc, 0);
 			else
 				clickLeftMouse.invoke((Object) mc);
@@ -350,7 +349,6 @@ public class VirtualMouse
 	// many apologies for this
 	private static int scbtcParam = 0;
 
-	@SuppressWarnings("unused")
 	public static void game_sendClickBlockToController(int i, boolean b)
 	{
 		if (scbtcParam == -1)
@@ -365,7 +363,7 @@ public class VirtualMouse
 		LogHelper.Debug("Calling " + names[0] + "(" + names[1] + ")");
 
 		@SuppressWarnings({ "rawtypes" })
-		Class[] params = ModVersionHelper.MC_VERSION == 164 ? new Class[] { int.class, boolean.class }
+		Class[] params = ModVersionHelper.getVersion() == 164 ? new Class[] { int.class, boolean.class }
 				: new Class[] { boolean.class };
 		Method sendClickBlockToController;
 		try
@@ -380,7 +378,7 @@ public class VirtualMouse
 				scbtcParam = 1;
 			}
 			sendClickBlockToController.setAccessible(true);
-			if (ModVersionHelper.MC_VERSION == 164)
+			if (ModVersionHelper.getVersion() == 164)
 				sendClickBlockToController.invoke((Object) mc, i, b);
 			else
 				sendClickBlockToController.invoke((Object) mc, b);
