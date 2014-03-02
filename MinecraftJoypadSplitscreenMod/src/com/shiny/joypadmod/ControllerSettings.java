@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
+
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -34,8 +36,6 @@ public class ControllerSettings
 	public static final float defaultAxisDeadZone = 0.20f;
 	public static final float defaultAxisThreshhold = 0.7f;
 	public static final float defaultPovThreshhold = 0.9f;
-
-	private static boolean invertYAxis = false;
 
 	public enum JoyBindingEnum
 	{
@@ -71,7 +71,6 @@ public class ControllerSettings
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
-	public static boolean toggleSneak = true;
 	public static Controller joystick;
 	public static int joyNo = -1;
 	public static int joyCameraSensitivity = 20;
@@ -98,6 +97,9 @@ public class ControllerSettings
 	// this is used during the controller setup screen when listening for
 	// controller events to map to an action
 	private static boolean suspendControllerInput = false;
+
+	private static boolean invertYAxis = false;
+	private static boolean toggleSneak = false;
 
 	private static ConfigFile config = null;
 
@@ -238,6 +240,9 @@ public class ControllerSettings
 			return;
 		}
 
+		invertYAxis = config.invertYAxis;
+		toggleSneak = config.toggleSneak;
+
 		LogHelper.Info("Initializing Controllers");
 
 		// only set a controller as in use on init if they have previously gone
@@ -260,8 +265,6 @@ public class ControllerSettings
 			}
 
 		}
-
-		invertYAxis = config.invertYAxis;
 
 		if (selectedController < 0)
 		{
@@ -337,6 +340,7 @@ public class ControllerSettings
 			controllerUtils.printDeadZones(joystick);
 
 			joyBindings = config.getControllerBindings(controllerNo, joystick.getName());
+			setToggleSneak(toggleSneak);
 
 			inputEnabled = true;
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
@@ -398,6 +402,7 @@ public class ControllerSettings
 				setControllerBinding(i, bindings[i].inputEvent);
 			}
 		}
+		setToggleSneak(toggleSneak);
 	}
 
 	public boolean isInputEnabled()
@@ -515,6 +520,11 @@ public class ControllerSettings
 		return invertYAxis;
 	}
 
+	public static boolean getToggleSneak()
+	{
+		return toggleSneak;
+	}
+
 	public static void setInvertYAxis(boolean b)
 	{
 		if (invertYAxis != b)
@@ -522,6 +532,18 @@ public class ControllerSettings
 			invertYAxis = b;
 			config.updateInvertJoypad(b);
 		}
+	}
+
+	public static void setToggleSneak(boolean b)
+	{
+		if (toggleSneak != b)
+		{
+			toggleSneak = b;
+			config.updateToggleSneak(b);
+		}
+		if (joyBindings != null)
+			joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].isToggle = b;
+		LogHelper.Info("Togglesneak set to " + b);
 	}
 
 	public static List<ControllerBinding> getGameBindings()
@@ -534,5 +556,15 @@ public class ControllerSettings
 		}
 
 		return gameBindings;
+	}
+
+	public static void unpressAll()
+	{
+		for (ControllerBinding binding : joyBindings)
+		{
+			if (binding.isToggle)
+				binding.toggleState = false;
+		}
+		KeyBinding.unPressAllKeys();
 	}
 }

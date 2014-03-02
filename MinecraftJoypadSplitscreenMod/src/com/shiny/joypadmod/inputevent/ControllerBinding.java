@@ -16,6 +16,8 @@ public class ControllerBinding
 	public String menuString;
 	public boolean doIsPressed;
 	public int[] keyCodes;
+	public boolean isToggle = false;
+	public boolean toggleState = false;
 
 	public ControllerInputEvent inputEvent;
 
@@ -47,6 +49,13 @@ public class ControllerBinding
 	public boolean isPressed(boolean autoHandle)
 	{
 		boolean bRet = inputEvent.isPressed();
+
+		// override to set to true if it has been toggled on
+		if (isToggle && toggleState)
+		{
+			bRet = true;
+		}
+
 		if (autoHandle)
 		{
 			for (int i : keyCodes)
@@ -88,17 +97,36 @@ public class ControllerBinding
 	public boolean wasPressed(boolean autoHandle)
 	{
 		boolean bRet = inputEvent.wasPressed();
-		if (bRet && autoHandle)
+
+		if (bRet)
 		{
-			for (int i : keyCodes)
+			boolean sendPressKey = true;
+
+			if (isToggle)
 			{
-				if (VirtualKeyboard.isCreated())
+				toggleState = !toggleState;
+				sendPressKey = toggleState;
+			}
+
+			if (autoHandle)
+			{
+				for (int i : keyCodes)
 				{
-					VirtualKeyboard.pressKey(i);
-				}
-				else
-				{
-					KeyBinding.setKeyBindState(i, true);
+					if (VirtualKeyboard.isCreated())
+					{
+						if (sendPressKey)
+						{
+							VirtualKeyboard.pressKey(i);
+						}
+						else
+						{
+							VirtualKeyboard.releaseKey(i, true);
+						}
+					}
+					else
+					{
+						KeyBinding.setKeyBindState(i, sendPressKey ? true : false);
+					}
 				}
 			}
 		}

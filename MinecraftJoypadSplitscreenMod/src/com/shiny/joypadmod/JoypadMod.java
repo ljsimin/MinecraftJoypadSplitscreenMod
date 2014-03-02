@@ -17,7 +17,10 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION)
+
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
+		+ JoypadMod.REVISION)
+
 // 1.6.4
 @NetworkMod(serverSideRequired = false)
 public class JoypadMod
@@ -25,6 +28,7 @@ public class JoypadMod
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static final float MINVERSION = 0.08f;
+	public static final String REVISION = "s";
 
 	public static ControllerSettings controllerSettings;
 

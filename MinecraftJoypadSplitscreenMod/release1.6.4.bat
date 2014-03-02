@@ -16,14 +16,14 @@ copy mcmod.info reobf\minecraft
 start reobf\minecraft
 echo Zip up the mcMod.info along with the COM folder, name it JoypadMod1.6.4.zip and press any key to continue
 pause
-if exist reobf\minecraft\JoypadMod1.6.4.zip goto copystuff
+if exist reobf\minecraft\JoypadMod1.6.4*.zip goto copystuff
 
 goto end
 
 :copystuff
 
-erase %mcMod%\JoypadMod1.6.4.zip
-copy reobf\minecraft\JoypadMod1.6.4.zip %mcMod%
+erase %mcMod%\JoypadMod1.6.4*.zip
+copy reobf\minecraft\JoypadMod1.6.4*.zip %mcMod%
 rmdir /s %dest%\shiny
 
 :end

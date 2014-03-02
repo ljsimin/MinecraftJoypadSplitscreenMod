@@ -15,6 +15,7 @@ import org.lwjgl.input.Keyboard;
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -97,8 +98,9 @@ public class GameRenderHandler
 
 		// fixes issue with transitioning from inGame to Gui movement continuing
 		if (Minecraft.getSystemTime() - lastInGameTick < 100)
-			KeyBinding.unPressAllKeys();
-
+		{
+			ControllerSettings.unpressAll();
+		}
 		// update mouse coordinates
 		joypadMouse.getX(true);
 		joypadMouse.getY(true);
@@ -119,9 +121,6 @@ public class GameRenderHandler
 					joypadMouse.leftButtonDown();
 					continue;
 				}
-
-				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
-					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 			}
 
 			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())
@@ -216,6 +215,16 @@ public class GameRenderHandler
 
 			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
 			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
+
+			// hack in the drop more than 1 item for 172. normal keypresses work for this in 164.
+			if (ModVersionHelper.getVersion() == 172)
+			{
+				if (ControllerSettings.get(JoyBindingEnum.joyBindDrop).wasPressed(false))
+				{
+					mc.thePlayer.dropOneItem(ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed(false));
+					continue;
+				}
+			}
 
 			boolean eventRead = false;
 			for (ControllerBinding binding : inGameBindings)

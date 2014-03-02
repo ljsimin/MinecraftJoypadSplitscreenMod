@@ -26,6 +26,11 @@ public class ModVersionHelper
 		TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
 	}
 
+	public static int getVersion()
+	{
+		return MC_VERSION;
+	}
+
 	// 1.7.2
 	/*
 	 * @SubscribeEvent public void tickRender(RenderTickEvent event) { if (event.phase == TickEvent.Phase.START) { GameRenderHandler.HandlePreRender(); } else if (event.phase == TickEvent.Phase.END) {
