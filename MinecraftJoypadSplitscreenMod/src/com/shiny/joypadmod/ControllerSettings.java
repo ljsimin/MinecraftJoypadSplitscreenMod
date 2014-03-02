@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 
-
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
@@ -311,7 +310,8 @@ public class ControllerSettings
 		}
 		catch (org.lwjgl.LWJGLException e)
 		{
-			System.err.println("Couldn't initialize Controllers: " + e.getMessage());
+			LogHelper.Fatal("Couldn't initialize Controllers: " + e.getMessage());
+			return -1;
 		}
 
 		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
@@ -405,6 +405,24 @@ public class ControllerSettings
 		setToggleSneak(toggleSneak);
 	}
 
+	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
+	{
+		ControllerSettings.joyBindings[bindingIndex].inputEvent = inputEvent;
+		config.saveControllerBinding(joystick.getName(), joyBindings[bindingIndex]);
+	}
+
+	public static List<ControllerBinding> getGameBindings()
+	{
+		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
+		for (ControllerBinding binding : joyBindings)
+		{
+			if (binding.keyCodes != null && binding.keyCodes.length != 0)
+				gameBindings.add(binding);
+		}
+
+		return gameBindings;
+	}
+
 	public boolean isInputEnabled()
 	{
 		return inputEnabled;
@@ -450,10 +468,62 @@ public class ControllerSettings
 		return ControllerSettings.suspendControllerInput;
 	}
 
-	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
+	public static boolean getInvertYAxis()
 	{
-		ControllerSettings.joyBindings[bindingIndex].inputEvent = inputEvent;
-		config.saveControllerBinding(joystick.getName(), joyBindings[bindingIndex]);
+		return invertYAxis;
+	}
+
+	public static boolean getToggleSneak()
+	{
+		return toggleSneak;
+	}
+
+	public static void setInvertYAxis(boolean b)
+	{
+		if (invertYAxis != b)
+		{
+			invertYAxis = b;
+			config.updateInvertJoypad(b);
+		}
+	}
+
+	public static void setToggleSneak(boolean b)
+	{
+		if (toggleSneak != b)
+		{
+			toggleSneak = b;
+			config.updateToggleSneak(b);
+		}
+		if (joyBindings != null)
+			joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].isToggle = b;
+		LogHelper.Info("Togglesneak set to " + b);
+	}
+
+	public static void unpressAll()
+	{
+		for (ControllerBinding binding : joyBindings)
+		{
+			if (binding.isToggle)
+				binding.toggleState = false;
+		}
+		KeyBinding.unPressAllKeys();
+	}
+
+	public List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
+	{
+		List<Integer> values = new ArrayList<Integer>();
+		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
+		while (it.hasNext())
+		{
+			List<Integer> ids = it.next().getValue();
+			for (int i = 0; i < ids.size(); i++)
+			{
+				values.add(ids.get(i));
+			}
+		}
+		java.util.Collections.sort(values);
+
+		return values;
 	}
 
 	private static void addControllerToList(Map<String, List<Integer>> listToUse, String name, int id)
@@ -496,75 +566,5 @@ public class ControllerSettings
 		LogHelper.Info("Found controller " + controller.getName() + " (" + joyNo + ")");
 		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
 		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
-	}
-
-	public List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
-	{
-		List<Integer> values = new ArrayList<Integer>();
-		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
-		while (it.hasNext())
-		{
-			List<Integer> ids = it.next().getValue();
-			for (int i = 0; i < ids.size(); i++)
-			{
-				values.add(ids.get(i));
-			}
-		}
-		java.util.Collections.sort(values);
-
-		return values;
-	}
-
-	public static boolean getInvertYAxis()
-	{
-		return invertYAxis;
-	}
-
-	public static boolean getToggleSneak()
-	{
-		return toggleSneak;
-	}
-
-	public static void setInvertYAxis(boolean b)
-	{
-		if (invertYAxis != b)
-		{
-			invertYAxis = b;
-			config.updateInvertJoypad(b);
-		}
-	}
-
-	public static void setToggleSneak(boolean b)
-	{
-		if (toggleSneak != b)
-		{
-			toggleSneak = b;
-			config.updateToggleSneak(b);
-		}
-		if (joyBindings != null)
-			joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].isToggle = b;
-		LogHelper.Info("Togglesneak set to " + b);
-	}
-
-	public static List<ControllerBinding> getGameBindings()
-	{
-		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
-		for (ControllerBinding binding : joyBindings)
-		{
-			if (binding.keyCodes != null && binding.keyCodes.length != 0)
-				gameBindings.add(binding);
-		}
-
-		return gameBindings;
-	}
-
-	public static void unpressAll()
-	{
-		for (ControllerBinding binding : joyBindings)
-		{
-			if (binding.isToggle)
-				binding.toggleState = false;
-		}
-		KeyBinding.unPressAllKeys();
 	}
 }
