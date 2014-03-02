@@ -2,6 +2,8 @@ package com.shiny.joypadmod.inputevent;
 
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+
 /**
  * Input event that encapsulates the button press, pov and axis movement
  * 
@@ -26,6 +28,8 @@ public abstract class ControllerInputEvent
 
 	public ControllerInputEvent(EventType type, int controllerNumber, int buttonNumber, float threshold, float deadzone)
 	{
+		LogHelper.Info("ControllerInputEvent constructor params:(" + type + ", " + controllerNumber + ", "
+				+ buttonNumber + ", " + threshold + ", " + deadzone + ")");
 		this.type = type;
 		this.controllerNumber = controllerNumber;
 		this.buttonNumber = buttonNumber;
@@ -71,6 +75,8 @@ public abstract class ControllerInputEvent
 	// just checks the event to see if it matches, not using threshold values
 	public boolean wasPressedRaw()
 	{
+		if (!isValid())
+			return false;
 
 		if (Controllers.getEventSource().getIndex() == controllerNumber
 				&& Controllers.getEventControlIndex() == buttonNumber && isTargetEvent())
