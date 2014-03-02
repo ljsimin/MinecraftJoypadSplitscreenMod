@@ -59,7 +59,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control, prev, next, sensitivity, reset, invert, calibrate, done, mouseMenu
+		control, prev, next, sensitivity, reset, invert, toggleSneak, calibrate, done, mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen)
@@ -100,8 +100,8 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonYEnd_top = buttonYStart_top + (buttonYSpacing * 2);
 
 		controlListYStart = buttonYEnd_top + 2;
-		controlListXStart = buttonXStart_top + controllerButtonWidth / 5;
-		controlListWidth = (int) (controllerButtonWidth / 1.7);
+		controlListXStart = buttonXStart_top;
+		controlListWidth = (int) (controllerButtonWidth / 1.5);
 		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
 
 		GameSettings.Options options = GameSettings.Options.SENSITIVITY;
@@ -114,6 +114,10 @@ public class JoypadConfigMenu extends GuiScreen
 
 		addButton(new GuiButton(401, resetXStart, controlListYStart + 21, controllerButtonWidth + buttonXStart_top
 				- resetXStart, 20, "Invert : " + (ControllerSettings.getInvertYAxis() ? "on" : "off")));
+
+		addButton(new GuiButton(402, resetXStart, controlListYStart + (21 * 2), controllerButtonWidth
+				+ buttonXStart_top - resetXStart, 20, "Toggle sneak : "
+				+ (ControllerSettings.getToggleSneak() ? "on" : "off")));
 		// add bottom buttons
 		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
 				bottomButtonWidth, 20, "Calibrate"));
@@ -166,7 +170,11 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 401: // invert
 			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
-			toggleInvertButton(ControllerSettings.getInvertYAxis());
+			toggleOnOffButton(ControllerSettings.getInvertYAxis(), ButtonsEnum.invert.ordinal());
+			break;
+		case 402: // toggleSneak
+			ControllerSettings.setToggleSneak(!ControllerSettings.getToggleSneak());
+			toggleOnOffButton(ControllerSettings.getToggleSneak(), ButtonsEnum.toggleSneak.ordinal());
 			break;
 		case 500: // Calibrate
 			// TODO implement
@@ -273,10 +281,13 @@ public class JoypadConfigMenu extends GuiScreen
 		return i;
 	}
 
-	private void toggleInvertButton(boolean b)
+	private void toggleOnOffButton(boolean b, int index)
 	{
-		String s = "Invert: " + (b ? "on" : "off");
-		((GuiButton) buttonList.get(ButtonsEnum.invert.ordinal())).displayString = s;
+		String s1 = b ? "off" : "on";
+		String s2 = b ? "on" : "off";
+		String newString = ((GuiButton) buttonList.get(index)).displayString.replace(s1, s2);
+
+		((GuiButton) buttonList.get(index)).displayString = newString;
 	}
 
 	private void toggleController()

@@ -97,8 +97,9 @@ public class GameRenderHandler
 
 		// fixes issue with transitioning from inGame to Gui movement continuing
 		if (Minecraft.getSystemTime() - lastInGameTick < 100)
-			KeyBinding.unPressAllKeys();
-
+		{
+			ControllerSettings.unpressAll();
+		}
 		// update mouse coordinates
 		joypadMouse.getX(true);
 		joypadMouse.getY(true);
@@ -119,10 +120,6 @@ public class GameRenderHandler
 					joypadMouse.leftButtonDown();
 					continue;
 				}
-				VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT,
-						ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed());
-				if (ControllerSettings.get(JoyBindingEnum.joyBindSneak).isPressed())
-					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 			}
 
 			if (joypadMouse.leftButtonHeld && !ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())

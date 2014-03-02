@@ -15,6 +15,7 @@ public class ConfigFile
 	public int preferedJoyNo;
 	public String preferedJoyName;
 	public boolean invertYAxis;
+	public boolean toggleSneak;
 
 	private Configuration config;
 	private String userName;
@@ -47,10 +48,11 @@ public class ConfigFile
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
+		toggleSneak = config.get(defaultCategory, "ToggleSneak", false).getBoolean(false);
 		double lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ConfigVersion "
-				+ lastConfigFileVersion);
+		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ToggleSneak = "
+				+ toggleSneak + ". invertYAxis = " + invertYAxis + ". ConfigVersion " + lastConfigFileVersion);
 
 		config.save();
 	}
@@ -69,6 +71,11 @@ public class ConfigFile
 	public void updateInvertJoypad(boolean invert)
 	{
 		updateKey(defaultCategory, "InvertY", String.valueOf(invert));
+	}
+
+	public void updateToggleSneak(boolean toggleSneak)
+	{
+		updateKey(defaultCategory, "ToggleSneak", String.valueOf(toggleSneak));
 	}
 
 	public ControllerBinding[] getControllerBindings(int joyNo, String joyName)
