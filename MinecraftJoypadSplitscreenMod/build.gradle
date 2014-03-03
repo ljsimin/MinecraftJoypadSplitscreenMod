@@ -51,6 +51,6 @@ processResources
 
 }
  
-archivesBaseName = "JoypadSplitscreenMod"
+archivesBaseName = "JoypadMod"
 version = "1.7.2-0.08"
 minecraft.version = "1.7.2-10.12.0.1031"
