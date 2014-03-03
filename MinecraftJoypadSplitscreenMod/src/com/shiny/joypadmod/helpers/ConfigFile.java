@@ -51,7 +51,7 @@ public class ConfigFile
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
 		toggleSneak = config.get(defaultCategory, "ToggleSneak", false).getBoolean(false);
-		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 20).getInt();
+		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
 		inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		double lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 

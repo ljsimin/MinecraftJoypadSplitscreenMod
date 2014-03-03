@@ -106,9 +106,15 @@ public class VirtualMouse
 		game_leftClick();
 	}
 
+	private static long lastCameraReading = 0;
+	private static long readingTimeout = 10;
+
 	// this is the equivalent of moving the mouse around on your joypad
 	public static void updateCameraAxisReading(boolean inGui)
 	{
+		if (Minecraft.getSystemTime() - lastCameraReading < readingTimeout)
+			return;
+
 		// minecrafts original crazy calculation has found its way here
 		float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
 		float var4 = var3;// var3 * var3 * var3 * 8.0F;
@@ -125,17 +131,21 @@ public class VirtualMouse
 				.getAnalogReading();
 		float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
-		float cameraMultiplier = (inGui ? (ControllerSettings.inMenuSensitivity * 0.5f)
+		float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
 				: ControllerSettings.inGameSensitivity * 2);
 
 		deltaX = (float) (Math.round(horizontalMovement * (float) cameraMultiplier) * var4);
 		deltaY = (float) (Math.round(verticalMovement * (float) cameraMultiplier) * var4);
 
 		LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
+		lastCameraReading = Minecraft.getSystemTime();
 	}
 
 	private void setMouseCoordinatesWithController(boolean inGui)
 	{
+		if (Minecraft.getSystemTime() - lastCameraReading < readingTimeout)
+			return;
+
 		final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
 				mc.displayHeight);
 
