@@ -116,7 +116,7 @@ public class GameRenderHandler
 			{
 				if (ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).wasPressed())
 				{
-					System.out.println("Shift Click");
+					LogHelper.Info("Shift Click");
 					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
 					joypadMouse.leftButtonDown();
 					continue;
@@ -251,7 +251,7 @@ public class GameRenderHandler
 			{
 				if (!attackHeld)
 				{
-					System.out.println("Initiating attack ontick");
+					LogHelper.Info("Initiating attack ontick");
 					KeyBinding.onTick(attackKeyCode);
 					attackHeld = true;
 				}
@@ -261,19 +261,19 @@ public class GameRenderHandler
 			{
 				if (!useHeld)
 				{
-					System.out.println("Initiating use ontick");
+					LogHelper.Info("Initiating use ontick");
 					KeyBinding.onTick(useKeyCode);
 					useHeld = true;
 				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
 			{
-				LogHelper.Debug("NextItem pressed");
+				LogHelper.Info("NextItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(-1);
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).wasPressed())
 			{
-				LogHelper.Debug("PrevItem pressed");
+				LogHelper.Info("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
 

@@ -81,7 +81,7 @@ public class VirtualKeyboard
 			return;
 		}
 
-		LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
+		LogHelper.Debug("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try
@@ -133,7 +133,7 @@ public class VirtualKeyboard
 
 		if (keyBufferField != null)
 		{
-			LogHelper.Info("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
+			LogHelper.Debug("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
 			try
 			{
 				((ByteBuffer) keyBufferField.get(null)).compact();
