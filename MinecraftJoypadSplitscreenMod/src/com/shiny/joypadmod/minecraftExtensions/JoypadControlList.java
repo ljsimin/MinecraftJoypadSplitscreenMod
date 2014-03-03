@@ -83,15 +83,15 @@ public class JoypadControlList extends GuiScrollingList
 							Controllers.getEventControlIndex());
 					if (inputEvent != null)
 					{
-						LogHelper.Info("Received from controller: " + inputEvent.getName());
-						float threshold = 0;
+						float threshold = inputEvent.getThreshold();
+						LogHelper.Info("Received from controller: " + inputEvent.getName() + " threshold: " + threshold);
 						if (inputEvent.getEventType() == EventType.AXIS)
 						{
-							threshold = ControllerSettings.defaultAxisThreshhold;
+							threshold = ControllerSettings.defaultAxisThreshhold * (threshold > 0 ? 1 : -1);
 						}
 						else if (inputEvent.getEventType() == EventType.POV)
 						{
-							threshold = ControllerSettings.defaultPovThreshhold;
+							threshold = ControllerSettings.defaultPovThreshhold * (threshold > 0 ? 1 : -1);
 						}
 						inputEvent.setThreshold(threshold);
 						ControllerSettings.setControllerBinding(selectedIndex, inputEvent);
