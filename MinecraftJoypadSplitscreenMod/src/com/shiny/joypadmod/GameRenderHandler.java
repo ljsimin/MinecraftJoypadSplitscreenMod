@@ -213,9 +213,6 @@ public class GameRenderHandler
 				mc.inGameHasFocus = true;
 			}
 
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
-
 			// hack in the drop more than 1 item for 172. normal keypresses work for this in 164.
 			if (ModVersionHelper.getVersion() == 172)
 			{
@@ -238,14 +235,20 @@ public class GameRenderHandler
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
-				System.out.println("Initiating attack ontick");
-				KeyBinding.onTick(attackKeyCode);
+				if (!mc.gameSettings.keyBindAttack.getIsKeyPressed())
+				{
+					System.out.println("Initiating attack ontick");
+					KeyBinding.onTick(attackKeyCode);
+				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindInteract).wasPressed()
 					|| ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
-				System.out.println("Initiating use ontick");
-				KeyBinding.onTick(useKeyCode);
+				if (!mc.gameSettings.keyBindUseItem.getIsKeyPressed())
+				{
+					System.out.println("Initiating use ontick");
+					KeyBinding.onTick(useKeyCode);
+				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
 			{
@@ -257,6 +260,10 @@ public class GameRenderHandler
 				LogHelper.Debug("PrevItem pressed");
 				mc.thePlayer.inventory.changeCurrentItem(1);
 			}
+
+			// these should go after the waspressed calls
+			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
+			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
 
 		}
 
