@@ -227,6 +227,16 @@ public class GameRenderHandler
 				}
 			}
 
+			// hack in sprint
+			if (ModVersionHelper.getVersion() == 164)
+			{
+				if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
+				{
+					mc.thePlayer.setSprinting(true);
+					continue;
+				}
+			}
+
 			boolean eventRead = false;
 			for (ControllerBinding binding : inGameBindings)
 			{
