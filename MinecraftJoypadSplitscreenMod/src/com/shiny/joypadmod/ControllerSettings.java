@@ -242,8 +242,8 @@ public class ControllerSettings
 
 		invertYAxis = config.invertYAxis;
 		toggleSneak = config.toggleSneak;
-		inMenuSensitivity = config.inMenuSensitivity;
-		inGameSensitivity = config.inGameSensitivity;
+		inMenuSensitivity = config.inMenuSensitivity * (ModVersionHelper.getVersion() == 172 ? 2 : 1);
+		inGameSensitivity = config.inGameSensitivity * (ModVersionHelper.getVersion() == 172 ? 2 : 1);
 
 		LogHelper.Info("Initializing Controllers");
 
