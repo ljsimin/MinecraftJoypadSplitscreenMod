@@ -36,7 +36,6 @@ public class VirtualMouse
 
 	public boolean usingAxisCoordinates = true;
 	public static boolean debug = false;
-	public float sensitivity = 0.07f;
 
 	private static Minecraft mc = Minecraft.getMinecraft();
 
@@ -111,8 +110,8 @@ public class VirtualMouse
 	public static void updateCameraAxisReading(boolean inGui)
 	{
 		// minecrafts original crazy calculation has found its way here
-		float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.5F;
-		float var4 = var3 * var3 * var3 * 8.0F;
+		float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
+		float var4 = var3;// var3 * var3 * var3 * 8.0F;
 
 		float xPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus).getAnalogReading();
 		float xMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXminus : JoyBindingEnum.joyCameraXminus).getAnalogReading();
@@ -122,8 +121,11 @@ public class VirtualMouse
 		float yMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYminus : JoyBindingEnum.joyCameraYminus).getAnalogReading();
 		float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
-		deltaX = (float) (Math.round(horizontalMovement * (float) ControllerSettings.joyCameraSensitivity) * var4);
-		deltaY = (float) (Math.round(verticalMovement * (float) ControllerSettings.joyCameraSensitivity) * var4);
+		float cameraMultiplier = (inGui ? (ControllerSettings.inMenuSensitivity * 0.5f)
+				: ControllerSettings.inGameSensitivity * 2);
+
+		deltaX = (float) (Math.round(horizontalMovement * (float) cameraMultiplier) * var4);
+		deltaY = (float) (Math.round(verticalMovement * (float) cameraMultiplier) * var4);
 
 		LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
 	}
@@ -135,8 +137,8 @@ public class VirtualMouse
 
 		updateCameraAxisReading(inGui);
 
-		int dx = (int) (sensitivity * deltaX);
-		int dy = (int) (sensitivity * deltaY);
+		int dx = (int) deltaX;
+		int dy = (int) deltaY;
 		x += dx;
 		y += dy;
 
