@@ -72,7 +72,8 @@ public class ControllerSettings
 	public static boolean displayHints = false;
 	public static Controller joystick;
 	public static int joyNo = -1;
-	public static int joyCameraSensitivity = 20;
+	public static int inGameSensitivity = 20;
+	public static int inMenuSensitivity = 20;
 
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;
@@ -241,6 +242,8 @@ public class ControllerSettings
 
 		invertYAxis = config.invertYAxis;
 		toggleSneak = config.toggleSneak;
+		inMenuSensitivity = config.inMenuSensitivity;
+		inGameSensitivity = config.inGameSensitivity;
 
 		LogHelper.Info("Initializing Controllers");
 

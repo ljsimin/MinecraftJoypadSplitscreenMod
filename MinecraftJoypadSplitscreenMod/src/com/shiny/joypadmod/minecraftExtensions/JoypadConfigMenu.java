@@ -281,12 +281,6 @@ public class JoypadConfigMenu extends GuiScreen
 		return i;
 	}
 
-	private void toggleInvertButton(boolean b)
-	{
-		String s = "Invert: " + (b ? "on" : "off");
-		((GuiButton) buttonList.get(ButtonsEnum.invert.ordinal())).displayString = s;
-	}
-
 	private void toggleOnOffButton(boolean b, int index)
 	{
 		String s1 = b ? "off" : "on";

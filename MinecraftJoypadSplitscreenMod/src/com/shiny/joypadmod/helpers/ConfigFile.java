@@ -16,6 +16,8 @@ public class ConfigFile
 	public String preferedJoyName;
 	public boolean invertYAxis;
 	public boolean toggleSneak;
+	public int inGameSensitivity;
+	public int inMenuSensitivity;
 
 	private Configuration config;
 	private String userName;
@@ -34,7 +36,7 @@ public class ConfigFile
 
 		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
 		{
-			userName = Minecraft.getMinecraft().getSession().getUsername();
+			// userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
 
 		defaultCategory = "Joypad-" + userName;
@@ -49,12 +51,14 @@ public class ConfigFile
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
 		toggleSneak = config.get(defaultCategory, "ToggleSneak", false).getBoolean(false);
+		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 20).getInt();
+		inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		double lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ConfigVersion "
-				+ lastConfigFileVersion);
 		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ToggleSneak = "
-				+ toggleSneak + ". invertYAxis = " + invertYAxis + ". ConfigVersion " + lastConfigFileVersion);
+				+ toggleSneak + ". invertYAxis = " + invertYAxis + ". ConfigVersion " + lastConfigFileVersion
+				+ ". Game Sensitivity multiplier: " + inGameSensitivity + ". Menu Sensitivity multiplier: "
+				+ inMenuSensitivity);
 
 		config.save();
 	}
