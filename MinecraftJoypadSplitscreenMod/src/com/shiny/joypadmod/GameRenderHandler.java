@@ -188,6 +188,10 @@ public class GameRenderHandler
 	private static int attackKeyCode = McObfuscationHelper.keyCode(mc.gameSettings.keyBindAttack);
 	private static int useKeyCode = McObfuscationHelper.keyCode(mc.gameSettings.keyBindUseItem);
 
+	// TODO: update this temporary hack to fix the attack/use from registering too many from single press (happens on triggers)
+	private static boolean attackHeld = false;
+	private static boolean useHeld = false;
+
 	// does this have to be run in post render or pre? maybe doesn't
 	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
@@ -235,19 +239,21 @@ public class GameRenderHandler
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
 			{
-				if (!mc.gameSettings.keyBindAttack.getIsKeyPressed())
+				if (!attackHeld)
 				{
 					System.out.println("Initiating attack ontick");
 					KeyBinding.onTick(attackKeyCode);
+					attackHeld = true;
 				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindInteract).wasPressed()
 					|| ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
 			{
-				if (!mc.gameSettings.keyBindUseItem.getIsKeyPressed())
+				if (!useHeld)
 				{
 					System.out.println("Initiating use ontick");
 					KeyBinding.onTick(useKeyCode);
+					useHeld = true;
 				}
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
@@ -262,9 +268,31 @@ public class GameRenderHandler
 			}
 
 			// these should go after the waspressed calls
-			KeyBinding.setKeyBindState(useKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed());
-			KeyBinding.setKeyBindState(attackKeyCode, ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed());
+			if (useHeld)
+			{
+				if (!ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed())
+				{
+					KeyBinding.setKeyBindState(useKeyCode, false);
+					useHeld = false;
+				}
+				else
+				{
+					KeyBinding.setKeyBindState(useKeyCode, true);
+				}
+			}
 
+			if (attackHeld)
+			{
+				if (!ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
+				{
+					KeyBinding.setKeyBindState(attackKeyCode, false);
+					attackHeld = false;
+				}
+				else
+				{
+					KeyBinding.setKeyBindState(attackKeyCode, true);
+				}
+			}
 		}
 
 		// Read joypad movement
