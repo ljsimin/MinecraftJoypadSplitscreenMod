@@ -172,7 +172,7 @@ public class VirtualMouse
 
 		if (gMdParam == -1)
 		{
-			System.out.println("gui_mouseDown disabled due to earlier error");
+			LogHelper.Error("gui_mouseDown disabled due to earlier error");
 			return;
 		}
 		String[] names = McObfuscationHelper.getMcVarNames("mouseClicked");

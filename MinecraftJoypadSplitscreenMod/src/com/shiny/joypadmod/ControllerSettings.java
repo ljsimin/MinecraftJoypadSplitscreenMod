@@ -347,7 +347,7 @@ public class ControllerSettings
 		}
 		catch (Exception e)
 		{
-			System.err.println("Couldn't initialize Controllers: " + e.toString());
+			LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
 			joystick = null;
 			inputEnabled = false;
 		}

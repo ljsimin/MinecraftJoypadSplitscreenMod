@@ -14,6 +14,7 @@ import org.lwjgl.input.Controllers;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.JoypadMod;
+import com.shiny.joypadmod.helpers.LogHelper;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -134,14 +135,14 @@ public class JoypadConfigMenu extends GuiScreen
 	@Override
 	public void onGuiClosed()
 	{
-		System.out.println("JoypadConfigMenu OnGuiClosed");
+		LogHelper.Info("JoypadConfigMenu OnGuiClosed");
 		ControllerSettings.suspendControllerInput(false, 0);
 	}
 
 	@Override
 	protected void actionPerformed(GuiButton guiButton)
 	{
-		System.out.println("Action performed on buttonID " + getButtonId(guiButton));
+		LogHelper.Info("Action performed on buttonID " + getButtonId(guiButton));
 
 		switch (getButtonId(guiButton))
 		{
@@ -297,7 +298,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private void toggleController()
 	{
-		System.out.println("Enable/disable input");
+		LogHelper.Info("Enable/disable input");
 		JoypadMod.controllerSettings.setInputEnabled(!JoypadMod.controllerSettings.isInputEnabled());
 		updateControllerButton();
 	}

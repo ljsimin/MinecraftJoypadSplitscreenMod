@@ -54,7 +54,7 @@ public class ControllerUtils
 		{
 			for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++)
 			{
-				System.out.println("Axis " + axisNo + " deadzone: " + joystick2.getDeadZone(axisNo));
+				LogHelper.Info("Axis " + axisNo + " deadzone: " + joystick2.getDeadZone(axisNo));
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public class ControllerUtils
 	{
 		for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++)
 		{
-			System.out.println("Axis " + axisNo + ", " + joystick2.getAxisName(axisNo));
+			LogHelper.Info("Axis " + axisNo + ", " + joystick2.getAxisName(axisNo));
 		}
 	}
 
@@ -71,7 +71,7 @@ public class ControllerUtils
 	{
 		for (int buttonNo = 0; buttonNo < joystick2.getButtonCount(); buttonNo++)
 		{
-			System.out.println("Button " + buttonNo + ", " + joystick2.getButtonName(buttonNo));
+			LogHelper.Info("Button " + buttonNo + ", " + joystick2.getButtonName(buttonNo));
 		}
 	}
 
