@@ -1,7 +1,5 @@
 package com.shiny.joypadmod;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
@@ -26,7 +24,6 @@ public class GameRenderHandler
 	private static Minecraft mc = Minecraft.getMinecraft();
 	public static int reticalColor = 0xFFFFFFFF;
 	public static VirtualMouse joypadMouse = new VirtualMouse();
-	public static List<ControllerBinding> inGameBindings = null;
 	// boolean to allow the original controls menu.
 	// normally we override the controls menu when seen
 	public static boolean allowOrigControlsMenu = false;
@@ -76,10 +73,6 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
-				if (inGameBindings == null)
-				{
-					inGameBindings = ControllerSettings.getGameBindings();
-				}
 				HandleJoystickInGame();
 				lastInGameTick = Minecraft.getSystemTime();
 			}
@@ -198,7 +191,7 @@ public class GameRenderHandler
 	{
 		if (Minecraft.getSystemTime() - lastInGuiTick > 200)
 		{
-			for (ControllerBinding binding : inGameBindings)
+			for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
 			{
 				binding.isPressed();
 			}
@@ -238,7 +231,7 @@ public class GameRenderHandler
 			}
 
 			boolean eventRead = false;
-			for (ControllerBinding binding : inGameBindings)
+			for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
 			{
 				if (eventRead = binding.wasPressed())
 					break;

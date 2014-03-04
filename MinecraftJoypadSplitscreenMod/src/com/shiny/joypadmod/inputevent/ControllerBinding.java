@@ -150,8 +150,10 @@ public class ControllerBinding
 		if (s == null)
 			return false;
 
-		if (this.toConfigFileString().equalsIgnoreCase(s))
+		if (this.toConfigFileString().equalsIgnoreCase(s) && this.inputEvent.controllerNumber == joyNo)
+		{
 			return true;
+		}
 
 		LogHelper.Info("setToConfigFileString called with following values: " + s);
 
