@@ -346,6 +346,7 @@ public class ControllerSettings
 
 			inputEnabled = true;
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
+			ControllerSettings.resetAutoHandleBindings();
 		}
 		catch (Exception e)
 		{
@@ -456,6 +457,7 @@ public class ControllerSettings
 	{
 		ControllerSettings.joyBindings[bindingIndex].inputEvent = inputEvent;
 		config.saveControllerBinding(joystick.getName(), joyBindings[bindingIndex]);
+		ControllerSettings.resetAutoHandleBindings();
 	}
 
 	private static void addControllerToList(Map<String, List<Integer>> listToUse, String name, int id)
@@ -546,18 +548,33 @@ public class ControllerSettings
 		if (joyBindings != null)
 			joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].isToggle = b;
 		LogHelper.Info("Togglesneak set to " + b);
+		resetAutoHandleBindings();
 	}
 
-	public static List<ControllerBinding> getGameBindings()
+	private static List<ControllerBinding> autoHandleBindings = null;
+
+	public static List<ControllerBinding> getAutoHandleBindings()
 	{
-		List<ControllerBinding> gameBindings = new ArrayList<ControllerBinding>();
-		for (ControllerBinding binding : joyBindings)
+		if (autoHandleBindings == null)
 		{
-			if (binding.keyCodes != null && binding.keyCodes.length != 0)
-				gameBindings.add(binding);
+			autoHandleBindings = new ArrayList<ControllerBinding>();
+			for (ControllerBinding binding : joyBindings)
+			{
+				if (binding.keyCodes != null && binding.keyCodes.length != 0)
+					autoHandleBindings.add(binding);
+			}
 		}
 
-		return gameBindings;
+		return autoHandleBindings;
+	}
+
+	public static void resetAutoHandleBindings()
+	{
+		if (autoHandleBindings != null)
+		{
+			autoHandleBindings.clear();
+			autoHandleBindings = null;
+		}
 	}
 
 	public static void unpressAll()
