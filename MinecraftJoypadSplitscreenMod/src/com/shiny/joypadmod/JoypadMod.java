@@ -62,8 +62,6 @@ public class JoypadMod
 	{
 		LogHelper.Info("postInit");
 		controllerSettings.init();
-		modHelper = new ModVersionHelper();
-		modHelper.gameInit();
 		try
 		{
 			VirtualKeyboard.create();
@@ -73,6 +71,19 @@ public class JoypadMod
 			LogHelper.Fatal("Unable to initialize VirtualKeyboard.  Limited compatibility with some mods likely. "
 					+ ex.toString());
 		}
+
+		try
+		{
+			VirtualMouseNew.create();
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Fatal("Unable to initialize VirtualMouse.  Unable to continue. " + ex.toString());
+			ControllerSettings.modDisabled = true;
+		}
+
+		modHelper = new ModVersionHelper();
+		modHelper.gameInit();
 	}
 
 }
