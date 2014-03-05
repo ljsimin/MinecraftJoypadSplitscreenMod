@@ -22,6 +22,10 @@ public class VirtualKeyboard
 
 	public static void create() throws NoSuchFieldException, SecurityException
 	{
+		if (created)
+			return;
+
+		LogHelper.Info("Creating VirtualKeyboard");
 		keyBufferField = Keyboard.class.getDeclaredField("readBuffer");
 		keyDownField = Keyboard.class.getDeclaredField("keyDownBuffer");
 		keyDownField.setAccessible(true);
