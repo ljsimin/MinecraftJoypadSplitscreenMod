@@ -1,4 +1,4 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.lwjglVirtualInput;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -85,7 +85,7 @@ public class VirtualKeyboard
 			return;
 		}
 
-		LogHelper.Debug("Holding key " + Keyboard.getKeyName(keycode));
+		LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try

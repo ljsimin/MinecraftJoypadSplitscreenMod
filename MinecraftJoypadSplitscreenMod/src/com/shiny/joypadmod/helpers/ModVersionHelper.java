@@ -1,7 +1,8 @@
 package com.shiny.joypadmod.helpers;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.RenderTickHandler;
+import com.shiny.joypadmod.TickHandler.ClientTickHandler;
+import com.shiny.joypadmod.TickHandler.RenderTickHandler;
 
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -24,6 +25,7 @@ public class ModVersionHelper
 		// FMLCommonHandler.instance().bus().register(this);
 		// 1.6.4
 		TickRegistry.registerTickHandler(new RenderTickHandler(), Side.CLIENT);
+		TickRegistry.registerTickHandler(new ClientTickHandler(), Side.CLIENT);
 	}
 
 	public static int getVersion()
@@ -35,5 +37,8 @@ public class ModVersionHelper
 	/*
 	 * @SubscribeEvent public void tickRender(RenderTickEvent event) { if (event.phase == TickEvent.Phase.START) { GameRenderHandler.HandlePreRender(); } else if (event.phase == TickEvent.Phase.END) {
 	 * GameRenderHandler.HandlePostRender(); } }
+	 * 
+	 * @SubscribeEvent public void tickRenderClient(ClientTickEvent event) { if (event.phase == TickEvent.Phase.START) { GameRenderHandler.HandleClientStartTick(); } else if (event.phase ==
+	 * TickEvent.Phase.END) { GameRenderHandler.HandleClientEndTick(); } }
 	 */
 }

@@ -438,7 +438,7 @@ public class ControllerSettings
 			suspendMax = maxTicksToSuspend;
 		}
 		ControllerSettings.suspendControllerInput = suspend;
-		GameRenderHandler.joypadMouse.UnpressButtons();
+		JoypadMouse.UnpressButtons();
 	}
 
 	public static boolean isSuspended()

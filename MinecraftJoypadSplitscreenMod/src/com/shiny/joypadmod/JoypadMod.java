@@ -7,7 +7,10 @@ package com.shiny.joypadmod;
 import net.minecraft.client.Minecraft;
 
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
 import cpw.mods.fml.common.Mod;
@@ -76,11 +79,21 @@ public class JoypadMod
 
 		try
 		{
-			VirtualMouseNew.create();
+			VirtualMouse.create();
 		}
 		catch (Exception ex)
 		{
 			LogHelper.Fatal("Unable to initialize VirtualMouse.  Unable to continue. " + ex.toString());
+			ControllerSettings.modDisabled = true;
+		}
+
+		try
+		{
+			McGuiHelper.create();
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Fatal("Unable to initialize McGuiHelper.  Unable to continue. " + ex.toString());
 			ControllerSettings.modDisabled = true;
 		}
 
