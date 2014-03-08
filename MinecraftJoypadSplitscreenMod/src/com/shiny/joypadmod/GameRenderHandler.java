@@ -79,6 +79,22 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
+				if (Minecraft.getSystemTime() - lastInGuiTick > 200)
+				{
+					for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
+					{
+						binding.isPressed();
+					}
+				}
+				else
+				{
+					JoypadMouse.UnpressButtons();
+				}
+
+				if (VirtualMouse.isButtonDown(0) || VirtualMouse.isButtonDown(1))
+				{
+					VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
+				}
 				UpdateInGameCamera();
 			}
 		}
@@ -255,13 +271,9 @@ public class GameRenderHandler
 	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
 	{
-		if (Minecraft.getSystemTime() - lastInGuiTick > 200)
-		{
-			for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
-			{
-				binding.isPressed();
-			}
-		}
+		/*
+		 * if (Minecraft.getSystemTime() - lastInGuiTick > 200) { for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings()) { binding.isPressed(); } }
+		 */
 
 		while (Controllers.next())
 		{
