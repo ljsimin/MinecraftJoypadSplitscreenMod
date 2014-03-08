@@ -57,6 +57,7 @@ public class VirtualMouse
 	// Mouse.poll will set the dx/dy values based on what it reads from the mouse
 	// therefore, we have to send the dx/dy values in addition to setting the
 	// dx/dy variables directly
+	// this function doesn't really work properly right now
 	public static boolean moveMouse(int dx, int dy)
 	{
 		if (!checkCreated())

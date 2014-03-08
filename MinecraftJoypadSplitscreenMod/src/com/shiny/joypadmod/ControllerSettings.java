@@ -74,6 +74,7 @@ public class ControllerSettings
 	public static int joyNo = -1;
 	public static int inGameSensitivity = 20;
 	public static int inMenuSensitivity = 20;
+	public static int scrollDelay = 50;
 
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;

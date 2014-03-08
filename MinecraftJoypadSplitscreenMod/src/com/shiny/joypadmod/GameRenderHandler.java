@@ -30,7 +30,7 @@ public class GameRenderHandler
 	public static boolean allowOrigControlsMenu = false;
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
-	static int scrollDelay = 0;
+	static long lastScrollTick = 0;
 
 	public static void HandlePreRender()
 	{
@@ -162,24 +162,33 @@ public class GameRenderHandler
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
 		}
 
-		if (lastScrollEvent != 0)
-		{
-			VirtualMouse.scrollWheel(lastScrollEvent);
-			scrollDelay = 2;
-			lastScrollEvent = 0;
-		}
-
-		if (scrollDelay-- <= 0)
+		if ((lastScrollEvent == 0) && (Minecraft.getSystemTime() - lastScrollTick > ControllerSettings.scrollDelay))
 		{
 			if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).isPressed(false))
 			{
-				VirtualMouse.scrollWheel(-1);
+				lastScrollEvent = -1;
 			}
-			if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).isPressed(false))
+			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).isPressed(false))
 			{
-				VirtualMouse.scrollWheel(1);
+				lastScrollEvent = 1;
 			}
-			scrollDelay = 1;
+		}
+		DoScroll();
+	}
+
+	private static void DoScroll()
+	{
+		if (lastScrollEvent != 0)
+		{
+			if (Minecraft.getSystemTime() - lastScrollTick > ControllerSettings.scrollDelay)
+			{
+				VirtualMouse.scrollWheel(lastScrollEvent);
+				lastScrollTick = Minecraft.getSystemTime();
+			}
+
+			// note: we eat scroll events occurring too quickly
+			lastScrollEvent = 0;
+			System.out.println("Scroll initiated at " + lastScrollTick);
 		}
 	}
 
