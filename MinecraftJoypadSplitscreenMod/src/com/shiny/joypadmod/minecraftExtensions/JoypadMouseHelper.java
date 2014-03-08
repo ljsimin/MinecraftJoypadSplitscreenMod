@@ -14,6 +14,7 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void grabMouseCursor()
 	{
+		LogHelper.Info("grabMouseCursor called");
 		if (JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
@@ -26,11 +27,17 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void ungrabMouseCursor()
 	{
+		LogHelper.Info("ungrabMouseCursor called");
 		if (JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
 		super.ungrabMouseCursor();
 	}
+
+	/*
+	 * @Override public void mouseXYChange() { this.deltaX = Mouse.getDX(); this.deltaY = Mouse.getDY(); if (this.deltaX != 0 || this.deltaY != 0) { LogHelper.Info("MouseHelper dx:" + deltaX + " dy:"
+	 * + deltaY); } }
+	 */
 
 	@Override
 	protected void finalize() throws Throwable

@@ -2,9 +2,9 @@ package com.shiny.joypadmod.inputevent;
 
 import net.minecraft.client.settings.KeyBinding;
 
-import com.shiny.joypadmod.VirtualKeyboard;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 
 public class ControllerBinding
 {

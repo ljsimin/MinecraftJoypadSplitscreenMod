@@ -6,6 +6,7 @@ import com.shiny.joypadmod.GameRenderHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 
 public class ModVersionHelper
@@ -47,4 +48,16 @@ public class ModVersionHelper
 		}
 	}
 
+	@SubscribeEvent
+	public void tickRenderClient(ClientTickEvent event)
+	{
+		if (event.phase == TickEvent.Phase.START)
+		{
+			GameRenderHandler.HandleClientStartTick();
+		}
+		else if (event.phase == TickEvent.Phase.END)
+		{
+			GameRenderHandler.HandleClientEndTick();
+		}
+	}
 }
