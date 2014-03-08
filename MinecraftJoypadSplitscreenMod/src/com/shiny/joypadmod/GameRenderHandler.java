@@ -79,7 +79,7 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
-				if (Minecraft.getSystemTime() - lastInGuiTick > 200)
+				if (Minecraft.getSystemTime() - lastInGuiTick > 50)
 				{
 					for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
 					{
@@ -288,7 +288,7 @@ public class GameRenderHandler
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
-			if (Minecraft.getSystemTime() - lastInGuiTick < 200)
+			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
 			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
