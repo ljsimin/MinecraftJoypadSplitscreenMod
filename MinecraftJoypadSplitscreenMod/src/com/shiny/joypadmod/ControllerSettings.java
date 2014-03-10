@@ -29,7 +29,6 @@ import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
-import com.shiny.joypadmod.inputevent.PovInputEvent;
 
 public class ControllerSettings
 {
@@ -174,8 +173,8 @@ public class ControllerSettings
 				EnumSet.of(BindingOptions.GAME_BINDING));
 
 		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
-				new ButtonInputEvent(joyNo, 1, 1), new int[] { Keyboard.KEY_LSHIFT, -100 },
-				EnumSet.of(BindingOptions.MENU_BINDING));
+				new ButtonInputEvent(joyNo, 1, 1), new int[] { Keyboard.KEY_LSHIFT, -100 }, EnumSet.of(
+						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
 				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone), null, EnumSet.of(
@@ -214,20 +213,20 @@ public class ControllerSettings
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
-				new PovInputEvent(joyNo, 0, defaultPovThreshhold), null, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD));
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone), null, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
-				new PovInputEvent(joyNo, 0, defaultPovThreshhold * -1), null, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD));
+				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyGuiYplus.ordinal()] = new ControllerBinding("joy.guiY+", "GUI down",
-				new PovInputEvent(joyNo, 1, defaultPovThreshhold), null, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD));
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), null, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyGuiYminus.ordinal()] = new ControllerBinding("joy.guiY-", "GUI up",
-				new PovInputEvent(joyNo, 1, defaultPovThreshhold * -1), null, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD));
+				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyGuiScrollDown.ordinal()] = new ControllerBinding("joy.scrollDown", "Scroll down",
 				new ButtonInputEvent(joyNo, 5, 1), new int[] { -199 }, EnumSet.of(BindingOptions.MENU_BINDING,

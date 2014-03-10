@@ -2,8 +2,6 @@ package com.shiny.joypadmod.inputevent;
 
 import java.util.EnumSet;
 
-import net.minecraft.client.settings.KeyBinding;
-
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
@@ -24,6 +22,7 @@ public class ControllerBinding
 	public String menuString;
 	public int[] keyCodes;
 	public boolean toggleState = false;
+	public boolean isActive = false;
 
 	public EnumSet<BindingOptions> bindingOptions;
 
@@ -46,7 +45,7 @@ public class ControllerBinding
 
 	public boolean isPressed()
 	{
-		return isPressed(bindingOptions.contains(BindingOptions.REPEAT_IF_HELD));
+		return isPressed(this.keyCodes != null);
 	}
 
 	private void handleMouse(boolean pressed, int code, boolean firstPress)
@@ -71,13 +70,16 @@ public class ControllerBinding
 			{
 				if (isWheel)
 				{
-					VirtualMouse.scrollWheel(code);
+					if (firstPress || bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
+						VirtualMouse.scrollWheel(code);
 				}
 				else
 				{
 					if (firstPress)
+					{
 						VirtualMouse.holdMouseButton(code, true);
-					else
+					}
+					else if (bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
 					{
 						VirtualMouse.setMouseButton(code, true);
 					}
@@ -104,7 +106,7 @@ public class ControllerBinding
 			bRet = true;
 		}
 
-		if (autoHandle)
+		if (autoHandle && isActive)
 		{
 			for (int i : keyCodes)
 			{
@@ -113,32 +115,18 @@ public class ControllerBinding
 					handleMouse(bRet, i, false);
 					continue;
 				}
-				if (bRet)
+				if (bRet && bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
 				{
-					if (VirtualKeyboard.isCreated())
-					{
-						VirtualKeyboard.holdKey(i, true);
-					}
-					else
-					{
-						// less compatible method
-						KeyBinding.setKeyBindState(i, true);
-					}
+					VirtualKeyboard.holdKey(i, true);
 				}
 				else
 				{
-					if (VirtualKeyboard.isCreated())
-					{
-						VirtualKeyboard.releaseKey(i, true);
-					}
-					else
-					{
-						KeyBinding.setKeyBindState(i, false);
-					}
+					VirtualKeyboard.releaseKey(i, true);
 				}
 
 			}
 		}
+		isActive = bRet;
 		return bRet;
 	}
 
@@ -160,6 +148,8 @@ public class ControllerBinding
 				sendPressKey = toggleState;
 			}
 
+			isActive = sendPressKey;
+
 			if (autoHandle)
 			{
 				for (int i : keyCodes)
@@ -170,20 +160,13 @@ public class ControllerBinding
 						continue;
 					}
 
-					if (VirtualKeyboard.isCreated())
+					if (sendPressKey)
 					{
-						if (sendPressKey)
-						{
-							VirtualKeyboard.pressKey(i);
-						}
-						else
-						{
-							VirtualKeyboard.releaseKey(i, true);
-						}
+						VirtualKeyboard.pressKey(i);
 					}
 					else
 					{
-						KeyBinding.setKeyBindState(i, sendPressKey ? true : false);
+						VirtualKeyboard.releaseKey(i, true);
 					}
 				}
 			}

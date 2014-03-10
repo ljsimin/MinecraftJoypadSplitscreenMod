@@ -4,10 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 
 import org.lwjgl.input.Controllers;
-import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -15,7 +13,6 @@ import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -91,9 +88,6 @@ public class GameRenderHandler
 					JoypadMouse.UnpressButtons();
 				}
 
-				/*
-				 * if (VirtualMouse.isButtonDown(0) || VirtualMouse.isButtonDown(1)) { VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true); }
-				 */
 				UpdateInGameCamera();
 			}
 		}
@@ -211,14 +205,13 @@ public class GameRenderHandler
 				continue;
 
 			// VirtualMouseNew.setXY(joypadMouse.mcX, joypadMouse.mcY);
-			if (mc.currentScreen instanceof GuiContainer)
+			// if (mc.currentScreen instanceof GuiContainer)
 			{
 				if (ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).wasPressed())
 				{
-					LogHelper.Info("Shift Click");
-					VirtualKeyboard.pressKey(Keyboard.KEY_LSHIFT);
-					VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true);
-					JoypadMouse.leftButtonDown();
+					/*
+					 * LogHelper.Info("Shift Click"); VirtualKeyboard.pressKey(Keyboard.KEY_LSHIFT); VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true); JoypadMouse.leftButtonDown();
+					 */
 					continue;
 				}
 			}
@@ -237,11 +230,11 @@ public class GameRenderHandler
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).wasPressed())
 			{
-				JoypadMouse.leftButtonDown();
+				// JoypadMouse.leftButtonDown();
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).wasPressed())
 			{
-				JoypadMouse.rightButtonDown();
+				// JoypadMouse.rightButtonDown();
 			}
 			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).wasPressed(false))
 			{
@@ -257,17 +250,23 @@ public class GameRenderHandler
 
 		if (!ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())
 		{
-			JoypadMouse.leftButtonUp();
+			// JoypadMouse.leftButtonUp();
 		}
 
 		if (!ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).isPressed())
 		{
-			JoypadMouse.rightButtonUp();
+			// JoypadMouse.rightButtonUp();
 		}
 
 		if (mc.currentScreen == null)
 		{
 			JoypadMouse.UnpressButtons();
+		}
+		else
+		{
+			// TODO remove hack to turn off shift click
+			// if (mc.currentScreen instanceof GuiContainer)
+			ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).isPressed();
 		}
 	}
 

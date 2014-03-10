@@ -114,7 +114,7 @@ public class McGuiHelper
 
 		long lastEvent = -1;
 		int eventButton = -1;
-		LogHelper.Info("Calling mouseDrag");
+		// LogHelper.Info("Calling mouseDrag");
 
 		try
 		{

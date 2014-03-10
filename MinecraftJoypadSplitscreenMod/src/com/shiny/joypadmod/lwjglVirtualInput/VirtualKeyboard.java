@@ -52,7 +52,7 @@ public class VirtualKeyboard
 		if (keyHelper(keycode, 1))
 		{
 			keyState[keycode] = 1;
-			// holdKey(keycode, true);
+			holdKey(keycode, true);
 		}
 	}
 
