@@ -58,7 +58,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control, prev, next, reset, invert, toggleSneak, calibrate, done, mouseMenu
+		control, prev, next, reset, invert, toggleSneak, showInvalid, calibrate, done, mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen)
@@ -66,16 +66,32 @@ public class JoypadConfigMenu extends GuiScreen
 		super();
 		parentScr = parent;
 		mouseGui = originalControlScreen;
-		controllers = JoypadMod.controllerSettings.flattenMap(ControllerSettings.validControllers);
+		getControllers(true);
+	}
+
+	public void getControllers(boolean valid)
+	{
+		controllers = JoypadMod.controllerSettings.flattenMap(valid ? ControllerSettings.validControllers
+				: ControllerSettings.inValidControllers);
+
+		if (controllers.size() <= 0)
+		{
+			currentJoyIndex = -1;
+			return;
+		}
+
+		currentJoyIndex = 0;
 
 		if (ControllerSettings.joyNo >= 0)
 		{
 			for (int i = 0; i < controllers.size(); i++)
+			{
 				if (controllers.get(i) == ControllerSettings.joyNo)
 				{
 					currentJoyIndex = i;
 					break;
 				}
+			}
 		}
 	}
 
@@ -87,8 +103,10 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonYStart_bottom = height - 20;
 
 		// add top buttons
-		addButton(new GuiButton(100, buttonXStart_top, buttonYStart_top, controllerButtonWidth, 20, getJoystickInfo(
-				currentJoyIndex, JoyInfoEnum.name)));
+		addButton(
+				new GuiButton(100, buttonXStart_top, buttonYStart_top, controllerButtonWidth, 20, getJoystickInfo(
+						currentJoyIndex, JoyInfoEnum.name)), controllers.size() > 0);
+
 		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYSpacing, controllerButtonWidth / 2,
 				20, "PREV"));
 		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 2, buttonYStart_top + buttonYSpacing,
@@ -108,20 +126,28 @@ public class JoypadConfigMenu extends GuiScreen
 		// + getFontRenderer().FONT_HEIGHT * 2 + 3, options));
 
 		int resetXStart = controlListXStart + controlListWidth + 5;
-		addButton(new GuiButton(400, resetXStart, controlListYStart, controllerButtonWidth + buttonXStart_top
-				- resetXStart, 20, "Reset"));
 
-		addButton(new GuiButton(401, resetXStart, controlListYStart + 21, controllerButtonWidth + buttonXStart_top
-				- resetXStart, 20, "Invert : " + (ControllerSettings.getInvertYAxis() ? "on" : "off")));
+		// add buttons to right of control list box
+		int buttonNum = 0;
+		addButton(new GuiButton(400, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Reset"));
 
-		addButton(new GuiButton(402, resetXStart, controlListYStart + (21 * 2), controllerButtonWidth
-				+ buttonXStart_top - resetXStart, 20, "Toggle sneak : "
-				+ (ControllerSettings.getToggleSneak() ? "on" : "off")));
+		addButton(new GuiButton(401, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Invert : "
+						+ (ControllerSettings.getInvertYAxis() ? "on" : "off")));
+
+		addButton(new GuiButton(402, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Toggle sneak : "
+						+ (ControllerSettings.getToggleSneak() ? "on" : "off")));
+
+		addButton(new GuiButton(503, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Other controllers"));
+
 		// add bottom buttons
-		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
-				bottomButtonWidth, 20, "Calibrate"));
 		// TODO calibration
-		((GuiButton) buttonList.get(ButtonsEnum.calibrate.ordinal())).enabled = false;
+		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
+				bottomButtonWidth, 20, "Calibrate"), false);
+
 		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
 				"Done"));
 		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2),
@@ -143,6 +169,9 @@ public class JoypadConfigMenu extends GuiScreen
 	protected void actionPerformed(GuiButton guiButton)
 	{
 		LogHelper.Info("Action performed on buttonID " + getButtonId(guiButton));
+
+		if (controllers.size() <= 0 && getButtonId(guiButton) <= 500)
+			return;
 
 		switch (getButtonId(guiButton))
 		{
@@ -185,7 +214,25 @@ public class JoypadConfigMenu extends GuiScreen
 			GameRenderHandler.allowOrigControlsMenu = true;
 			mc.displayGuiScreen(mouseGui);
 			break;
-
+		case 503: // unhide controllers
+			JoypadMod.controllerSettings.setInputEnabled(false);
+			if (guiButton.displayString.contains("Other"))
+			{
+				getControllers(false);
+				guiButton.displayString = guiButton.displayString.replace("Other", "Valid");
+			}
+			else
+			{
+				getControllers(true);
+				guiButton.displayString = guiButton.displayString.replace("Valid", "Other");
+			}
+			GuiButton button = (GuiButton) buttonList.get(ButtonsEnum.control.ordinal());
+			button.enabled = controllers.size() > 0;
+			if (controllers.size() > 0)
+			{
+				updateControllerButton();
+			}
+			break;
 		}
 	}
 
@@ -198,9 +245,12 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		String ret = "";
 
+		if (controllers.size() == 0)
+			return "No controllers found!";
+
 		try
 		{
-			if (joyIndex > controllers.size())
+			if (joyIndex >= controllers.size())
 				ret = "Code Error: Invalid controller # selected";
 			else
 			{
@@ -256,7 +306,7 @@ public class JoypadConfigMenu extends GuiScreen
 	 */
 	protected void keyTyped(char c, int code)
 	{
-		if (c == ' ')
+		if (c == ' ' && controllers.size() > 0)
 		{
 			toggleController();
 		}
@@ -318,9 +368,17 @@ public class JoypadConfigMenu extends GuiScreen
 	// TODO think about extending the GuiButton class for this functionality
 
 	@SuppressWarnings("unchecked")
+	private void addButton(GuiButton guiButton, boolean enabled)
+	{
+		if (!enabled)
+			guiButton.enabled = false;
+		// field_146292_n.add(guiButton);
+		buttonList.add(guiButton);
+	}
+
+	@SuppressWarnings("unchecked")
 	private void addButton(GuiButton guiButton)
 	{
-		// field_146292_n.add(guiButton);
 		buttonList.add(guiButton);
 	}
 

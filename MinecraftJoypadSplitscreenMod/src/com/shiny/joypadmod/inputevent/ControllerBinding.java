@@ -1,39 +1,42 @@
 package com.shiny.joypadmod.inputevent;
 
+import java.util.EnumSet;
+
 import net.minecraft.client.settings.KeyBinding;
 
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 public class ControllerBinding
 {
+
+	public enum BindingOptions
+	{
+		MENU_BINDING, GAME_BINDING, IS_TOGGLE, REPEAT_IF_HELD,
+	};
 
 	/**
 	 * Used as a key for the save file
 	 */
 	public String inputString;
 	public String menuString;
-	public boolean doIsPressed;
 	public int[] keyCodes;
-	public boolean isToggle = false;
 	public boolean toggleState = false;
+
+	public EnumSet<BindingOptions> bindingOptions;
 
 	public ControllerInputEvent inputEvent;
 
-	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent)
-	{
-		this(inputString, menuString, inputEvent, null, false);
-	}
-
 	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent, int[] keyCodes,
-			boolean doIsPressed)
+			EnumSet<BindingOptions> options)
 	{
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
 		this.keyCodes = keyCodes;
-		this.doIsPressed = doIsPressed;
+		this.bindingOptions = options;
 	}
 
 	public void setKeybinding(int[] keyCodes)
@@ -43,7 +46,47 @@ public class ControllerBinding
 
 	public boolean isPressed()
 	{
-		return isPressed(doIsPressed);
+		return isPressed(bindingOptions.contains(BindingOptions.REPEAT_IF_HELD));
+	}
+
+	private void handleMouse(boolean pressed, int code)
+	{
+		// this code is a little weird but the idea was taken from Mojang
+		// a mouse button has a keycode of -100 for button 0 and -99 for button 1
+		// i've reused this idea here and added the scrolling index of -201 which will signify -1 and -199 to signify +1
+		// which are the values the mouse uses when sending a scroll event
+		if (code < 0)
+		{
+			boolean isWheel = false;
+			if (code <= -199)
+			{
+				isWheel = true;
+				code += 200;
+			}
+			else
+				// mouse press requested
+				code += 100;
+
+			if (pressed)
+			{
+				if (isWheel)
+				{
+					VirtualMouse.scrollWheel(code);
+				}
+				else
+				{
+					VirtualMouse.holdMouseButton(code, true);
+				}
+			}
+			else
+			{
+				// scroll wheels are discreet events and have no held state
+				if (!isWheel)
+				{
+					VirtualMouse.releaseMouseButton(code, true);
+				}
+			}
+		}
 	}
 
 	public boolean isPressed(boolean autoHandle)
@@ -51,7 +94,7 @@ public class ControllerBinding
 		boolean bRet = inputEvent.isPressed();
 
 		// override to set to true if it has been toggled on
-		if (isToggle && toggleState)
+		if (bindingOptions.contains(BindingOptions.IS_TOGGLE) && toggleState)
 		{
 			bRet = true;
 		}
@@ -60,6 +103,13 @@ public class ControllerBinding
 		{
 			for (int i : keyCodes)
 			{
+				if (i < 0)
+				{
+					// we only need to send an unpress event for mouse buttons
+					if (!bRet)
+						handleMouse(bRet, i);
+					continue;
+				}
 				if (bRet)
 				{
 					if (VirtualKeyboard.isCreated())
@@ -102,7 +152,7 @@ public class ControllerBinding
 		{
 			boolean sendPressKey = true;
 
-			if (isToggle)
+			if (bindingOptions.contains(BindingOptions.IS_TOGGLE))
 			{
 				toggleState = !toggleState;
 				sendPressKey = toggleState;
@@ -112,6 +162,12 @@ public class ControllerBinding
 			{
 				for (int i : keyCodes)
 				{
+					if (i < 0)
+					{
+						handleMouse(bRet, i);
+						continue;
+					}
+
 					if (VirtualKeyboard.isCreated())
 					{
 						if (sendPressKey)

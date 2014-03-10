@@ -14,11 +14,12 @@ public class VirtualMouse
 	private static Field yField;
 	private static Field dxField;
 	private static Field dyField;
-	private static Field eventXField;
-	private static Field eventYField;
+	// private static Field eventXField;
+	// private static Field eventYField;
 	private static Field buttonField;
 	private static Field mouseReadBuffer;
-	private static int[] buttonsDown = { 0, 0 };
+	private static int[] buttonsDown = { 0, 0, 0 };
+	private static final int buttonsSupported = 3;
 
 	private static int lastX = 0;
 	private static int lastY = 0;
@@ -40,8 +41,8 @@ public class VirtualMouse
 		yField = getSetField("y");
 		dxField = getSetField("dx");
 		dyField = getSetField("dy");
-		eventXField = getSetField("event_x");
-		eventYField = getSetField("event_y");
+		// eventXField = getSetField("event_x");
+		// eventYField = getSetField("event_y");
 		buttonField = getSetField("buttons");
 		mouseReadBuffer = getSetField("readBuffer");
 
@@ -79,10 +80,13 @@ public class VirtualMouse
 		return true;
 	}
 
-	public static boolean holdMouseButton(int button)
+	public static boolean holdMouseButton(int button, boolean onlyIfNotHeld)
 	{
-		if (!checkCreated())
+		if (!checkCreated() || !checkButtonSupported(button))
 			return false;
+
+		if (onlyIfNotHeld && buttonsDown[button] != 0)
+			return true;
 
 		LogHelper.Info("Holding mouse button: " + button);
 		setMouseButton(button, true);
@@ -91,10 +95,13 @@ public class VirtualMouse
 		return true;
 	}
 
-	public static boolean releaseMouseButton(int button)
+	public static boolean releaseMouseButton(int button, boolean onlyIfHeld)
 	{
-		if (!checkCreated())
+		if (!checkCreated() || !checkButtonSupported(button))
 			return false;
+
+		if (onlyIfHeld && buttonsDown[button] != 1)
+			return true;
 
 		LogHelper.Info("Releasing mouse button: " + button);
 		setMouseButton(button, false);
@@ -148,16 +155,11 @@ public class VirtualMouse
 		LogHelper.Debug("Hacking mouse button: " + button);
 		try
 		{
-			// left Button
-			if (button == 0)
-				((ByteBuffer) buttonField.get(null)).put(0, (byte) (down ? 1 : 0));
-			// right Button
-			else if (button == 1)
-				((ByteBuffer) buttonField.get(null)).put(1, (byte) (down ? 1 : 0));
+			((ByteBuffer) buttonField.get(null)).put(button, (byte) (down ? 1 : 0));
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed calling Mouse fields: " + ex.toString());
+			LogHelper.Error("Failed setting mouse button field: " + ex.toString());
 			return false;
 		}
 
@@ -197,6 +199,16 @@ public class VirtualMouse
 			return false;
 		}
 
+		return true;
+	}
+
+	private static boolean checkButtonSupported(int button)
+	{
+		if (button < 0 || button >= buttonsSupported)
+		{
+			LogHelper.Error("Button number is not supported.  Max button index is " + (buttonsSupported - 1));
+			return false;
+		}
 		return true;
 	}
 
