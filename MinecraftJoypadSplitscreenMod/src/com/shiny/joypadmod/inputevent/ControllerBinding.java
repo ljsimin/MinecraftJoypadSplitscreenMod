@@ -49,7 +49,7 @@ public class ControllerBinding
 		return isPressed(bindingOptions.contains(BindingOptions.REPEAT_IF_HELD));
 	}
 
-	private void handleMouse(boolean pressed, int code)
+	private void handleMouse(boolean pressed, int code, boolean firstPress)
 	{
 		// this code is a little weird but the idea was taken from Mojang
 		// a mouse button has a keycode of -100 for button 0 and -99 for button 1
@@ -75,7 +75,12 @@ public class ControllerBinding
 				}
 				else
 				{
-					VirtualMouse.holdMouseButton(code, true);
+					if (firstPress)
+						VirtualMouse.holdMouseButton(code, true);
+					else
+					{
+						VirtualMouse.setMouseButton(code, true);
+					}
 				}
 			}
 			else
@@ -105,9 +110,7 @@ public class ControllerBinding
 			{
 				if (i < 0)
 				{
-					// we only need to send an unpress event for mouse buttons
-					if (!bRet)
-						handleMouse(bRet, i);
+					handleMouse(bRet, i, false);
 					continue;
 				}
 				if (bRet)
@@ -164,7 +167,7 @@ public class ControllerBinding
 				{
 					if (i < 0)
 					{
-						handleMouse(bRet, i);
+						handleMouse(bRet, i, true);
 						continue;
 					}
 
