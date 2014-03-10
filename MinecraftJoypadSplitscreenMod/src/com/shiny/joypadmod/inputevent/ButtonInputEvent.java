@@ -29,6 +29,8 @@ public class ButtonInputEvent extends ControllerInputEvent
 	@Override
 	public String getName()
 	{
+		if (!isValid())
+			return "Invalid";
 		return Controllers.getController(controllerNumber).getButtonName(buttonNumber);
 	}
 

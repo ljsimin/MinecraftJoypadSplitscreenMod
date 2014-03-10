@@ -45,7 +45,7 @@ public class JoypadMouse
 		{
 			// McGuiHelper.guiMouseDown(AxisReader.x, AxisReader.y, 0);
 			VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
-			VirtualMouse.holdMouseButton(0);
+			VirtualMouse.holdMouseButton(0, true);
 		}
 	}
 
@@ -55,7 +55,7 @@ public class JoypadMouse
 		{
 			// McGuiHelper.guiMouseUp(AxisReader.x, AxisReader.y, 0);
 			// VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
-			VirtualMouse.releaseMouseButton(0);
+			VirtualMouse.releaseMouseButton(0, true);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class JoypadMouse
 		{
 			// McGuiHelper.guiMouseDown(AxisReader.x, AxisReader.y, 1);
 			VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
-			VirtualMouse.holdMouseButton(1);
+			VirtualMouse.holdMouseButton(1, true);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class JoypadMouse
 		{
 			// McGuiHelper.guiMouseUp(AxisReader.x, AxisReader.y, 1);
 			// VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
-			VirtualMouse.releaseMouseButton(1);
+			VirtualMouse.releaseMouseButton(1, true);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class JoypadMouse
 		for (int i = 0; i < 2; i++)
 		{
 			if (VirtualMouse.isButtonDown(i))
-				VirtualMouse.releaseMouseButton(i);
+				VirtualMouse.releaseMouseButton(i, true);
 		}
 	}
 

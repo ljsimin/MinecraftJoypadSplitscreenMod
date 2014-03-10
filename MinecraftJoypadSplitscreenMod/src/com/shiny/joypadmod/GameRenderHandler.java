@@ -81,7 +81,7 @@ public class GameRenderHandler
 			{
 				if (Minecraft.getSystemTime() - lastInGuiTick > 50)
 				{
-					for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
+					for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
 					{
 						binding.isPressed();
 					}
@@ -91,10 +91,9 @@ public class GameRenderHandler
 					JoypadMouse.UnpressButtons();
 				}
 
-				if (VirtualMouse.isButtonDown(0) || VirtualMouse.isButtonDown(1))
-				{
-					VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
-				}
+				/*
+				 * if (VirtualMouse.isButtonDown(0) || VirtualMouse.isButtonDown(1)) { VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true); }
+				 */
 				UpdateInGameCamera();
 			}
 		}
@@ -164,11 +163,11 @@ public class GameRenderHandler
 
 		if ((lastScrollEvent == 0) && (Minecraft.getSystemTime() - lastScrollTick > ControllerSettings.scrollDelay))
 		{
-			if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).isPressed(false))
+			if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed(false))
 			{
 				lastScrollEvent = -1;
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).isPressed(false))
+			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).isPressed(false))
 			{
 				lastScrollEvent = 1;
 			}
@@ -244,11 +243,11 @@ public class GameRenderHandler
 			{
 				JoypadMouse.rightButtonDown();
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed(false))
+			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).wasPressed(false))
 			{
 				lastScrollEvent = -1;
 			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).wasPressed(false))
+			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).wasPressed(false))
 			{
 				lastScrollEvent = 1;
 			}
@@ -272,18 +271,8 @@ public class GameRenderHandler
 		}
 	}
 
-	// TODO: update this temporary hack to fix the attack/use from registering too many from single press (happens on triggers)
-	private static boolean attackHeld = false;
-	private static boolean useHeld = false;
-
-	// does this have to be run in post render or pre? maybe doesn't
-	// matter...but be wary if changing it around
 	private static void HandleJoystickInGame()
 	{
-		/*
-		 * if (Minecraft.getSystemTime() - lastInGuiTick > 200) { for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings()) { binding.isPressed(); } }
-		 */
-
 		while (Controllers.next())
 		{
 			// ignore controller events in the milliseconds following in GUI
@@ -317,65 +306,10 @@ public class GameRenderHandler
 				}
 			}
 
-			boolean eventRead = false;
-			for (ControllerBinding binding : ControllerSettings.getAutoHandleBindings())
+			for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
 			{
-				if (eventRead = binding.wasPressed())
+				if (binding.wasPressed())
 					break;
-			}
-
-			if (eventRead)
-				continue;
-
-			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).wasPressed())
-			{
-				if (!attackHeld)
-				{
-					LogHelper.Info("Initiating attack");
-					VirtualMouse.holdMouseButton(0);
-					// KeyBinding.onTick(attackKeyCode);
-					attackHeld = true;
-				}
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindInteract).wasPressed()
-					|| ControllerSettings.get(JoyBindingEnum.joyBindUseItem).wasPressed())
-			{
-				if (!useHeld)
-				{
-					LogHelper.Info("Initiating use ontick");
-					VirtualMouse.holdMouseButton(1);
-					// KeyBinding.onTick(useKeyCode);
-					useHeld = true;
-				}
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindNextItem).wasPressed())
-			{
-				LogHelper.Info("NextItem pressed");
-				VirtualMouse.scrollWheel(-1);
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindPrevItem).wasPressed())
-			{
-				LogHelper.Info("PrevItem pressed");
-				VirtualMouse.scrollWheel(1);
-			}
-
-			// these should go after the waspressed calls
-			if (useHeld)
-			{
-				if (!ControllerSettings.get(JoyBindingEnum.joyBindUseItem).isPressed())
-				{
-					VirtualMouse.releaseMouseButton(1);
-					useHeld = false;
-				}
-			}
-
-			if (attackHeld)
-			{
-				if (!ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
-				{
-					VirtualMouse.releaseMouseButton(0);
-					attackHeld = false;
-				}
 			}
 		}
 	}
