@@ -2,6 +2,8 @@ package com.shiny.joypadmod.inputevent;
 
 import java.util.EnumSet;
 
+import net.minecraft.client.Minecraft;
+
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
@@ -12,7 +14,7 @@ public class ControllerBinding
 
 	public enum BindingOptions
 	{
-		MENU_BINDING, GAME_BINDING, IS_TOGGLE, REPEAT_IF_HELD,
+		MENU_BINDING, GAME_BINDING, IS_TOGGLE, REPEAT_IF_HELD, CLIENT_TICK, RENDER_TICK
 	};
 
 	/**
@@ -23,18 +25,21 @@ public class ControllerBinding
 	public int[] keyCodes;
 	public boolean toggleState = false;
 	public boolean isActive = false;
+	public long delay;
+	private long lastTick = 0;
 
 	public EnumSet<BindingOptions> bindingOptions;
 
 	public ControllerInputEvent inputEvent;
 
 	public ControllerBinding(String inputString, String menuString, ControllerInputEvent inputEvent, int[] keyCodes,
-			EnumSet<BindingOptions> options)
+			long delayBetweenPresses, EnumSet<BindingOptions> options)
 	{
 		this.inputString = inputString;
 		this.menuString = menuString;
 		this.inputEvent = inputEvent;
 		this.keyCodes = keyCodes;
+		this.delay = delayBetweenPresses;
 		this.bindingOptions = options;
 	}
 
@@ -106,7 +111,7 @@ public class ControllerBinding
 			bRet = true;
 		}
 
-		if (autoHandle && isActive)
+		if (autoHandle && isActive && Minecraft.getSystemTime() - lastTick > delay)
 		{
 			for (int i : keyCodes)
 			{
@@ -123,8 +128,8 @@ public class ControllerBinding
 				{
 					VirtualKeyboard.releaseKey(i, true);
 				}
-
 			}
+			lastTick = Minecraft.getSystemTime();
 		}
 		isActive = bRet;
 		return bRet;
@@ -137,8 +142,12 @@ public class ControllerBinding
 
 	public boolean wasPressed(boolean autoHandle)
 	{
-		boolean bRet = inputEvent.wasPressed();
+		return wasPressed(autoHandle, false);
+	}
 
+	public boolean wasPressed(boolean autoHandle, boolean forceHandle)
+	{
+		boolean bRet = forceHandle ? true : inputEvent.wasPressed();
 		if (bRet)
 		{
 			boolean sendPressKey = true;
@@ -149,10 +158,9 @@ public class ControllerBinding
 				sendPressKey = toggleState;
 			}
 
-			isActive = sendPressKey;
-
-			if (autoHandle)
+			if (autoHandle && Minecraft.getSystemTime() - lastTick > delay)
 			{
+				isActive = sendPressKey;
 				for (int i : keyCodes)
 				{
 					if (i < 0)
@@ -170,6 +178,7 @@ public class ControllerBinding
 						VirtualKeyboard.releaseKey(i, true);
 					}
 				}
+				lastTick = Minecraft.getSystemTime();
 			}
 		}
 		return bRet;

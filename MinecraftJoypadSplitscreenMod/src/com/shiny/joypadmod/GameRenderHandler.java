@@ -31,10 +31,11 @@ public class GameRenderHandler
 
 	public static void HandlePreRender()
 	{
-		if (mc.currentScreen != null && !ControllerSettings.isSuspended())
+		try
 		{
-			try
+			if (mc.currentScreen != null && !ControllerSettings.isSuspended())
 			{
+
 				if (mc.currentScreen instanceof GuiControls)
 				{
 					if (!allowOrigControlsMenu)
@@ -54,11 +55,11 @@ public class GameRenderHandler
 					VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 					HandleDragAndScrolling();
 				}
-			}
-			catch (Exception ex)
-			{
-				LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
-			}
+			}			
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 	}
 
@@ -76,18 +77,6 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
-				if (Minecraft.getSystemTime() - lastInGuiTick > 50)
-				{
-					for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
-					{
-						binding.isPressed();
-					}
-				}
-				else
-				{
-					JoypadMouse.UnpressButtons();
-				}
-
 				UpdateInGameCamera();
 			}
 		}
@@ -155,34 +144,8 @@ public class GameRenderHandler
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
 		}
 
-		if ((lastScrollEvent == 0) && (Minecraft.getSystemTime() - lastScrollTick > ControllerSettings.scrollDelay))
-		{
-			if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed(false))
-			{
-				lastScrollEvent = -1;
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).isPressed(false))
-			{
-				lastScrollEvent = 1;
-			}
-		}
-		DoScroll();
-	}
-
-	private static void DoScroll()
-	{
-		if (lastScrollEvent != 0)
-		{
-			if (Minecraft.getSystemTime() - lastScrollTick > ControllerSettings.scrollDelay)
-			{
-				VirtualMouse.scrollWheel(lastScrollEvent);
-				lastScrollTick = Minecraft.getSystemTime();
-			}
-
-			// note: we eat scroll events occurring too quickly
-			lastScrollEvent = 0;
-			System.out.println("Scroll initiated at " + lastScrollTick);
-		}
+		ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed();
+		ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).isPressed();
 	}
 
 	private static void HandleJoystickInGui()
@@ -197,6 +160,11 @@ public class GameRenderHandler
 		// JoypadMouse.updateXY();
 		VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 
+		for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
+		{
+			binding.isPressed();
+		}
+
 		while (Controllers.next() && mc.currentScreen != null)
 		{
 			// ignore controller events in the milliseconds following in GAME
@@ -204,96 +172,34 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGameTick < 200)
 				continue;
 
-			// VirtualMouseNew.setXY(joypadMouse.mcX, joypadMouse.mcY);
-			// if (mc.currentScreen instanceof GuiContainer)
+			for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
 			{
-				if (ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).wasPressed())
-				{
-					/*
-					 * LogHelper.Info("Shift Click"); VirtualKeyboard.pressKey(Keyboard.KEY_LSHIFT); VirtualKeyboard.holdKey(Keyboard.KEY_LSHIFT, true); JoypadMouse.leftButtonDown();
-					 */
-					continue;
-				}
+				if (binding.wasPressed())
+					break;
 			}
-
-			if (ControllerSettings.get(JoyBindingEnum.joyBindInventory).wasPressed(false))
-			{
-				LogHelper.Info("Inventory dismiss pressed");
-
-				if (mc.thePlayer != null)
-					mc.thePlayer.closeScreen();
-				else
-				{
-					// backup
-					mc.displayGuiScreen(null);
-				}
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).wasPressed())
-			{
-				// JoypadMouse.leftButtonDown();
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).wasPressed())
-			{
-				// JoypadMouse.rightButtonDown();
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).wasPressed(false))
-			{
-				lastScrollEvent = -1;
-			}
-			else if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).wasPressed(false))
-			{
-				lastScrollEvent = 1;
-			}
-			else
-				ControllerSettings.get(JoyBindingEnum.joyBindMenu).wasPressed(); // auto handled
-		}
-
-		if (!ControllerSettings.get(JoyBindingEnum.joyBindGuiLeftClick).isPressed())
-		{
-			// JoypadMouse.leftButtonUp();
-		}
-
-		if (!ControllerSettings.get(JoyBindingEnum.joyBindGuiRightClick).isPressed())
-		{
-			// JoypadMouse.rightButtonUp();
 		}
 
 		if (mc.currentScreen == null)
 		{
 			JoypadMouse.UnpressButtons();
 		}
-		else
-		{
-			// TODO remove hack to turn off shift click
-			// if (mc.currentScreen instanceof GuiContainer)
-			ControllerSettings.get(JoyBindingEnum.joyBindShiftClick).isPressed();
-		}
 	}
 
 	private static void HandleJoystickInGame()
 	{
-		while (Controllers.next())
+		for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+		{
+			binding.isPressed();
+		}
+
+		while (Controllers.next() && mc.currentScreen == null)
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
-			if (ControllerSettings.get(JoyBindingEnum.joyBindAttack).isPressed())
-			{
-				// this call ensures that you can break blocks in non-creative!
-				mc.inGameHasFocus = true;
-			}
-
-			// hack in the drop more than 1 item for 172. normal keypresses work for this in 164.
-			if (ModVersionHelper.getVersion() == 172)
-			{
-				if (ControllerSettings.get(JoyBindingEnum.joyBindDrop).wasPressed(false))
-				{
-					mc.thePlayer.dropOneItem(ControllerSettings.get(JoyBindingEnum.joyBindRun).isPressed(false));
-					continue;
-				}
-			}
+			mc.inGameHasFocus = true;
 
 			// hack in sprint
 			if (ModVersionHelper.getVersion() == 164)
