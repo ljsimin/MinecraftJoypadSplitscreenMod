@@ -55,7 +55,7 @@ public class GameRenderHandler
 					VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 					HandleDragAndScrolling();
 				}
-			}			
+			}
 		}
 		catch (Exception ex)
 		{
@@ -77,6 +77,11 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
+				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+				{
+					binding.isPressed();
+				}
+
 				UpdateInGameCamera();
 			}
 		}
@@ -199,7 +204,7 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
-			mc.inGameHasFocus = true;
+			// mc.inGameHasFocus = true;
 
 			// hack in sprint
 			if (ModVersionHelper.getVersion() == 164)

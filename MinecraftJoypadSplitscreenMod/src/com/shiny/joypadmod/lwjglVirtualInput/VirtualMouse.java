@@ -86,7 +86,10 @@ public class VirtualMouse
 			return false;
 
 		if (onlyIfNotHeld && buttonsDown[button] != 0)
+		{
+			LogHelper.Info("rejecting mouse button press as its already indicated as held");
 			return true;
+		}
 
 		LogHelper.Info("Holding mouse button: " + button);
 		setMouseButton(button, true);
@@ -152,7 +155,7 @@ public class VirtualMouse
 
 	public static boolean setMouseButton(int button, boolean down)
 	{
-		LogHelper.Debug("Hacking mouse button: " + button);
+		LogHelper.Info("Hacking mouse button: " + button);
 		try
 		{
 			((ByteBuffer) buttonField.get(null)).put(button, (byte) (down ? 1 : 0));
