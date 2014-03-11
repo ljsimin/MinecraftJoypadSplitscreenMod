@@ -145,8 +145,8 @@ public class ControllerSettings
 				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
-				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone), new int[] { -99 }, 0,
-				EnumSet.of(BindingOptions.GAME_BINDING));
+				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone), new int[] { -99 }, 0, EnumSet.of(
+				BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
 		bindings[JoyBindingEnum.joyBindInteract.ordinal()] = new ControllerBinding("joy.interact", "Interact",
 				new ButtonInputEvent(joyNo, 2, 1), new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING));

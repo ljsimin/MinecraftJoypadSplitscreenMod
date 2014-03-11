@@ -48,11 +48,6 @@ public class ControllerBinding
 		this.keyCodes = keyCodes;
 	}
 
-	public boolean isPressed()
-	{
-		return isPressed(this.keyCodes != null);
-	}
-
 	private void handleMouse(boolean pressed, int code, boolean firstPress)
 	{
 		// this code is a little weird but the idea was taken from Mojang
@@ -101,6 +96,11 @@ public class ControllerBinding
 		}
 	}
 
+	public boolean isPressed()
+	{
+		return isPressed(this.keyCodes != null);
+	}
+
 	public boolean isPressed(boolean autoHandle)
 	{
 		boolean bRet = inputEvent.isPressed();
@@ -111,7 +111,7 @@ public class ControllerBinding
 			bRet = true;
 		}
 
-		if (autoHandle && isActive && Minecraft.getSystemTime() - lastTick > delay)
+		if (autoHandle && isActive && (!bRet || (Minecraft.getSystemTime() - lastTick >= delay)))
 		{
 			for (int i : keyCodes)
 			{
@@ -120,18 +120,20 @@ public class ControllerBinding
 					handleMouse(bRet, i, false);
 					continue;
 				}
-				if (bRet && bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
-				{
-					VirtualKeyboard.holdKey(i, true);
-				}
-				else
+
+				if (!bRet)
 				{
 					VirtualKeyboard.releaseKey(i, true);
+				}
+				else if (bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
+				{
+					VirtualKeyboard.holdKey(i, true);
 				}
 			}
 			lastTick = Minecraft.getSystemTime();
 		}
-		isActive = bRet;
+		if (!bRet)
+			isActive = false;
 		return bRet;
 	}
 
@@ -158,7 +160,7 @@ public class ControllerBinding
 				sendPressKey = toggleState;
 			}
 
-			if (autoHandle && Minecraft.getSystemTime() - lastTick > delay)
+			if (autoHandle && Minecraft.getSystemTime() - lastTick >= delay)
 			{
 				isActive = sendPressKey;
 				for (int i : keyCodes)
