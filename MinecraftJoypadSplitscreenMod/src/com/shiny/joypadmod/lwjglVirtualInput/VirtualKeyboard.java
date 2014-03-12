@@ -51,6 +51,7 @@ public class VirtualKeyboard
 
 		if (keyHelper(keycode, 1))
 		{
+			LogHelper.Info("Pressing key " + Keyboard.getKeyName(keycode));
 			keyState[keycode] = 1;
 			holdKey(keycode, true);
 		}
@@ -67,6 +68,7 @@ public class VirtualKeyboard
 
 		if (isValidKey(keycode, true) && (!onlyIfPressed || keyState[keycode] == 1))
 		{
+			LogHelper.Info("Releasing key " + Keyboard.getKeyName(keycode));
 			keyHelper(keycode, 0);
 			keyState[keycode] = 0;
 			holdKey(keycode, false);

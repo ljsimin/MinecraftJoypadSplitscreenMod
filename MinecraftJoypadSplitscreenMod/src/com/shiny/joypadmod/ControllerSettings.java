@@ -236,11 +236,11 @@ public class ControllerSettings
 
 		bindings[JoyBindingEnum.joyGuiScrollDown.ordinal()] = new ControllerBinding("joy.scrollDown", "Scroll down",
 				new ButtonInputEvent(joyNo, 5, 1), new int[] { -201 }, scrollDelay, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD));
+						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK));
 
 		bindings[JoyBindingEnum.joyGuiScrollUp.ordinal()] = new ControllerBinding("joy.scrollUp", "Scroll up",
 				new ButtonInputEvent(joyNo, 4, 1), new int[] { -199 }, scrollDelay, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD));
+						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK));
 
 		return bindings;
 	}
