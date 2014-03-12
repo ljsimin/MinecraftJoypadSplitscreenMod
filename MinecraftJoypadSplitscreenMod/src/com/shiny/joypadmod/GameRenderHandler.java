@@ -191,12 +191,6 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGameTick < 200)
 				continue;
 
-			/*
-			 * if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).wasPressed(false)) { scrollBucket.add(ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown)); continue; }
-			 * 
-			 * if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).wasPressed(false)) { scrollBucket.add(ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp)); continue; }
-			 */
-
 			for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
 			{
 				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
