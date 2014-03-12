@@ -1,5 +1,8 @@
 package com.shiny.joypadmod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
@@ -13,6 +16,7 @@ import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -137,7 +141,7 @@ public class GameRenderHandler
 				JoypadMouse.AxisReader.deltaY * (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
 	}
 
-	public static int lastScrollEvent = 0;
+	public static List<ControllerBinding> scrollBucket = new ArrayList<ControllerBinding>();
 
 	private static void HandleDragAndScrolling()
 	{
@@ -147,6 +151,15 @@ public class GameRenderHandler
 			// VirtualMouse.moveMouse(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 			McGuiHelper.guiMouseDrag(JoypadMouse.getX(), JoypadMouse.getY());
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
+		}
+
+		if (scrollBucket.size() > 0)
+		{
+			for (ControllerBinding b : scrollBucket)
+			{
+				b.wasPressed(true, true);
+			}
+			scrollBucket.clear();
 		}
 
 		ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed();
@@ -167,7 +180,8 @@ public class GameRenderHandler
 
 		for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
 		{
-			binding.isPressed();
+			if (!binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
+				binding.isPressed();
 		}
 
 		while (Controllers.next() && mc.currentScreen != null)
@@ -177,9 +191,23 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGameTick < 200)
 				continue;
 
+			/*
+			 * if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).wasPressed(false)) { scrollBucket.add(ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown)); continue; }
+			 * 
+			 * if (ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).wasPressed(false)) { scrollBucket.add(ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp)); continue; }
+			 */
+
 			for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
 			{
-				if (binding.wasPressed())
+				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
+				{
+					if (binding.wasPressed(false))
+					{
+						scrollBucket.add(binding);
+						break;
+					}
+				}
+				else if (binding.wasPressed())
 					break;
 			}
 		}
@@ -204,7 +232,7 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
-			// mc.inGameHasFocus = true;
+			mc.inGameHasFocus = true;
 
 			// hack in sprint
 			if (ModVersionHelper.getVersion() == 164)

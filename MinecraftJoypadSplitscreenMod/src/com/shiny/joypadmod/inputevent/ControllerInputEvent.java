@@ -17,9 +17,8 @@ public abstract class ControllerInputEvent
 	protected final int buttonNumber;
 	protected float threshold;
 	protected float deadzone;
-	// some controllers have buttons/axis lit up until they are moved/pressed.
-	// we want to limit some of these from returning ispressed() until an actual event arrives
-	protected boolean pressEventReceived;
+	protected boolean isActive;
+	protected boolean wasReleased;
 
 	public enum EventType
 	{
@@ -35,7 +34,8 @@ public abstract class ControllerInputEvent
 		this.buttonNumber = buttonNumber;
 		this.threshold = threshold;
 		this.deadzone = deadzone;
-		pressEventReceived = false;
+		isActive = false;
+		wasReleased = false;
 	}
 
 	// subclasses will check the controller event to see if it matches their subclass type
@@ -57,10 +57,18 @@ public abstract class ControllerInputEvent
 
 	public boolean isPressed()
 	{
-		if (!pressEventReceived || !isValid())
+		if (!isActive || !isValid())
 			return false;
 
-		return meetsThreshold();
+		boolean ret = meetsThreshold();
+
+		if (!ret)
+		{
+			wasReleased = true;
+			isActive = false;
+		}
+
+		return ret;
 	}
 
 	// this should only be called when a Controllers.next call has returned true
@@ -69,7 +77,18 @@ public abstract class ControllerInputEvent
 		if (!isValid())
 			return false;
 
-		return wasPressedRaw() && meetsThreshold();
+		boolean bRet = wasPressedRaw() && meetsThreshold();
+
+		if (bRet)
+			isActive = true;
+
+		if (isActive && wasReleased)
+		{
+			LogHelper.Warn("wasPressed returning true prior to the wasReleased being consumed");
+			wasReleased = false;
+		}
+
+		return bRet;
 	}
 
 	// just checks the event to see if it matches, not using threshold values
@@ -81,11 +100,23 @@ public abstract class ControllerInputEvent
 		if (Controllers.getEventSource().getIndex() == controllerNumber
 				&& Controllers.getEventControlIndex() == buttonNumber && isTargetEvent())
 		{
-			pressEventReceived = true;
 			return true;
 		}
 
 		return false;
+	}
+
+	// signify to the caller that this was just released and needs a release event to be sent
+	public boolean wasReleased()
+	{
+		boolean bRet = false;
+		if (wasReleased)
+		{
+			System.out.println("wasReleased returning true for " + getName());
+			bRet = true;
+			wasReleased = false;
+		}
+		return bRet;
 	}
 
 	protected boolean meetsThreshold()

@@ -24,7 +24,6 @@ public class ControllerBinding
 	public String menuString;
 	public int[] keyCodes;
 	public boolean toggleState = false;
-	public boolean isActive = false;
 	public long delay;
 	private long lastTick = 0;
 
@@ -50,50 +49,52 @@ public class ControllerBinding
 
 	private void handleMouse(boolean pressed, int code, boolean firstPress)
 	{
+		if (code >= 0)
+		{
+			LogHelper.Warn("Someone is calling handle mouse for a non-mouse code!");
+			return;
+		}
 		// this code is a little weird but the idea was taken from Mojang
 		// a mouse button has a keycode of -100 for button 0 and -99 for button 1
 		// i've reused this idea here and added the scrolling index of -201 which will signify -1 and -199 to signify +1
 		// which are the values the mouse uses when sending a scroll event
-		if (code < 0)
+		boolean isWheel = false;
+		if (code <= -199)
 		{
-			boolean isWheel = false;
-			if (code <= -199)
-			{
-				isWheel = true;
-				code += 200;
-			}
-			else
-				// mouse press requested
-				code += 100;
+			isWheel = true;
+			code += 200;
+		}
+		else
+		{
+			// mouse press requested
+			code += 100;
+		}
 
-			if (pressed)
+		if (pressed)
+		{
+			if (isWheel)
 			{
-				if (isWheel)
-				{
-					if (firstPress || bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
-						VirtualMouse.scrollWheel(code);
-				}
-				else
-				{
-					if (firstPress)
-					{
-						VirtualMouse.holdMouseButton(code, true);
-					}
-					else if (bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
-					{
-						VirtualMouse.setMouseButton(code, true);
-					}
-				}
+				if (firstPress || bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
+					VirtualMouse.scrollWheel(code);
 			}
 			else
 			{
-				// scroll wheels are discreet events and have no held state
-				if (!isWheel)
+				if (firstPress)
 				{
-					VirtualMouse.releaseMouseButton(code, true);
+					VirtualMouse.holdMouseButton(code, true);
+				}
+				else if (bindingOptions.contains(BindingOptions.REPEAT_IF_HELD))
+				{
+					VirtualMouse.setMouseButton(code, true);
 				}
 			}
 		}
+		else if (!isWheel)
+		{
+			// scroll wheels are discreet events and have no held state
+			VirtualMouse.releaseMouseButton(code, true);
+		}
+
 	}
 
 	public boolean isPressed()
@@ -104,6 +105,8 @@ public class ControllerBinding
 	public boolean isPressed(boolean autoHandle)
 	{
 		boolean bRet = inputEvent.isPressed();
+		// consume the wasReleasedEvent if it was just released
+		boolean wasReleased = !bRet ? inputEvent.wasReleased() : false;
 
 		// override to set to true if it has been toggled on
 		if (bindingOptions.contains(BindingOptions.IS_TOGGLE) && toggleState)
@@ -111,7 +114,9 @@ public class ControllerBinding
 			bRet = true;
 		}
 
-		if (autoHandle && isActive && (!bRet || (Minecraft.getSystemTime() - lastTick >= delay)))
+		// only proceed if this has been set to active through a wasPressed result
+		//
+		if ((autoHandle) && (bRet && (Minecraft.getSystemTime() - lastTick >= delay)) || wasReleased)
 		{
 			for (int i : keyCodes)
 			{
@@ -130,10 +135,10 @@ public class ControllerBinding
 					VirtualKeyboard.holdKey(i, true);
 				}
 			}
-			lastTick = Minecraft.getSystemTime();
+			if (bRet)
+				lastTick = Minecraft.getSystemTime();
 		}
-		if (!bRet)
-			isActive = false;
+
 		return bRet;
 	}
 
@@ -162,7 +167,6 @@ public class ControllerBinding
 
 			if (autoHandle && Minecraft.getSystemTime() - lastTick >= delay)
 			{
-				isActive = sendPressKey;
 				for (int i : keyCodes)
 				{
 					if (i < 0)
