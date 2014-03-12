@@ -115,7 +115,7 @@ public class ControllerBinding
 		}
 
 		// only proceed if this has been set to active through a wasPressed result
-		//
+		// or if it was just released
 		if ((autoHandle) && (bRet && (Minecraft.getSystemTime() - lastTick >= delay)) || wasReleased)
 		{
 			for (int i : keyCodes)
