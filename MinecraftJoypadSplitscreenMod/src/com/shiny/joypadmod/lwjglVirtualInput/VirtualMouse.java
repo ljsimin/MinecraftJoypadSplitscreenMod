@@ -54,6 +54,14 @@ public class VirtualMouse
 		return created;
 	}
 
+	public static void unpressAllButtons()
+	{
+		for (int i = 0; i < buttonsSupported; i++)
+		{
+			releaseMouseButton(i, true);
+		}
+	}
+
 	// note a Mouse.poll is used indirectly by Minecraft when it calls Display.update
 	// Mouse.poll will set the dx/dy values based on what it reads from the mouse
 	// therefore, we have to send the dx/dy values in addition to setting the
