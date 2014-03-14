@@ -76,11 +76,25 @@ public class GameRenderHandler
 		{
 			if (InGuiCheckNeeded())
 			{
+				// fixes issue with transitioning from inGui to game movement continuing
+				if (Minecraft.getSystemTime() - lastInGameTick < 50)
+				{
+					System.out.println("Unpressing all buttons");
+					ControllerSettings.unpressAll();
+				}
+
 				DrawRetical();
 			}
 
 			if (InGameCheckNeeded())
 			{
+				// fixes issue with transitioning from inGame to Gui movement continuing
+				if (Minecraft.getSystemTime() - lastInGuiTick < 50)
+				{
+					System.out.println("Unpressing all buttons");
+					ControllerSettings.unpressAll();
+				}
+
 				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
 				{
 					binding.isPressed();
@@ -168,12 +182,6 @@ public class GameRenderHandler
 
 	private static void HandleJoystickInGui()
 	{
-		// fixes issue with transitioning from inGame to Gui movement continuing
-		if (Minecraft.getSystemTime() - lastInGameTick < 100)
-		{
-			System.out.println("Unpressing all buttons");
-			ControllerSettings.unpressAll();
-		}
 		// update mouse coordinates
 		// JoypadMouse.updateXY();
 		VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
@@ -204,11 +212,6 @@ public class GameRenderHandler
 				else if (binding.wasPressed())
 					break;
 			}
-		}
-
-		if (mc.currentScreen == null)
-		{
-			JoypadMouse.UnpressButtons();
 		}
 	}
 

@@ -84,7 +84,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	public String getDescription()
 	{
 		if (!isValid())
-			return "Invalid";
+			return "Not set";
 
 		return new StringBuilder().append(getName()).append(" ").append(getDirection(getThreshold())).toString();
 	}
@@ -101,6 +101,6 @@ public class AxisInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isValid()
 	{
-		return axisNumber < Controllers.getController(controllerNumber).getAxisCount();
+		return axisNumber >= 0 && axisNumber < Controllers.getController(controllerNumber).getAxisCount();
 	}
 }

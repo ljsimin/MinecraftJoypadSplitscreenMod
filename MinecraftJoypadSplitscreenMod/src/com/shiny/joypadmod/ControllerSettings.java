@@ -29,6 +29,7 @@ import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 public class ControllerSettings
 {
@@ -632,5 +633,6 @@ public class ControllerSettings
 				binding.toggleState = false;
 		}
 		KeyBinding.unPressAllKeys();
+		VirtualMouse.unpressAllButtons();
 	}
 }
