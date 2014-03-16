@@ -60,7 +60,7 @@ public class PovInputEvent extends ControllerInputEvent
 	}
 
 	@Override
-	protected boolean isValid()
+	public boolean isValid()
 	{
 		return povNumber == 0 || povNumber == 1;
 	}

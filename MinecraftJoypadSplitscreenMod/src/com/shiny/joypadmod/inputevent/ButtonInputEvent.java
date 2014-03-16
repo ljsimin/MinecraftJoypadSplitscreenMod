@@ -48,7 +48,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	}
 
 	@Override
-	protected boolean isValid()
+	public boolean isValid()
 	{
 		return buttonNumber >= 0 && buttonNumber < Controllers.getController(controllerNumber).getButtonCount();
 	}
