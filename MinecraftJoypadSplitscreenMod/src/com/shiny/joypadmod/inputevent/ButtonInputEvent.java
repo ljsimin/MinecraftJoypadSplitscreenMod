@@ -12,7 +12,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isTargetEvent()
 	{
-		return Controllers.isEventButton();
+		return Controllers.isEventButton() && Controllers.getEventControlIndex() == buttonNumber;
 	}
 
 	@Override

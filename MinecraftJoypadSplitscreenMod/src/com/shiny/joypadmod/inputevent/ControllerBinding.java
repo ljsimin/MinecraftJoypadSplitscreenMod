@@ -4,6 +4,8 @@ import java.util.EnumSet;
 
 import net.minecraft.client.Minecraft;
 
+import org.lwjgl.input.Keyboard;
+
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
@@ -197,7 +199,25 @@ public class ControllerBinding
 
 	public String toConfigFileString()
 	{
-		String s = menuString + "," + inputEvent.toConfigFileString();
+		String s = menuString + ",";
+		if (this.inputString.toLowerCase().contains("user."))
+		{
+			if (keyCodes != null)
+			{
+				s += "{";
+				for (int i = 0; i < keyCodes.length; i++)
+				{
+					s += Keyboard.getKeyName(keyCodes[i]);
+
+					if (i + 1 < keyCodes.length)
+						s += " ";
+				}
+				s += "},";
+			}
+		}
+		if (inputEvent != null)
+			s += inputEvent.toConfigFileString();
+
 		return s;
 	}
 
@@ -229,22 +249,41 @@ public class ControllerBinding
 		float threshold;
 		float deadzone;
 
-		try
-		{
-			event = ControllerInputEvent.EventType.valueOf(settings[1]);
-			eventIndex = Integer.parseInt(settings[2]);
-			threshold = Float.parseFloat(settings[3]);
-			deadzone = Float.parseFloat(settings[4]);
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Error("Failed parsing string: " + s + " Exception: " + ex.toString());
-			return false;
-		}
+		/*
+		 * try { event = ControllerInputEvent.EventType.valueOf(settings[1]); eventIndex = Integer.parseInt(settings[2]); threshold = Float.parseFloat(settings[3]); deadzone =
+		 * Float.parseFloat(settings[4]); } catch (Exception ex) { LogHelper.Error("Failed parsing string: " + s + " Exception: " + ex.toString()); return false; }
+		 */
 
 		try
 		{
-			this.menuString = settings[0];
+			int i = 0;
+			if (settings[i].toLowerCase().contains("user."))
+			{
+				this.inputString = settings[i++];
+				this.menuString = settings[i++];
+
+				String[] keyCodesS = settings[i].replaceAll("\\{", "").replaceAll("\\}", "").split(" ");
+				keyCodes = new int[keyCodesS.length];
+				for (int j = 0; j < keyCodesS.length; j++)
+				{
+					try
+					{
+						keyCodes[j] = Integer.parseInt(keyCodesS[j]);
+					}
+					catch (NumberFormatException nfe)
+					{
+						keyCodes[j] = Keyboard.getKeyIndex(keyCodesS[j]);
+					}
+				}
+				i++;
+			}
+			else
+				this.menuString = settings[i];
+
+			event = ControllerInputEvent.EventType.valueOf(settings[i++]);
+			eventIndex = Integer.parseInt(settings[i++]);
+			threshold = Float.parseFloat(settings[i++]);
+			deadzone = Float.parseFloat(settings[i++]);
 
 			if (event == EventType.BUTTON)
 			{

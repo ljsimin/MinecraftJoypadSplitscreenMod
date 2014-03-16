@@ -71,8 +71,8 @@ public class ControllerSettings
 		joyGuiScrollDown
 	}
 
-	private static ControllerBinding joyBindings[] = null;
-	private static List<ControllerBinding> userDefinedBindings = null;
+	private static List<ControllerBinding> joyBindings = null;
+	public static List<ControllerBinding> userDefinedBindings;
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
@@ -254,7 +254,7 @@ public class ControllerSettings
 	public static ControllerBinding get(int joyBindingIndex)
 	{
 		if (joyBindings != null)
-			return joyBindings[joyBindingIndex];
+			return joyBindings.get(joyBindingIndex);
 
 		return null;
 	}
@@ -263,7 +263,7 @@ public class ControllerSettings
 	{
 		if (joyBindings == null)
 			return 0;
-		return joyBindings.length;
+		return joyBindings.size();
 	}
 
 	public void init()
@@ -408,7 +408,7 @@ public class ControllerSettings
 		ControllerBinding[] bindings = getDefaultJoyBindings();
 		for (int i = 0; i < bindings.length; i++)
 		{
-			if (!bindings[i].equals(joyBindings[i]))
+			if (!bindings[i].equals(joyBindings.get(i)))
 			{
 				setControllerBinding(i, bindings[i].inputEvent);
 			}
@@ -463,12 +463,32 @@ public class ControllerSettings
 
 	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
 	{
-		ControllerSettings.joyBindings[bindingIndex].inputEvent = inputEvent;
-		config.saveControllerBinding(joystick.getName(), joyBindings[bindingIndex]);
-		if (joyBindings[bindingIndex].bindingOptions.contains(BindingOptions.GAME_BINDING))
+		ControllerSettings.joyBindings.get(bindingIndex).inputEvent = inputEvent;
+		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
 			ControllerSettings.resetGameAutoHandleBindings();
 
-		if (joyBindings[bindingIndex].bindingOptions.contains(BindingOptions.MENU_BINDING))
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
+			ControllerSettings.resetMenuAutoHandleBindings();
+	}
+
+	public static void addControllerBinding(ControllerBinding binding)
+	{
+		joyBindings.add(binding);
+
+		if (binding.inputString.contains("user."))
+		{
+			userDefinedBindings.add(binding);
+		}
+
+		int bindingIndex = joyBindings.size() - 1;
+
+		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
+
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
+			ControllerSettings.resetGameAutoHandleBindings();
+
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
 			ControllerSettings.resetMenuAutoHandleBindings();
 	}
 
@@ -560,11 +580,11 @@ public class ControllerSettings
 			{
 				if (b)
 				{
-					joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].bindingOptions.add(BindingOptions.IS_TOGGLE);
+					joyBindings.get(JoyBindingEnum.joyBindSneak.ordinal()).bindingOptions.add(BindingOptions.IS_TOGGLE);
 				}
 				else
 				{
-					joyBindings[JoyBindingEnum.joyBindSneak.ordinal()].bindingOptions.remove(BindingOptions.IS_TOGGLE);
+					joyBindings.get(JoyBindingEnum.joyBindSneak.ordinal()).bindingOptions.remove(BindingOptions.IS_TOGGLE);
 				}
 			}
 		}
