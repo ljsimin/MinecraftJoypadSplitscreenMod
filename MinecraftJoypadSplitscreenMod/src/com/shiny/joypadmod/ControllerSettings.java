@@ -20,6 +20,7 @@ import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.helpers.ConfigFile;
+import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
@@ -117,6 +118,14 @@ public class ControllerSettings
 		validControllers = new HashMap<String, List<Integer>>();
 		inValidControllers = new HashMap<String, List<Integer>>();
 		userDefinedBindings = new ArrayList<ControllerBinding>();
+		try
+		{
+			Controllers.create();
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Error("Failed creating controller object. " + ex.toString());
+		}
 	}
 
 	public static ControllerBinding[] getDefaultJoyBindings()
@@ -566,7 +575,7 @@ public class ControllerSettings
 		if (invertYAxis != b)
 		{
 			invertYAxis = b;
-			config.updateInvertJoypad(b);
+			config.updateConfigFileSetting(UserJoypadSettings.InvertY, "" + b);
 		}
 	}
 
@@ -575,7 +584,7 @@ public class ControllerSettings
 		if (toggleSneak != b)
 		{
 			toggleSneak = b;
-			config.updateToggleSneak(b);
+			config.updateConfigFileSetting(UserJoypadSettings.ToggleSneak, "" + b);
 			if (joyBindings != null)
 			{
 				if (b)

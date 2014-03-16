@@ -30,6 +30,11 @@ public class ConfigFile
 
 	private double lastConfigFileVersion;
 
+	public enum UserJoypadSettings
+	{
+		JoyNo, JoyName, InvertY, ToggleSneak
+	}
+
 	public ConfigFile(File configFile)
 	{
 		config = new Configuration(configFile, true);
@@ -73,22 +78,13 @@ public class ConfigFile
 	public void updatePreferedJoy(int joyNo, String joyName)
 	{
 		String category = defaultCategory;
-		String[] keys = { "JoyNo", "JoyName" };
-		int numKeys = joyName != null ? keys.length : 1;
-		for (int i = 0; i < numKeys; i++)
-		{
-			updateKey(category, keys[i], (i == 0 ? String.valueOf(joyNo) : joyName));
-		}
+		updateKey(category, "JoyNo", "" + joyNo);
+		updateKey(category, "JoyName", joyName);
 	}
 
-	public void updateInvertJoypad(boolean invert)
+	public void updateConfigFileSetting(UserJoypadSettings setting, String value)
 	{
-		updateKey(defaultCategory, "InvertY", String.valueOf(invert));
-	}
-
-	public void updateToggleSneak(boolean toggleSneak)
-	{
-		updateKey(defaultCategory, "ToggleSneak", String.valueOf(toggleSneak));
+		updateKey(defaultCategory, setting.toString(), value);
 	}
 
 	public List<ControllerBinding> getUserBindings(int joyNo)
@@ -102,10 +98,10 @@ public class ConfigFile
 			String inputString = "user." + i;
 			// String bindingComment = "S:" + inputString
 			// + "=<Menu String>,<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>";
-			String bindSettings = config.get(category, inputString, "Trigger1,{R},POV,1,1,0").getString();
-			ControllerBinding binding = new ControllerBinding(inputString, "menu", null, null, 0,
+			String bindSettings = config.get(category, inputString, "Trigger" + i + ",{R},BUTTON,-1,1,0").getString();
+			ControllerBinding binding = new ControllerBinding(inputString, "Trigger" + i, null, null, 0,
 					EnumSet.of(BindingOptions.GAME_BINDING));
-			binding.setToConfigFileString(inputString + "," + bindSettings, joyNo, lastConfigFileVersion);
+			binding.setToConfigFileString(inputString + "," + bindSettings, joyNo, JoypadMod.MINVERSION);
 			bindings.add(binding);
 		}
 		return bindings;

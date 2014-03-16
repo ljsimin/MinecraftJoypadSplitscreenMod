@@ -122,10 +122,12 @@ public class JoypadMouse
 		// this is the equivalent of moving the mouse around on your joypad
 		public static void pollAxis()
 		{
-			if (Minecraft.getSystemTime() - lastAxisReading < readingTimeout)
-				return;
-
 			boolean inGui = mc.currentScreen != null;
+			long readTimeout = inGui ? readingTimeout + ControllerSettings.inMenuSensitivity : readingTimeout
+					+ ControllerSettings.inGameSensitivity;
+
+			if (Minecraft.getSystemTime() - lastAxisReading < readTimeout)
+				return;
 
 			// minecrafts original crazy calculation has found its way here
 			float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;

@@ -27,7 +27,7 @@ public class JoypadMod
 {
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final float MINVERSION = 0.09f;
+	public static final float MINVERSION = 0.095f;
 	public static final String REVISION = "Experimental";
 
 	public static ControllerSettings controllerSettings;
@@ -39,7 +39,6 @@ public class JoypadMod
 	{
 		LogHelper.Info("preInit");
 		controllerSettings = new ControllerSettings(event.getSuggestedConfigurationFile());
-		controllerSettings.init();
 	}
 
 	@EventHandler
@@ -65,6 +64,7 @@ public class JoypadMod
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		LogHelper.Info("postInit");
+		controllerSettings.init();
 		try
 		{
 			VirtualKeyboard.create();
