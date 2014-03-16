@@ -20,6 +20,8 @@ import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -197,7 +199,7 @@ public class JoypadConfigMenu extends GuiScreen
 		// add bottom buttons
 		// TODO calibration
 		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
-				bottomButtonWidth, 20, "Calibrate"), false);
+				bottomButtonWidth, 20, "Calibrate"));
 
 		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
 				"Done"));
@@ -268,7 +270,7 @@ public class JoypadConfigMenu extends GuiScreen
 			ControllerSettings.inGameSensitivity += 5;
 			break;
 		case 500: // Calibrate
-			// TODO implement
+			calibrate();
 			break;
 		case 501: // Done
 			mc.displayGuiScreen(this.parentScr);
@@ -501,5 +503,29 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		// return this.field_146289_q;
 		return this.fontRenderer;
+	}
+
+	private void calibrate()
+	{
+		ControllerSettings.suspendControllerInput(true, 5000);
+		for (int i = 0; i < ControllerSettings.bindingListSize(); i++)
+		{
+			ControllerBinding binding = ControllerSettings.get(i);
+			if (binding.inputEvent.getEventType() == EventType.AXIS && binding.inputEvent.isValid())
+			{
+				ControllerInputEvent input = binding.inputEvent;
+				LogHelper.Info("Checking deadzone values for " + input.toString());
+				float startDeadZone = input.getDeadZone();
+				float deadZone = startDeadZone;
+				while (input.isPressed() && deadZone <= 1f)
+				{
+					deadZone += 0.02;
+					input.setDeadZone(deadZone);
+				}
+				LogHelper.Info("Start deadzone: " + startDeadZone + " End deadzone: " + deadZone);
+			}
+		}
+		ControllerSettings.suspendControllerInput(false, 0);
+
 	}
 }

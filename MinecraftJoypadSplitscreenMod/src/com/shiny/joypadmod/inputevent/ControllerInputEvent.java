@@ -43,7 +43,7 @@ public abstract class ControllerInputEvent
 	protected abstract boolean isTargetEvent();
 
 	// check if axis or button number is valid
-	protected abstract boolean isValid();
+	public abstract boolean isValid();
 
 	public abstract float getAnalogReading();
 

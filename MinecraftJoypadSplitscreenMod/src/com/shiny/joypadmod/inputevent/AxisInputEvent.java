@@ -99,7 +99,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	}
 
 	@Override
-	protected boolean isValid()
+	public boolean isValid()
 	{
 		return axisNumber >= 0 && axisNumber < Controllers.getController(controllerNumber).getAxisCount();
 	}

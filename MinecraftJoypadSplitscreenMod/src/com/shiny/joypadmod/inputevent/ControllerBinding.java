@@ -272,7 +272,24 @@ public class ControllerBinding
 					}
 					catch (NumberFormatException nfe)
 					{
-						keyCodes[j] = Keyboard.getKeyIndex(keyCodesS[j]);
+						int key = Keyboard.getKeyIndex(keyCodesS[j]);
+						if (key == Keyboard.KEY_NONE)
+						{
+							char[] chars = keyCodesS[j].toCharArray();
+							for (int c1 = 0; c1 < chars.length; c1++)
+							{
+								if (chars[c1] == '/')
+								{
+									keyCodes[j] = Keyboard.KEY_SLASH;
+								}
+								else
+									keyCodes[j] = Character.toUpperCase(chars[c1]);
+								if (c1 < chars.length - 2)
+									j++;
+							}
+						}
+						else
+							keyCodes[j] = Keyboard.getKeyIndex(keyCodesS[j]);
 					}
 				}
 				i++;
