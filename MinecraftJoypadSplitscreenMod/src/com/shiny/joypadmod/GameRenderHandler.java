@@ -83,6 +83,7 @@ public class GameRenderHandler
 				{
 					System.out.println("Unpressing all buttons");
 					ControllerSettings.unpressAll();
+					Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 				}
 
 				DrawRetical();
@@ -95,6 +96,7 @@ public class GameRenderHandler
 				{
 					System.out.println("Unpressing all buttons");
 					ControllerSettings.unpressAll();
+					Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 				}
 
 				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
