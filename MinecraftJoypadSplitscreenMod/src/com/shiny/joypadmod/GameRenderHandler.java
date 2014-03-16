@@ -17,6 +17,7 @@ import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
@@ -32,6 +33,7 @@ public class GameRenderHandler
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
 	static long lastScrollTick = 0;
+	static boolean debugInputEvents = false;
 
 	public static void HandlePreRender()
 	{
@@ -199,6 +201,24 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGameTick < 200)
 				continue;
 
+			if (debugInputEvents)
+			{
+				try
+				{
+					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
+							ControllerSettings.joystick, Controllers.getEventControlIndex());
+					if (inputEvent != null)
+					{
+						LogHelper.Info("Input event " + inputEvent.toString()
+								+ " triggered.  Finding associated binding");
+					}
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Exception caught debugging controller input events: " + ex.toString());
+				}
+			}
+
 			for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
 			{
 				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
@@ -228,6 +248,24 @@ public class GameRenderHandler
 			// controlling
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
+
+			if (debugInputEvents)
+			{
+				try
+				{
+					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
+							ControllerSettings.joystick, Controllers.getEventControlIndex());
+					if (inputEvent != null)
+					{
+						LogHelper.Info("Input event " + inputEvent.toString()
+								+ " triggered.  Finding associated binding");
+					}
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Exception caught debugging controller input events: " + ex.toString());
+				}
+			}
 
 			mc.inGameHasFocus = true;
 

@@ -16,7 +16,9 @@ public class PovInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isTargetEvent()
 	{
-		return Controllers.isEventPovX() || Controllers.isEventPovY();
+		if (povNumber == 0)
+			return Controllers.isEventPovX();
+		return Controllers.isEventPovY();
 	}
 
 	@Override

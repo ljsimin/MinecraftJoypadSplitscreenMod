@@ -27,8 +27,9 @@ public abstract class ControllerInputEvent
 
 	public ControllerInputEvent(EventType type, int controllerNumber, int buttonNumber, float threshold, float deadzone)
 	{
-		LogHelper.Info("ControllerInputEvent constructor params:(" + type + ", " + controllerNumber + ", "
-				+ buttonNumber + ", " + threshold + ", " + deadzone + ")");
+		LogHelper.Info("ControllerInputEvent constructor params:( type: " + type + ", controllerNumber: "
+				+ controllerNumber + ", buttonNumber: " + buttonNumber + ", threshhold: " + threshold + ", deadzone: "
+				+ deadzone + ")");
 		this.type = type;
 		this.controllerNumber = controllerNumber;
 		this.buttonNumber = buttonNumber;
@@ -97,8 +98,7 @@ public abstract class ControllerInputEvent
 		if (!isValid())
 			return false;
 
-		if (Controllers.getEventSource().getIndex() == controllerNumber
-				&& Controllers.getEventControlIndex() == buttonNumber && isTargetEvent())
+		if (Controllers.getEventSource().getIndex() == controllerNumber && isTargetEvent())
 		{
 			return true;
 		}

@@ -39,6 +39,7 @@ public class JoypadMod
 	{
 		LogHelper.Info("preInit");
 		controllerSettings = new ControllerSettings(event.getSuggestedConfigurationFile());
+		controllerSettings.init();
 	}
 
 	@EventHandler
@@ -64,7 +65,6 @@ public class JoypadMod
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		LogHelper.Info("postInit");
-		controllerSettings.init();
 		try
 		{
 			VirtualKeyboard.create();

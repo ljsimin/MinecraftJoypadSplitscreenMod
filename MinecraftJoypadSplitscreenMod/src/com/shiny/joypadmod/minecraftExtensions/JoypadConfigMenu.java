@@ -1,5 +1,6 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -12,11 +13,15 @@ import net.minecraft.client.settings.GameSettings;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.inputevent.ButtonInputEvent;
+import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -55,12 +60,25 @@ public class JoypadConfigMenu extends GuiScreen
 	private GuiControls mouseGui;
 	public Minecraft mc = Minecraft.getMinecraft();
 
+	private long customBindingTickStart = 0;
+
 	private JoypadControlList optionList;
 	private List<Integer> controllers;
 
 	private enum ButtonsEnum
 	{
-		control, prev, next, sensitivity, reset, invert, toggleSneak, showInvalid, calibrate, done, mouseMenu
+		control,
+		prev,
+		next,
+		sensitivity,
+		reset,
+		invert,
+		toggleSneak,
+		showInvalid,
+		customBinding,
+		calibrate,
+		done,
+		mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent, GuiControls originalControlScreen)
@@ -145,6 +163,9 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(503, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
 				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Other controllers"));
 
+		addButton(new GuiButton(504, resetXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				controllerButtonWidth + buttonXStart_top - resetXStart, 20, "Custom key"));
+
 		// add bottom buttons
 		// TODO calibration
 		addButton(new GuiButton(500, width / 2 - (int) (bottomButtonWidth * 1.5), buttonYStart_bottom,
@@ -152,10 +173,13 @@ public class JoypadConfigMenu extends GuiScreen
 
 		addButton(new GuiButton(501, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
 				"Done"));
-		GuiButton mouseKeyboardMenuButton = new GuiButton(502, width / 2 + (bottomButtonWidth / 2),
-				buttonYStart_bottom, bottomButtonWidth, 20, "Mouse menu");
-		mouseKeyboardMenuButton.enabled = !JoypadMod.controllerSettings.isInputEnabled();
-		addButton(mouseKeyboardMenuButton);
+		addButton(new GuiButton(502, width / 2 + (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth, 20,
+				"Mouse menu"));
+
+		enableDisableButton(ButtonsEnum.mouseMenu.ordinal(), !JoypadMod.controllerSettings.isInputEnabled());
+		enableDisableButton(ButtonsEnum.customBinding.ordinal(), JoypadMod.controllerSettings.isInputEnabled());
+		// mouseKeyboardMenuButton.enabled = !JoypadMod.controllerSettings.isInputEnabled();
+		// addButton(mouseKeyboardMenuButton);
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
 	}
@@ -228,12 +252,14 @@ public class JoypadConfigMenu extends GuiScreen
 				getControllers(true);
 				guiButton.displayString = guiButton.displayString.replace("Valid", "Other");
 			}
-			GuiButton button = (GuiButton) buttonList.get(ButtonsEnum.control.ordinal());
-			button.enabled = controllers.size() > 0;
+			enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0);
 			if (controllers.size() > 0)
 			{
 				updateControllerButton();
 			}
+			break;
+		case 504: // custom binding
+			customBindingTickStart = Minecraft.getSystemTime();
 			break;
 		}
 	}
@@ -281,6 +307,31 @@ public class JoypadConfigMenu extends GuiScreen
 	@Override
 	public void drawScreen(int par1, int par2, float par3)
 	{
+		if (customBindingTickStart > 0)
+		{
+			if (Minecraft.getSystemTime() - customBindingTickStart > 5000)
+				customBindingTickStart = 0;
+			changeButtonText(ButtonsEnum.customBinding.ordinal(), "Press Key");
+			for (int i = 0; i < Keyboard.KEYBOARD_SIZE; i++)
+			{
+				if (Keyboard.isKeyDown(i))
+				{
+					String key = Keyboard.getKeyName(i);
+					System.out.println("Received " + key);
+					customBindingTickStart = 0;
+					ControllerBinding binding = new ControllerBinding("user."
+							+ ControllerSettings.userDefinedBindings.size(), key, new ButtonInputEvent(
+							ControllerSettings.joyNo, -1, 1), new int[] { Keyboard.getKeyIndex(key) }, 0,
+							EnumSet.of(BindingOptions.GAME_BINDING));
+					ControllerSettings.addControllerBinding(binding);
+					break;
+				}
+			}
+		}
+		else
+		{
+			changeButtonText(ButtonsEnum.customBinding.ordinal(), "Custom Key");
+		}
 		drawDefaultBackground();
 		this.optionList.drawScreen(par1, par2, par3);
 		int heightOffset = labelYStart;
@@ -299,7 +350,6 @@ public class JoypadConfigMenu extends GuiScreen
 		// CALIBRATE
 
 		super.drawScreen(par1, par2, par3);
-
 	}
 
 	/**
@@ -332,13 +382,23 @@ public class JoypadConfigMenu extends GuiScreen
 		return i;
 	}
 
+	private void changeButtonText(int buttonIndex, String text)
+	{
+		((GuiButton) buttonList.get(buttonIndex)).displayString = text;
+	}
+
+	private void enableDisableButton(int buttonIndex, boolean enable)
+	{
+		((GuiButton) buttonList.get(buttonIndex)).enabled = enable;
+	}
+
 	private void toggleOnOffButton(boolean b, int index)
 	{
 		String s1 = b ? "off" : "on";
 		String s2 = b ? "on" : "off";
 		String newString = ((GuiButton) buttonList.get(index)).displayString.replace(s1, s2);
 
-		((GuiButton) buttonList.get(index)).displayString = newString;
+		changeButtonText(index, newString);
 	}
 
 	private void toggleController()
@@ -350,18 +410,15 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private void updateControllerButton()
 	{
-		GuiButton button = (GuiButton) buttonList.get(ButtonsEnum.mouseMenu.ordinal());
-		if (JoypadMod.controllerSettings.isInputEnabled())
+		if (JoypadMod.controllerSettings.isInputEnabled()
+				&& ControllerSettings.joyNo != controllers.get(currentJoyIndex))
 		{
-			button.enabled = false;
-			if (ControllerSettings.joyNo != controllers.get(currentJoyIndex))
-				JoypadMod.controllerSettings.setController(controllers.get(currentJoyIndex));
+			JoypadMod.controllerSettings.setController(controllers.get(currentJoyIndex));
 		}
-		else
-			button.enabled = true;
 
-		button = (GuiButton) buttonList.get(ButtonsEnum.control.ordinal());
-		button.displayString = getJoystickInfo(currentJoyIndex, JoyInfoEnum.name);
+		enableDisableButton(ButtonsEnum.mouseMenu.ordinal(), !JoypadMod.controllerSettings.isInputEnabled());
+		enableDisableButton(ButtonsEnum.customBinding.ordinal(), JoypadMod.controllerSettings.isInputEnabled());
+		changeButtonText(ButtonsEnum.control.ordinal(), getJoystickInfo(currentJoyIndex, JoyInfoEnum.name));
 	}
 
 	// Obfuscation & back porting helpers -- here and not in ObfuscationHelper

@@ -32,7 +32,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isTargetEvent()
 	{
-		return Controllers.isEventAxis();
+		return Controllers.isEventAxis() && Controllers.getEventControlIndex() == axisNumber;
 	}
 
 	@Override
