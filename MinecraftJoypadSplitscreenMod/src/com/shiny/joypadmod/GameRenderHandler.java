@@ -301,7 +301,7 @@ public class GameRenderHandler
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Debug("Failed to get parent of options gui.  aborting");
+				LogHelper.Error("Failed to get parent of options gui.  aborting. Exception " + ex.toString());
 				return;
 			}
 		}
