@@ -21,6 +21,7 @@ public class JoypadControlList extends GuiScrollingList
 
 	private int selectedIndex = -1;
 	private boolean doubleClicked = false;
+	private JoypadConfigMenu parent;
 
 	public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
 	{
@@ -31,6 +32,7 @@ public class JoypadControlList extends GuiScrollingList
 																		// end
 				parent.controlListXStart, // left start
 				20); // entryHeight
+		this.parent = parent;
 		this.fontRenderer = fontRenderer;
 	}
 
@@ -43,6 +45,10 @@ public class JoypadControlList extends GuiScrollingList
 	@Override
 	protected void elementClicked(int index, boolean doubleClick)
 	{
+		if (Minecraft.getSystemTime() - parent.lastSensitivityChange < 500)
+		{
+			return;
+		}
 		selectedIndex = index;
 		LogHelper.Info("Element " + index + " clicked! Double: " + doubleClick);
 		doubleClicked = doubleClick;
