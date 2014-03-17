@@ -45,6 +45,8 @@ public class JoypadConfigMenu extends GuiScreen
 	public int menuSensitivityStringXStart;
 	public int gameSensitivityStringXStart;
 
+	public long lastSensitivityChange = 0;
+
 	public int controllerStringY;
 
 	// determined by size of screen
@@ -299,29 +301,44 @@ public class JoypadConfigMenu extends GuiScreen
 			ControllerSettings.setToggleSneak(!ControllerSettings.getToggleSneak());
 			toggleOnOffButton(ControllerSettings.getToggleSneak(), ButtonsEnum.toggleSneak.ordinal());
 			break;
-		case 420: // menu sensitivity down big
-			ControllerSettings.inMenuSensitivity -= 5;
-			break;
-		case 421: // menu sensitivity down small
-			ControllerSettings.inMenuSensitivity -= 1;
-			break;
-		case 422: // menu sensitivity up small
-			ControllerSettings.inMenuSensitivity += 1;
-			break;
-		case 423: // menu sensitivity up big
-			ControllerSettings.inMenuSensitivity += 5;
-			break;
-		case 425: // gui sensitivity down big
-			ControllerSettings.inGameSensitivity -= 5;
-			break;
-		case 426: // gui sensitivity down small
-			ControllerSettings.inGameSensitivity -= 1;
-			break;
-		case 427: // gui sensitivity up small
-			ControllerSettings.inGameSensitivity += 1;
-			break;
-		case 428: // gui sensitivity up big
-			ControllerSettings.inGameSensitivity += 5;
+		case 420:
+		case 421:
+		case 422:
+		case 423:
+		case 425:
+		case 426:
+		case 427:
+		case 428:
+			int bigChange = 5;
+			int smallChange = 1;
+			switch (getButtonId(guiButton))
+			{
+			case 420: // menu sensitivity down big
+				ControllerSettings.inMenuSensitivity -= bigChange;
+				break;
+			case 421: // menu sensitivity down small
+				ControllerSettings.inMenuSensitivity -= smallChange;
+				break;
+			case 422: // menu sensitivity up small
+				ControllerSettings.inMenuSensitivity += smallChange;
+				break;
+			case 423: // menu sensitivity up big
+				ControllerSettings.inMenuSensitivity += bigChange;
+				break;
+			case 425: // gui sensitivity down big
+				ControllerSettings.inGameSensitivity -= bigChange;
+				break;
+			case 426: // gui sensitivity down small
+				ControllerSettings.inGameSensitivity -= smallChange;
+				break;
+			case 427: // gui sensitivity up small
+				ControllerSettings.inGameSensitivity += smallChange;
+				break;
+			case 428: // gui sensitivity up big
+				ControllerSettings.inGameSensitivity += bigChange;
+				break;
+			}
+			lastSensitivityChange = Minecraft.getSystemTime();
 			break;
 		case 500: // Calibrate
 			calibrate();
