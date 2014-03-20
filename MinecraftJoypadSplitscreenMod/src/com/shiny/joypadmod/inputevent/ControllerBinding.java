@@ -19,6 +19,10 @@ public class ControllerBinding
 		MENU_BINDING, GAME_BINDING, IS_TOGGLE, REPEAT_IF_HELD, CLIENT_TICK, RENDER_TICK
 	};
 
+	public static String[] BindingOptionsComment = { "Will trigger in menu screens", "Will trigger during game play",
+			"Pressing button once will toggle on / off", "Continues to trigger if held down",
+			"Send the trigger during client tick", "Send the trigger during render tick" };
+
 	/**
 	 * Used as a key for the save file
 	 */
@@ -194,7 +198,10 @@ public class ControllerBinding
 
 	public float getAnalogReading()
 	{
-		return inputEvent.getAnalogReading();
+		if (inputEvent.isValid())
+			return inputEvent.getAnalogReading();
+
+		return 0;
 	}
 
 	public String toConfigFileString()
@@ -218,6 +225,15 @@ public class ControllerBinding
 		if (inputEvent != null)
 			s += inputEvent.toConfigFileString();
 
+		if (bindingOptions != null)
+		{
+			Object[] options = bindingOptions.toArray();
+			for (Object bo : options)
+			{
+				s += "," + bo.toString();
+			}
+		}
+
 		return s;
 	}
 
@@ -227,7 +243,7 @@ public class ControllerBinding
 		if (s == null)
 			return false;
 
-		if (this.toConfigFileString().equalsIgnoreCase(s) && this.inputEvent.controllerNumber == joyNo)
+		if (this.toConfigFileString().equals(s) && this.inputEvent.controllerNumber == joyNo)
 		{
 			return true;
 		}
@@ -248,11 +264,6 @@ public class ControllerBinding
 		int eventIndex;
 		float threshold;
 		float deadzone;
-
-		/*
-		 * try { event = ControllerInputEvent.EventType.valueOf(settings[1]); eventIndex = Integer.parseInt(settings[2]); threshold = Float.parseFloat(settings[3]); deadzone =
-		 * Float.parseFloat(settings[4]); } catch (Exception ex) { LogHelper.Error("Failed parsing string: " + s + " Exception: " + ex.toString()); return false; }
-		 */
 
 		try
 		{
@@ -295,12 +306,25 @@ public class ControllerBinding
 				i++;
 			}
 			else
-				this.menuString = settings[i];
+				this.menuString = settings[i++];
 
 			event = ControllerInputEvent.EventType.valueOf(settings[i++]);
 			eventIndex = Integer.parseInt(settings[i++]);
 			threshold = Float.parseFloat(settings[i++]);
 			deadzone = Float.parseFloat(settings[i++]);
+
+			while (i < settings.length)
+			{
+				try
+				{
+					bindingOptions.add(BindingOptions.valueOf(settings[i]));
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Failed trying to parse " + settings[i] + " to a binding option. " + ex.toString());
+				}
+				i++;
+			}
 
 			if (event == EventType.BUTTON)
 			{

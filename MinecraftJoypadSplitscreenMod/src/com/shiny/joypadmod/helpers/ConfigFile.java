@@ -7,20 +7,19 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.ConfigCategory;
 import net.minecraftforge.common.Configuration;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 
 public class ConfigFile
 {
 	public int preferedJoyNo;
 	public String preferedJoyName;
 	public boolean invertYAxis;
-	public boolean toggleSneak;
 	public int inGameSensitivity;
 	public int inMenuSensitivity;
 
@@ -32,7 +31,7 @@ public class ConfigFile
 
 	public enum UserJoypadSettings
 	{
-		JoyNo, JoyName, InvertY, ToggleSneak
+		JoyNo, JoyName, InvertY, GameSensitivity, GuiSensitivity
 	}
 
 	public ConfigFile(File configFile)
@@ -48,7 +47,7 @@ public class ConfigFile
 
 		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
 		{
-			userName = Minecraft.getMinecraft().getSession().getUsername();
+			Minecraft.getMinecraft().getSession().getUsername();
 		}
 
 		defaultCategory = "Joypad-" + userName;
@@ -62,17 +61,27 @@ public class ConfigFile
 		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
 		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
-		toggleSneak = config.get(defaultCategory, "ToggleSneak", false).getBoolean(false);
 		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
 		inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). ToggleSneak = "
-				+ toggleSneak + ". invertYAxis = " + invertYAxis + ". ConfigVersion " + lastConfigFileVersion
-				+ ". Game Sensitivity multiplier: " + inGameSensitivity + ". Menu Sensitivity multiplier: "
-				+ inMenuSensitivity);
+		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). invertYAxis = "
+				+ invertYAxis + ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: "
+				+ inGameSensitivity + ". Menu Sensitivity multiplier: " + inMenuSensitivity);
 
+		addBindingOptionsComment();
 		config.save();
+	}
+
+	public void addBindingOptionsComment()
+	{
+		BindingOptions[] bos = ControllerBinding.BindingOptions.values();
+		for (BindingOptions bo : bos)
+		{
+			config.get("-BindingOptions-", bo.toString(), " " + ControllerBinding.BindingOptionsComment[bo.ordinal()]);
+		}
+		config.addCustomCategoryComment("-BindingOptions-",
+				"List of valid binding options that can be combined with Controller events");
 	}
 
 	public void updatePreferedJoy(int joyNo, String joyName)
@@ -90,21 +99,18 @@ public class ConfigFile
 	public List<ControllerBinding> getUserBindings(int joyNo)
 	{
 		String category = "-UserBindings-";
-		int numBindings = config.get(category, "NumBindings", 0).getInt();
-		List<ControllerBinding> bindings = new ArrayList<ControllerBinding>();
+		ControllerSettings.userDefinedBindings.clear();
 
-		for (int i = 0; i < numBindings; i++)
+		ConfigCategory cc = config.getCategory(category);
+		for (String key : cc.keySet())
 		{
-			String inputString = "user." + i;
-			// String bindingComment = "S:" + inputString
-			// + "=<Menu String>,<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>";
-			String bindSettings = config.get(category, inputString, "Trigger" + i + ",{R},BUTTON,-1,1,0").getString();
-			ControllerBinding binding = new ControllerBinding(inputString, "Trigger" + i, null, null, 0,
+			String bindSettings = cc.get(key).getString();
+			ControllerBinding binding = new ControllerBinding(key, "Trigger-" + key, null, null, 0,
 					EnumSet.of(BindingOptions.GAME_BINDING));
-			binding.setToConfigFileString(inputString + "," + bindSettings, joyNo, JoypadMod.MINVERSION);
-			bindings.add(binding);
+			if (binding.setToConfigFileString(key + "," + bindSettings, joyNo, JoypadMod.MINVERSION))
+				ControllerSettings.userDefinedBindings.add(binding);
 		}
-		return bindings;
+		return ControllerSettings.userDefinedBindings;
 	}
 
 	public List<ControllerBinding> getControllerBindings(int joyNo, String joyName)
@@ -112,7 +118,7 @@ public class ConfigFile
 		List<ControllerBinding> controlBindingsDefault = new ArrayList<ControllerBinding>(
 				Arrays.asList(ControllerSettings.getDefaultJoyBindings()));
 		String category = defaultCategory + "." + joyName;
-		String bindingComment = "S:<actionID>=<Menu String>,<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>";
+		String bindingComment = "S:<actionID>=<Menu String>,<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>,<BINDING_OPTIONS1>,<BINDING_OPTIONS2>...";
 		int i = 0;
 		LogHelper.Info("Attempting to get joy info for " + category);
 		try
@@ -137,10 +143,9 @@ public class ConfigFile
 					saveControllerBinding(joyName, controlBindingsDefault.get(i));
 				}
 				// last time the config file changed how it interprets values
-				else if (lastJoyConfigVersion < 0.08)
+				else if (lastJoyConfigVersion < 0.0951)
 				{
-					if (controlBindingsDefault.get(i).inputEvent.getEventType() == ControllerInputEvent.EventType.BUTTON)
-						saveControllerBinding(joyName, controlBindingsDefault.get(i));
+					saveControllerBinding(joyName, controlBindingsDefault.get(i));
 				}
 			}
 
@@ -179,12 +184,28 @@ public class ConfigFile
 		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for "
 				+ catToUpdate);
 
-		if (updateKey(catToUpdate, binding.inputString, binding.toConfigFileString()) && userBinding)
+		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString());
+
+	}
+
+	public void deleteControllerBinding(String joyName, ControllerBinding binding)
+	{
+		String catToUpdate;
+		boolean userBinding = binding.inputString.toLowerCase().contains("user");
+
+		if (userBinding)
 		{
-			int numBindings = config.get(catToUpdate, "NumBindings", 0).getInt();
-			updateKey(catToUpdate, "NumBindings", "" + (numBindings + 1));
+			catToUpdate = "-UserBindings-";
+		}
+		else
+		{
+			catToUpdate = createConfigSettingString(joyName, binding.inputString);
 		}
 
+		LogHelper.Info("Attempting to delete " + binding.inputString + " " + binding.toConfigFileString() + " for "
+				+ catToUpdate);
+
+		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString(), true);
 	}
 
 	private String createConfigSettingString(String joyName, String controlString)
@@ -192,9 +213,14 @@ public class ConfigFile
 		return defaultCategory + "." + joyName + "." + controlString;
 	}
 
-	// boolean true returns if a new key was created.
-	// false means key was updated
 	private boolean updateKey(String category, String key, String value)
+	{
+		return updateKey(category, key, value, false);
+	}
+
+	// boolean true returns if a new key was created or deleted.
+	// false means key was updated
+	private boolean updateKey(String category, String key, String value, boolean delete)
 	{
 		boolean bRet = true;
 		try
@@ -202,9 +228,12 @@ public class ConfigFile
 			if (config.hasKey(category, key))
 			{
 				config.getCategory(category).remove(key);
-				bRet = false;
+				bRet = delete ? true : false;
 			}
-			config.get(category, key, value);
+			if (!delete)
+			{
+				config.get(category, key, value);
+			}
 			config.save();
 		}
 		catch (Exception ex)

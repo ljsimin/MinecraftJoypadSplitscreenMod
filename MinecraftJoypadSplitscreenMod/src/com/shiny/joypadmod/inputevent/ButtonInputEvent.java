@@ -30,7 +30,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	public String getName()
 	{
 		if (!isValid())
-			return "Invalid";
+			return "Not Set";
 		return Controllers.getController(controllerNumber).getButtonName(buttonNumber);
 	}
 
