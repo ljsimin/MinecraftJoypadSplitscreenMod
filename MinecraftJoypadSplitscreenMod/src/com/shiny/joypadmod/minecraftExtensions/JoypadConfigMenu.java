@@ -474,7 +474,8 @@ public class JoypadConfigMenu extends GuiScreen
 					{
 						binding = new ControllerBinding("user." + ControllerSettings.getUnusedUserIndex(), key,
 								new ButtonInputEvent(ControllerSettings.joyNo, -1, 1),
-								new int[] { Keyboard.getKeyIndex(key) }, 0, EnumSet.of(BindingOptions.GAME_BINDING));
+								new int[] { Keyboard.getKeyIndex(key) }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+										BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK));
 						ControllerSettings.addControllerBinding(binding);
 					}
 					else
@@ -522,7 +523,8 @@ public class JoypadConfigMenu extends GuiScreen
 			if (currentSelectedBindingIndex != -1)
 			{
 				if (ControllerSettings.get(currentSelectedBindingIndex).bindingOptions != null
-						&& ControllerSettings.get(currentSelectedBindingIndex).bindingOptions.contains(BindingOptions.IS_TOGGLE))
+						&& ControllerSettings.get(currentSelectedBindingIndex).bindingOptions
+								.contains(BindingOptions.IS_TOGGLE))
 				{
 					toggleOnOffButton(true, ButtonsEnum.toggle.ordinal());
 				}
