@@ -107,7 +107,6 @@ public class ControllerSettings
 	private static boolean suspendControllerInput = false;
 
 	private static boolean invertYAxis = false;
-	private static boolean toggleSneak = false;
 
 	private static ConfigFile config = null;
 
@@ -268,6 +267,46 @@ public class ControllerSettings
 		return null;
 	}
 
+	public static void delete(int joyBindingIndex)
+	{
+		config.deleteControllerBinding(joystick.getName(), joyBindings.get(joyBindingIndex));
+		ControllerBinding binding = get(joyBindingIndex);
+		joyBindings.remove(joyBindingIndex);
+
+		if (binding.inputString.contains("user."))
+		{
+			userDefinedBindings.remove(binding);
+		}
+
+	}
+
+	public static int getUnusedUserIndex()
+	{
+		for (int i = 0; i < 1000; i++)
+		{
+			boolean foundMatch = false;
+			for (ControllerBinding binding : userDefinedBindings)
+			{
+				try
+				{
+					String idString = binding.inputString.substring(binding.inputString.indexOf('.') + 1);
+					if (Integer.parseInt(idString) == i)
+					{
+						foundMatch = true;
+						break;
+					}
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Exception caught getting unused user index. " + ex.toString());
+				}
+			}
+			if (!foundMatch)
+				return i;
+		}
+		return 9999;
+	}
+
 	public static int bindingListSize()
 	{
 		if (joyBindings == null)
@@ -291,9 +330,8 @@ public class ControllerSettings
 		}
 
 		invertYAxis = config.invertYAxis;
-		toggleSneak = config.toggleSneak;
-		inMenuSensitivity = config.inMenuSensitivity;// * (ModVersionHelper.getVersion() == 172 ? 2 : 1);
-		inGameSensitivity = config.inGameSensitivity;// * (ModVersionHelper.getVersion() == 172 ? 2 : 1);
+		inMenuSensitivity = config.inMenuSensitivity;
+		inGameSensitivity = config.inGameSensitivity;
 
 		LogHelper.Info("Initializing Controllers");
 
@@ -392,7 +430,6 @@ public class ControllerSettings
 			controllerUtils.printDeadZones(joystick);
 
 			joyBindings = config.getControllerBindings(controllerNo, joystick.getName());
-			setToggleSneak(toggleSneak);
 
 			inputEnabled = true;
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
@@ -422,7 +459,6 @@ public class ControllerSettings
 				setControllerBinding(i, bindings[i].inputEvent);
 			}
 		}
-		setToggleSneak(toggleSneak);
 	}
 
 	public boolean isInputEnabled()
@@ -472,13 +508,38 @@ public class ControllerSettings
 
 	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
 	{
+		// TODO: update the userdefinedbinding list as well if we will ever use its input event
 		ControllerSettings.joyBindings.get(bindingIndex).inputEvent = inputEvent;
+
 		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
 		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
 			ControllerSettings.resetGameAutoHandleBindings();
 
 		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
 			ControllerSettings.resetMenuAutoHandleBindings();
+	}
+
+	public static void setControllerBinding(int bindingIndex, ControllerBinding binding)
+	{
+		ControllerSettings.joyBindings.set(bindingIndex, binding);
+		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
+			ControllerSettings.resetGameAutoHandleBindings();
+
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
+			ControllerSettings.resetMenuAutoHandleBindings();
+	}
+
+	public static void unsetControllerBinding(int bindingIndex)
+	{
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
+			ControllerSettings.resetGameAutoHandleBindings();
+
+		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
+			ControllerSettings.resetMenuAutoHandleBindings();
+
+		ControllerSettings.joyBindings.get(bindingIndex).inputEvent = new ButtonInputEvent(0, -1, 1);
+		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
 	}
 
 	public static void addControllerBinding(ControllerBinding binding)
@@ -565,11 +626,6 @@ public class ControllerSettings
 		return invertYAxis;
 	}
 
-	public static boolean getToggleSneak()
-	{
-		return toggleSneak;
-	}
-
 	public static void setInvertYAxis(boolean b)
 	{
 		if (invertYAxis != b)
@@ -579,26 +635,24 @@ public class ControllerSettings
 		}
 	}
 
-	public static void setToggleSneak(boolean b)
+	public static void setToggle(int bindingIndex, boolean b)
 	{
-		if (toggleSneak != b)
+
+		ControllerBinding binding = joyBindings.get(bindingIndex);
+		boolean changed = false;
+		if (b)
 		{
-			toggleSneak = b;
-			config.updateConfigFileSetting(UserJoypadSettings.ToggleSneak, "" + b);
-			if (joyBindings != null)
-			{
-				if (b)
-				{
-					joyBindings.get(JoyBindingEnum.joyBindSneak.ordinal()).bindingOptions.add(BindingOptions.IS_TOGGLE);
-				}
-				else
-				{
-					joyBindings.get(JoyBindingEnum.joyBindSneak.ordinal()).bindingOptions.remove(BindingOptions.IS_TOGGLE);
-				}
-			}
+			changed = binding.bindingOptions.add(BindingOptions.IS_TOGGLE);
 		}
-		LogHelper.Info("Togglesneak set to " + b);
-		resetGameAutoHandleBindings();
+		else
+		{
+			changed = binding.bindingOptions.remove(BindingOptions.IS_TOGGLE);
+		}
+
+		if (changed)
+		{
+			setControllerBinding(bindingIndex, binding);
+		}
 	}
 
 	private static List<ControllerBinding> gameAutoHandleBindings = null;
@@ -663,5 +717,15 @@ public class ControllerSettings
 		}
 		KeyBinding.unPressAllKeys();
 		VirtualMouse.unpressAllButtons();
+	}
+
+	public static void saveSensitivityValues()
+	{
+		LogHelper.Info("Saving game sensitivity value: " + ControllerSettings.inGameSensitivity);
+		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GameSensitivity, ""
+				+ ControllerSettings.inGameSensitivity);
+		LogHelper.Info("Saving menu sensitivity value: " + ControllerSettings.inMenuSensitivity);
+		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity, ""
+				+ ControllerSettings.inMenuSensitivity);
 	}
 }

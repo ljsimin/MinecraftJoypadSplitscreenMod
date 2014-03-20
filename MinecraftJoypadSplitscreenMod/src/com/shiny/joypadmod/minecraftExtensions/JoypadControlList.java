@@ -10,6 +10,7 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 import cpw.mods.fml.client.GuiScrollingList;
 
@@ -17,11 +18,12 @@ public class JoypadControlList extends GuiScrollingList
 {
 	private FontRenderer fontRenderer;
 	private int controllerInputTimeout = 5000;
-	private long controllerTickStart = 0;
+	public long controllerTickStart = 0;
 
 	private int selectedIndex = -1;
-	private boolean doubleClicked = false;
+	public boolean doubleClicked = false;
 	private JoypadConfigMenu parent;
+	private int lastListSize = 0;
 
 	public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
 	{
@@ -32,6 +34,7 @@ public class JoypadControlList extends GuiScrollingList
 				parent.controlListXStart, // left start
 				20); // entryHeight
 		this.parent = parent;
+		this.parent.controlList = this;
 		this.fontRenderer = fontRenderer;
 	}
 
@@ -44,18 +47,21 @@ public class JoypadControlList extends GuiScrollingList
 	@Override
 	protected void elementClicked(int index, boolean doubleClick)
 	{
-		if (Minecraft.getSystemTime() - parent.lastSensitivityChange < 500)
+
+		if (Minecraft.getSystemTime() - parent.outsideListClick < 500)
 		{
 			return;
 		}
+
 		selectedIndex = index;
-		LogHelper.Info("Element " + index + " clicked! Double: " + doubleClick);
+		parent.currentSelectedBindingIndex = selectedIndex;
 		doubleClicked = doubleClick;
 		if (doubleClick)
 		{
 			controllerTickStart = Minecraft.getSystemTime();
 			ControllerSettings.suspendControllerInput(true, 10000);
 		}
+
 	}
 
 	@Override
@@ -112,9 +118,27 @@ public class JoypadControlList extends GuiScrollingList
 		return false;
 	};
 
+	int wheelDown = 0;
+
 	@Override
 	protected void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5)
 	{
+		if (wheelDown-- > 0)
+			VirtualMouse.scrollWheel(-1);
+		if (lastListSize != getSize())
+		{
+			if (lastListSize > 0 && getSize() > lastListSize)
+			{
+				wheelDown = 250;
+				selectedIndex = getSize() - 1;
+			}
+			else
+			{
+				selectedIndex = Math.max(-1, selectedIndex - 1);
+			}
+			parent.currentSelectedBindingIndex = selectedIndex;
+			lastListSize = getSize();
+		}
 		String mcActionName = ControllerSettings.get(var1).menuString;
 
 		String mcActionButton;

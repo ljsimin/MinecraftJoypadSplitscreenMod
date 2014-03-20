@@ -55,7 +55,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	public String getName()
 	{
 		if (!isValid())
-			return "Invalid";
+			return "Not Set";
 		return Controllers.getController(controllerNumber).getAxisName(axisNumber);
 	}
 
@@ -63,7 +63,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	public String toString()
 	{
 		if (!isValid())
-			return "Invalid";
+			return "Not Set";
 		return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(
 				" Threshold: ").append(threshold).append(" Current value: ").append(getAnalogReading()).append(
 				" Is pressed: ").append(isPressed()).toString();
