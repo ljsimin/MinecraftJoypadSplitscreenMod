@@ -47,7 +47,7 @@ public class ConfigFile
 
 		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
 		{
-			Minecraft.getMinecraft().getSession().getUsername();
+			userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
 
 		defaultCategory = "Joypad-" + userName;
