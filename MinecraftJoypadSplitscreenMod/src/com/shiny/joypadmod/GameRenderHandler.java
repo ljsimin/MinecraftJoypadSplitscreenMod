@@ -35,6 +35,9 @@ public class GameRenderHandler
 	static long lastScrollTick = 0;
 	static boolean debugInputEvents = false;
 
+	public static List<ControllerBinding> preRenderGuiBucket = new ArrayList<ControllerBinding>();
+	public static List<ControllerBinding> preRenderGameBucket = new ArrayList<ControllerBinding>();
+
 	public static void HandlePreRender()
 	{
 		try
@@ -59,7 +62,33 @@ public class GameRenderHandler
 					// This call here re-points the mouse position that Minecraft picks
 					// up to determine if it should do the Hover over button effect.
 					VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
+					if (preRenderGuiBucket.size() > 0)
+					{
+						for (ControllerBinding b : preRenderGuiBucket)
+						{
+							b.wasPressed(true, true);
+						}
+						preRenderGuiBucket.clear();
+					}
 					HandleDragAndScrolling();
+				}
+			}
+
+			if (InGameCheckNeeded())
+			{
+				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+				{
+					if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
+						binding.isPressed();
+				}
+
+				if (preRenderGameBucket.size() > 0)
+				{
+					for (ControllerBinding b : preRenderGameBucket)
+					{
+						b.wasPressed(true, true);
+					}
+					preRenderGameBucket.clear();
 				}
 			}
 		}
@@ -159,8 +188,6 @@ public class GameRenderHandler
 				JoypadMouse.AxisReader.deltaY * (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
 	}
 
-	public static List<ControllerBinding> scrollBucket = new ArrayList<ControllerBinding>();
-
 	private static void HandleDragAndScrolling()
 	{
 
@@ -169,15 +196,6 @@ public class GameRenderHandler
 			// VirtualMouse.moveMouse(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 			McGuiHelper.guiMouseDrag(JoypadMouse.getX(), JoypadMouse.getY());
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
-		}
-
-		if (scrollBucket.size() > 0)
-		{
-			for (ControllerBinding b : scrollBucket)
-			{
-				b.wasPressed(true, true);
-			}
-			scrollBucket.clear();
 		}
 
 		ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed();
@@ -227,7 +245,7 @@ public class GameRenderHandler
 				{
 					if (binding.wasPressed(false))
 					{
-						scrollBucket.add(binding);
+						preRenderGuiBucket.add(binding);
 						break;
 					}
 				}
@@ -283,9 +301,19 @@ public class GameRenderHandler
 
 			for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
 			{
-				if (binding.wasPressed())
-					break;
+				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
+				{
+					if (binding.wasPressed(false))
+					{
+						preRenderGameBucket.add(binding);
+					}
+				}
+				else
+				{
+					binding.wasPressed();
+				}
 			}
+
 		}
 	}
 
