@@ -54,8 +54,21 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		buttonYStart_bottom = height - 20;
 
-		buttonList.add(new GuiButton(500, width / 2 - (bottomButtonWidth / 2), buttonYStart_bottom, bottomButtonWidth,
-				20, "Done"));
+		int xPos = width / 2 - bottomButtonWidth / 2;
+
+		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "Exit");
+
+		// these buttons will be moved if we display axis values
+		if (joypadIndex != -1)
+		{
+			xPos -= bottomButtonWidth / 2;
+			buttonList.add(new GuiButton(400, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "Save"));
+			xPos += bottomButtonWidth;
+			doneButton.displayString = "Cancel";
+		}
+
+		buttonList.add(doneButton);
+
 	}
 
 	@Override
@@ -103,8 +116,10 @@ public class JoypadCalibrationMenu extends GuiScreen
 		{
 			switch (guiButton.id)
 			{
-			case 200:
-
+			case 400: // Save
+				ControllerSettings.saveDeadZones(joypadIndex);
+				((GuiButton) buttonList.get(1)).displayString = "Done";
+				break;
 			case 500: // Done
 				mc.displayGuiScreen(this.parent);
 				break;
@@ -143,7 +158,14 @@ public class JoypadCalibrationMenu extends GuiScreen
 			int yPos = yStart + ySpace * 3 + 2;
 			int xyEndLeft[] = drawInstructions(xStart, yPos, ySpace);
 			int xyEndRight[] = drawAxis(xyEndLeft[0] + boxSpacing, yPos, 21, par1, par2);
-			int xyEndLeftDown[] = drawButtons(xStart, xyEndLeft[1] + boxSpacing + 5, ySpace);
+			// move the save button
+			((GuiButton) buttonList.get(0)).xPosition = xyEndLeft[0] + boxSpacing;
+			((GuiButton) buttonList.get(0)).yPosition = xyEndRight[1];
+			// move the Exit button
+			((GuiButton) buttonList.get(1)).xPosition = xyEndLeft[0] + boxSpacing + bottomButtonWidth;
+			((GuiButton) buttonList.get(1)).yPosition = xyEndRight[1];
+
+			int xyEndLeftDown[] = drawButtons(xStart, xyEndLeft[1] + boxSpacing + 2, ySpace);
 		}
 
 		super.drawScreen(par1, par2, par3);
@@ -169,7 +191,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 		Controller controller = Controllers.getController(joypadIndex);
 		int yPos = yStart;
-		int maxButtons = 16;
+		int maxButtons = 13;
 		int butWidth = buttonBoxWidth;
 		int numStrings = Math.min(controller.getButtonCount(), maxButtons);
 
@@ -222,7 +244,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 			int yOffset = -7;
 			int xOffset = -2;
-			if (this.buttonList.size() <= 1 + 4 * i)
+			if (this.buttonList.size() <= 2 + 4 * i)
 			{
 				buttonList.add(new GuiButton(i, xPos, yPos + yOffset, controlButWidth, 20, "Auto"));
 				buttonList.add(new GuiButton(i + 100, xPos + controlButWidth + xOffset, yPos + yOffset,
@@ -233,7 +255,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 						yPos + yOffset, directionButWidth, 20, ">"));
 			}
 
-			for (int k = 1 + 4 * i; k < 4 * i + 4; k++)
+			for (int k = 2 + 4 * i; k < 4 * i + 4; k++)
 			{
 				((GuiButton) buttonList.get(k)).drawButton(Minecraft.getMinecraft(), par1, par2);
 			}
@@ -350,4 +372,5 @@ public class JoypadCalibrationMenu extends GuiScreen
 		controller.setDeadZone(axisId, newValue);
 		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
 	}
+
 }

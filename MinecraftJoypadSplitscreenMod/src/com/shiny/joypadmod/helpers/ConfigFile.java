@@ -84,6 +84,12 @@ public class ConfigFile
 				"List of valid binding options that can be combined with Controller events");
 	}
 
+	public void addComment(String category, String comment)
+	{
+		config.addCustomCategoryComment(category, comment);
+		config.save();
+	}
+
 	public void updatePreferedJoy(int joyNo, String joyName)
 	{
 		String category = defaultCategory;
@@ -94,6 +100,25 @@ public class ConfigFile
 	public void updateConfigFileSetting(UserJoypadSettings setting, String value)
 	{
 		updateKey(defaultCategory, setting.toString(), value);
+	}
+
+	public List<Float> getSavedDeadzones(String joyName)
+	{
+		List<Float> deadzones = new ArrayList<Float>();
+
+		ConfigCategory cc = config.getCategory("-Deadzones-." + joyName);
+		for (String key : cc.keySet())
+		{
+			String floatValues = cc.get(key).getString();
+			deadzones.add(Float.parseFloat(floatValues));
+		}
+
+		return deadzones;
+	}
+
+	public void updateConfigFileSettingEx(String category, String key, String value)
+	{
+		updateKey(category, key, value);
 	}
 
 	public List<ControllerBinding> getUserBindings(int joyNo)

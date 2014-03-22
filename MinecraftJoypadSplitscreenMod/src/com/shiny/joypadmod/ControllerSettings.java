@@ -662,6 +662,8 @@ public class ControllerSettings
 	{
 		if (gameAutoHandleBindings == null)
 		{
+			if (joyNo != -1)
+				applySavedDeadZones(joyNo);
 			gameAutoHandleBindings = new ArrayList<ControllerBinding>();
 			for (ControllerBinding binding : joyBindings)
 			{
@@ -678,6 +680,9 @@ public class ControllerSettings
 	{
 		if (menuAutoHandleBindings == null)
 		{
+			if (joyNo != -1)
+				applySavedDeadZones(joyNo);
+
 			menuAutoHandleBindings = new ArrayList<ControllerBinding>();
 			for (ControllerBinding binding : joyBindings)
 			{
@@ -727,5 +732,34 @@ public class ControllerSettings
 		LogHelper.Info("Saving menu sensitivity value: " + ControllerSettings.inMenuSensitivity);
 		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity, ""
 				+ ControllerSettings.inMenuSensitivity);
+	}
+
+	public static void saveDeadZones(int joyId)
+	{
+		Controller controller = Controllers.getController(joyId);
+		for (int i = 0; i < controller.getAxisCount(); i++)
+		{
+			config.updateConfigFileSettingEx("-Deadzones-." + controller.getName(), controller.getAxisName(i), ""
+					+ controller.getDeadZone(i));
+		}
+		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
+		LogHelper.Info("Saved deadzones for " + controller.getName());
+	}
+
+	public static void applySavedDeadZones(int joyId)
+	{
+		if (joyBindings.size() <= 0)
+			return;
+
+		LogHelper.Info("Applying configurated deadzones");
+
+		Controller c = Controllers.getController(joyId);
+		List<Float> deadzones = config.getSavedDeadzones(c.getName());
+		for (int i = 0; i < deadzones.size(); i++)
+		{
+			LogHelper.Info("Setting axis " + i + " deadzone to " + deadzones.get(i));
+			c.setDeadZone(i, deadzones.get(i));
+		}
+
 	}
 }
