@@ -728,4 +728,16 @@ public class ControllerSettings
 		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity, ""
 				+ ControllerSettings.inMenuSensitivity);
 	}
+
+	public static void saveDeadZones(int joyId)
+	{
+		Controller controller = Controllers.getController(joyId);
+		for (int i = 0; i < controller.getAxisCount(); i++)
+		{
+			config.updateConfigFileSettingEx("-Deadzones-." + controller.getName(), controller.getAxisName(i), ""
+					+ controller.getDeadZone(i));
+		}
+		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
+		LogHelper.Info("Saved deadzones for " + controller.getName());
+	}
 }

@@ -20,7 +20,6 @@ import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
@@ -62,7 +61,7 @@ public class JoypadConfigMenu extends GuiScreen
 	public int controlListHeight;
 
 	// bottom button parameters
-	public int buttonYStart_bottom;
+	private int buttonYStart_bottom;
 	private int bottomButtonWidth = 70;
 
 	private GuiScreen parentScr;
@@ -359,7 +358,8 @@ public class JoypadConfigMenu extends GuiScreen
 			}
 			break;
 		case 500: // Calibrate
-			calibrate();
+			int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
+			mc.displayGuiScreen(new JoypadCalibrationMenu(this, realJoyIndex));
 			break;
 		case 501: // Done
 			mc.displayGuiScreen(this.parentScr);
@@ -690,39 +690,16 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonList.add(guiButton);
 	}
 
-	private int getButtonId(GuiButton guiButton)
+	public int getButtonId(GuiButton guiButton)
 	{
 		// return guiButton.field_146127_k;
 		return guiButton.id;
 	}
 
-	private FontRenderer getFontRenderer()
+	public FontRenderer getFontRenderer()
 	{
 		// return this.field_146289_q;
 		return this.fontRenderer;
-	}
-
-	private void calibrate()
-	{
-		ControllerSettings.suspendControllerInput(true, 5000);
-		for (int i = 0; i < ControllerSettings.bindingListSize(); i++)
-		{
-			ControllerBinding binding = ControllerSettings.get(i);
-			if (binding.inputEvent.getEventType() == EventType.AXIS && binding.inputEvent.isValid())
-			{
-				ControllerInputEvent input = binding.inputEvent;
-				LogHelper.Info("Checking deadzone values for " + input.toString());
-				float startDeadZone = input.getDeadZone();
-				float deadZone = startDeadZone;
-				while (input.isPressed() && deadZone <= 1f)
-				{
-					deadZone += 0.02;
-					input.setDeadZone(deadZone);
-				}
-				LogHelper.Info("Start deadzone: " + startDeadZone + " End deadzone: " + deadZone);
-			}
-		}
-		ControllerSettings.suspendControllerInput(false, 0);
-
+		// return this.fontRendererObj;
 	}
 }
