@@ -102,6 +102,20 @@ public class ConfigFile
 		updateKey(defaultCategory, setting.toString(), value);
 	}
 
+	public List<Float> getSavedDeadzones(String joyName)
+	{
+		List<Float> deadzones = new ArrayList<Float>();
+
+		ConfigCategory cc = config.getCategory("-Deadzones-." + joyName);
+		for (String key : cc.keySet())
+		{
+			String floatValues = cc.get(key).getString();
+			deadzones.add(Float.parseFloat(floatValues));
+		}
+
+		return deadzones;
+	}
+
 	public void updateConfigFileSettingEx(String category, String key, String value)
 	{
 		updateKey(category, key, value);
