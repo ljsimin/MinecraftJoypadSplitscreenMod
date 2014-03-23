@@ -181,4 +181,15 @@ public class ControllerUtils
 		return numberOfNegativeAxes > 1;
 	}
 
+	public static void autoCalibrateAxis(int joyId, int axisId)
+	{
+		Controller controller = Controllers.getController(joyId);
+		controller.setDeadZone(axisId, 0);
+		float currentValue = Math.abs(controller.getAxisValue(axisId));
+		LogHelper.Info("Axis: " + axisId + " currently has a value of: " + currentValue);
+		float newValue = currentValue + 0.15f;
+		controller.setDeadZone(axisId, newValue);
+		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
+	}
+
 }

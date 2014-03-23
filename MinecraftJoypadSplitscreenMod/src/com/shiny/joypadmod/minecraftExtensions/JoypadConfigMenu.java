@@ -39,8 +39,8 @@ public class JoypadConfigMenu extends GuiScreen
 	// X start of the buttons at the top of the screen
 	public int buttonXStart_top;
 
-	public int sensitivityStringXStart;
-	public int sensitivityStringYStart;
+	public int sensitivityXStart;
+	public int sensitivityYStart;
 	public int menuSensitivityStringXStart;
 	public int gameSensitivityStringXStart;
 
@@ -67,7 +67,6 @@ public class JoypadConfigMenu extends GuiScreen
 	private GuiScreen parentScr;
 	private GuiControls mouseGui;
 	public Minecraft mc = Minecraft.getMinecraft();
-	public JoypadControlList controlList = null;
 
 	private long customBindingTickStart = 0;
 	private int customBindingKeyIndex = -1;
@@ -171,7 +170,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 		// other controllers
 		addButton(new GuiButton(503, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
-				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, "Other controllers"));
+				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, "Other controls"));
 
 		buttonYOffset += 22;
 
@@ -181,9 +180,9 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(401, buttonXStart_top, buttonYStart_top + buttonYOffset, invertButtonWidth, 20,
 				"Invert : " + (ControllerSettings.getInvertYAxis() ? "on" : "off")));
 
-		sensitivityStringXStart = buttonXStart_top + invertButtonWidth + 1;
-		sensitivityStringYStart = buttonYStart_top + buttonYOffset;
-		int topRowButtonXOffset = sensitivityStringXStart + 52;
+		sensitivityXStart = buttonXStart_top + invertButtonWidth + 1;
+		sensitivityYStart = buttonYStart_top + buttonYOffset;
+		int topRowButtonXOffset = sensitivityXStart;
 
 		int sensitivityButtonWidth = 15;
 
@@ -224,8 +223,11 @@ public class JoypadConfigMenu extends GuiScreen
 				">>"));
 		topRowButtonXOffset += sensitivityButtonWidth - 1;
 
+		int calibrateButtonWidth = controllerButtonWidth + buttonXStart_top - topRowButtonXOffset;
+
 		addButton(new GuiButton(500, topRowButtonXOffset, buttonYStart_top + buttonYOffset, controllerButtonWidth
-				+ buttonXStart_top - topRowButtonXOffset, 20, "Calibrate"));
+				+ buttonXStart_top - topRowButtonXOffset, 20, this.getFontRenderer().trimStringToWidth("Calibrate",
+				calibrateButtonWidth)));
 
 		buttonYOffset += 20;
 		// the middle section will be populated with the controller settings so
@@ -258,7 +260,6 @@ public class JoypadConfigMenu extends GuiScreen
 				rightButtonWidth, 20, "Add Custom key"), JoypadMod.controllerSettings.isInputEnabled());
 
 		// add bottom buttons
-		// TODO calibration
 		buttonNum = 0;
 
 		addButton(new GuiButton(400, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
@@ -389,8 +390,8 @@ public class JoypadConfigMenu extends GuiScreen
 		case 600: // set
 			outsideListClick = Minecraft.getSystemTime();
 			ControllerSettings.suspendControllerInput(true, 10000);
-			controlList.controllerTickStart = Minecraft.getSystemTime();
-			controlList.doubleClicked = true;
+			optionList.controllerTickStart = Minecraft.getSystemTime();
+			optionList.doubleClicked = true;
 			break;
 		case 601: // unset
 			VirtualMouse.unpressAllButtons();
@@ -546,14 +547,12 @@ public class JoypadConfigMenu extends GuiScreen
 
 		int sensitivityColor = 0xFFAA00;
 
-		this.drawString(getFontRenderer(), "Sensitivity:", sensitivityStringXStart, sensitivityStringYStart + 5,
-				sensitivityColor);
+		// this.drawString(getFontRenderer(), "Sensitivity:", sensitivityStringXStart, sensitivityStringYStart + 5,
+		// sensitivityColor);
 
-		this.drawString(getFontRenderer(), "Menu", menuSensitivityStringXStart, sensitivityStringYStart + 1,
-				sensitivityColor);
+		this.drawString(getFontRenderer(), "Menu", menuSensitivityStringXStart, sensitivityYStart + 1, sensitivityColor);
 
-		this.drawString(getFontRenderer(), "Game", gameSensitivityStringXStart, sensitivityStringYStart + 1,
-				sensitivityColor);
+		this.drawString(getFontRenderer(), "Game", gameSensitivityStringXStart, sensitivityYStart + 1, sensitivityColor);
 
 		int heightOffset = getFontRenderer().FONT_HEIGHT + 1;
 
@@ -576,9 +575,9 @@ public class JoypadConfigMenu extends GuiScreen
 			gameValueOffset = 8;
 
 		this.drawString(getFontRenderer(), "" + menuSens, menuSensitivityStringXStart + menuValueOffset,
-				sensitivityStringYStart + heightOffset, sensitivityColor);
+				sensitivityYStart + heightOffset, sensitivityColor);
 		this.drawString(getFontRenderer(), "" + gameSens, gameSensitivityStringXStart + gameValueOffset,
-				sensitivityStringYStart + heightOffset, sensitivityColor);
+				sensitivityYStart + heightOffset, sensitivityColor);
 
 		// CONTROLLER NAME BUTTON
 		// PREV NEXT
