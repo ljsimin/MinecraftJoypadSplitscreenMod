@@ -80,6 +80,7 @@ public class ControllerSettings
 	public static boolean displayHints = false;
 	public static Controller joystick;
 	public static int joyNo = -1;
+	public static boolean grabMouse = true;
 	public static int inGameSensitivity = 20;
 	public static int inMenuSensitivity = 20;
 	public static int scrollDelay = 50;
@@ -114,6 +115,8 @@ public class ControllerSettings
 	public ControllerSettings(File configFile)
 	{
 		config = new ConfigFile(configFile);
+		config.init();
+		grabMouse = config.grabMouse;
 		controllerUtils = new ControllerUtils();
 		validControllers = new HashMap<String, List<Integer>>();
 		inValidControllers = new HashMap<String, List<Integer>>();
@@ -319,8 +322,6 @@ public class ControllerSettings
 	{
 		LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION
 				+ " by Ljubomir Simin & Andrew Hickey\n---");
-
-		config.init();
 
 		if (config.preferedJoyName == "disabled")
 		{
