@@ -3,6 +3,7 @@ package com.shiny.joypadmod;
 // Common code
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -737,10 +738,12 @@ public class ControllerSettings
 	public static void saveDeadZones(int joyId)
 	{
 		Controller controller = Controllers.getController(joyId);
+		DecimalFormat df = new DecimalFormat("#0.00");
+
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
-			config.updateConfigFileSettingEx("-Deadzones-." + controller.getName(), controller.getAxisName(i), ""
-					+ controller.getDeadZone(i));
+			config.updateConfigFileSettingEx("-Deadzones-." + controller.getName(), controller.getAxisName(i),
+					df.format(controller.getDeadZone(i)));
 		}
 		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
 		LogHelper.Info("Saved deadzones for " + controller.getName());
@@ -748,18 +751,12 @@ public class ControllerSettings
 
 	public static void applySavedDeadZones(int joyId)
 	{
-		if (joyBindings.size() <= 0)
+		if (joyId < 0)
 			return;
 
 		LogHelper.Info("Applying configurated deadzones");
 
-		Controller c = Controllers.getController(joyId);
-		List<Float> deadzones = config.getSavedDeadzones(c.getName());
-		for (int i = 0; i < deadzones.size(); i++)
-		{
-			LogHelper.Info("Setting axis " + i + " deadzone to " + deadzones.get(i));
-			c.setDeadZone(i, deadzones.get(i));
-		}
+		config.applySavedDeadZones(Controllers.getController(joyId));
 
 	}
 }

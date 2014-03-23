@@ -35,7 +35,6 @@ public class JoypadControlList extends GuiScrollingList
 				parent.controlListXStart, // left start
 				20); // entryHeight
 		this.parent = parent;
-		this.parent.controlList = this;
 		this.fontRenderer = fontRenderer;
 	}
 

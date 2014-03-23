@@ -10,6 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.ConfigCategory;
 import net.minecraftforge.common.Configuration;
 
+import org.lwjgl.input.Controller;
+
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -102,18 +104,28 @@ public class ConfigFile
 		updateKey(defaultCategory, setting.toString(), value);
 	}
 
-	public List<Float> getSavedDeadzones(String joyName)
+	public void applySavedDeadZones(Controller c)
 	{
-		List<Float> deadzones = new ArrayList<Float>();
+		ConfigCategory cc = config.getCategory("-Deadzones-." + c.getName());
 
-		ConfigCategory cc = config.getCategory("-Deadzones-." + joyName);
-		for (String key : cc.keySet())
+		for (int i = 0; i < c.getAxisCount(); i++)
 		{
-			String floatValues = cc.get(key).getString();
-			deadzones.add(Float.parseFloat(floatValues));
+			String key = c.getAxisName(i);
+			if (cc.containsKey(key))
+			{
+				try
+				{
+					String floatStr = cc.get(key).getString();
+					LogHelper.Info("Applying deadzone value " + floatStr + " to " + c.getAxisName(i));
+					c.setDeadZone(i, Float.parseFloat(floatStr));
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Failed trying to apply deadzone for " + c.getAxisName(i) + " using the value for "
+							+ key + " from the config file");
+				}
+			}
 		}
-
-		return deadzones;
 	}
 
 	public void updateConfigFileSettingEx(String category, String key, String value)
