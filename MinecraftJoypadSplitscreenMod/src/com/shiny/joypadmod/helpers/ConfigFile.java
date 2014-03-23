@@ -24,10 +24,12 @@ public class ConfigFile
 	public boolean invertYAxis;
 	public int inGameSensitivity;
 	public int inMenuSensitivity;
+	public boolean grabMouse;
 
 	private Configuration config;
 	private String userName;
 	private String defaultCategory;
+	private String userCategory;
 
 	private double lastConfigFileVersion;
 
@@ -45,6 +47,11 @@ public class ConfigFile
 	{
 		config.load();
 
+		String globalCat = "-Global-";
+		boolean usingSharedProfile = config.get(globalCat, "SharedProfile", false).getBoolean(false);
+
+		grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
+
 		userName = "unknown";
 
 		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().getSession() != null)
@@ -52,26 +59,32 @@ public class ConfigFile
 			userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
 
-		defaultCategory = "Joypad-" + userName;
+		defaultCategory = "Joypad-" + (usingSharedProfile ? "-Shared-" : userName);
+		userCategory = "Joypad-" + userName;
 
-		if (config.hasCategory(defaultCategory.toLowerCase()))
+		if (config.hasCategory(userCategory.toLowerCase()))
 		{
 			// using older case insensitive version
-			config.removeCategory(config.getCategory(defaultCategory.toLowerCase()));
+			config.removeCategory(config.getCategory(userCategory.toLowerCase()));
 		}
 
-		preferedJoyNo = config.get(defaultCategory, "JoyNo", -1).getInt();
-		preferedJoyName = config.get(defaultCategory, "JoyName", "").getString();
-		invertYAxis = config.get(defaultCategory, "InvertY", false).getBoolean(false);
+		// always individual
+		preferedJoyNo = config.get(userCategory, "JoyNo", -1).getInt();
+		preferedJoyName = config.get(userCategory, "JoyName", "").getString();
+		invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
+
+		// individual or global
 		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
 		inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). invertYAxis = "
-				+ invertYAxis + ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: "
-				+ inGameSensitivity + ". Menu Sensitivity multiplier: " + inMenuSensitivity);
+		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
+				+ usingSharedProfile + ". GrabMouse = " + grabMouse + ".  invertYAxis = " + invertYAxis
+				+ ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: " + inGameSensitivity
+				+ ". Menu Sensitivity multiplier: " + inMenuSensitivity);
 
 		addBindingOptionsComment();
+		addGlobalOptionsComment();
 		config.save();
 	}
 
@@ -86,6 +99,13 @@ public class ConfigFile
 				"List of valid binding options that can be combined with Controller events");
 	}
 
+	public void addGlobalOptionsComment()
+	{
+		config.addCustomCategoryComment("-Global-",
+				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)"
+						+ "\r\nSharedProfile = Will share joypad settings across all users except for invert");
+	}
+
 	public void addComment(String category, String comment)
 	{
 		config.addCustomCategoryComment(category, comment);
@@ -94,14 +114,27 @@ public class ConfigFile
 
 	public void updatePreferedJoy(int joyNo, String joyName)
 	{
-		String category = defaultCategory;
+		String category = userCategory;
 		updateKey(category, "JoyNo", "" + joyNo);
 		updateKey(category, "JoyName", joyName);
 	}
 
 	public void updateConfigFileSetting(UserJoypadSettings setting, String value)
 	{
-		updateKey(defaultCategory, setting.toString(), value);
+		String category = defaultCategory;
+		switch (setting)
+		{
+		case JoyNo:
+		case JoyName:
+		case InvertY:
+			category = userCategory;
+			break;
+		default:
+			category = defaultCategory;
+			break;
+		}
+
+		updateKey(category, setting.toString(), value);
 	}
 
 	public void applySavedDeadZones(Controller c)
