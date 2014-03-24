@@ -3,6 +3,7 @@ set srcResources=resources
 set mcp=H:\modding\forge-1.6.4-9.11.1.965-src\mcp
 set dest=%mcp%\src\minecraft\com
 set mcMod=%APPDATA%\.minecraft\mods
+set modFileNamePrefix=JoypadMod-1.6.4
 
 if Exist %dest%\shiny rmdir /s %dest%\shiny
 copy resources\mcmod.info %mcp%
@@ -14,16 +15,16 @@ call reobfuscate.bat
 copy mcmod.info reobf\minecraft
 
 start reobf\minecraft
-echo Zip up the mcMod.info along with the COM folder, name it JoypadMod1.6.4.zip and press any key to continue
+echo Zip up the mcMod.info along with the COM folder, name it %modFileNamePrefix%-{version_number}.zip and press any key to continue
 pause
-if exist reobf\minecraft\JoypadMod1.6.4*.zip goto copystuff
+if exist reobf\minecraft\%modFileNamePrefix%*.zip goto copystuff
 
 goto end
 
 :copystuff
 
-erase %mcMod%\JoypadMod1.6.4*.zip
-copy reobf\minecraft\JoypadMod1.6.4*.zip %mcMod%
+erase %mcMod%\%modFileNamePrefix%*.zip
+copy reobf\minecraft\%modFileNamePrefix%*.zip %mcMod%
 rmdir /s %dest%\shiny
 
 :end
