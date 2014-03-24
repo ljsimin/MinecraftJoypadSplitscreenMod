@@ -21,10 +21,6 @@ public class ConfigFile
 {
 	public int preferedJoyNo;
 	public String preferedJoyName;
-	public boolean invertYAxis;
-	public int inGameSensitivity;
-	public int inMenuSensitivity;
-	public boolean grabMouse;
 
 	private Configuration config;
 	private String userName;
@@ -48,9 +44,10 @@ public class ConfigFile
 		config.load();
 
 		String globalCat = "-Global-";
-		boolean usingSharedProfile = config.get(globalCat, "SharedProfile", false).getBoolean(false);
+		boolean sharedProfile = config.get(globalCat, "SharedProfile", false).getBoolean(false);
 
-		grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
+		ControllerSettings.grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
+		ControllerSettings.loggingLevel = config.get(globalCat, "LoggingLevel", 1).getInt();
 
 		userName = "unknown";
 
@@ -59,7 +56,7 @@ public class ConfigFile
 			userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
 
-		defaultCategory = "Joypad-" + (usingSharedProfile ? "-Shared-" : userName);
+		defaultCategory = "Joypad-" + (sharedProfile ? "-Shared-" : userName);
 		userCategory = "Joypad-" + userName;
 
 		if (config.hasCategory(userCategory.toLowerCase()))
@@ -71,17 +68,18 @@ public class ConfigFile
 		// always individual
 		preferedJoyNo = config.get(userCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(userCategory, "JoyName", "").getString();
-		invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
+		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
 
 		// individual or global
-		inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
-		inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
+		ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
+		ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
 		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
-				+ usingSharedProfile + ". GrabMouse = " + grabMouse + ".  invertYAxis = " + invertYAxis
-				+ ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: " + inGameSensitivity
-				+ ". Menu Sensitivity multiplier: " + inMenuSensitivity);
+				+ sharedProfile + ". GrabMouse = " + ControllerSettings.grabMouse + ".  invertYAxis = "
+				+ ControllerSettings.invertYAxis + ". ConfigVersion " + lastConfigFileVersion
+				+ ". Game Sensitivity multiplier: " + ControllerSettings.inGameSensitivity
+				+ ". Menu Sensitivity multiplier: " + ControllerSettings.inMenuSensitivity);
 
 		addBindingOptionsComment();
 		addGlobalOptionsComment();
@@ -101,9 +99,11 @@ public class ConfigFile
 
 	public void addGlobalOptionsComment()
 	{
-		config.addCustomCategoryComment("-Global-",
-				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)"
-						+ "\r\nSharedProfile = Will share joypad settings across all users except for invert");
+		config.addCustomCategoryComment(
+				"-Global-",
+				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)\r\n"
+						+ "LoggingLevel = 0-4 levels of logging ranging from next to none to very verbose. 1 recommended unless debugging.\r\n"
+						+ "SharedProfile = Will share joypad settings across all users except for invert");
 	}
 
 	public void addComment(String category, String comment)

@@ -124,21 +124,8 @@ public class JoypadCalibrationList extends GuiScrollingList
 				buttonList.get(i).drawButton(Minecraft.getMinecraft(), k, i1);
 			}
 		}
-		// if (buttonList.size() <= var1)
-		{
-			// buttonList.add(new GuiButton(600 + var1, 0, 0, 50, 18, "WorderUp" + var1));
-		}
-		/*
-		 * if (buttonList.get(var1).mousePressed(mc, k, i1)) { LogHelper.Info("Mouse pressed on " + var1); }
-		 */
-		// buttonList.get(var1).xPosition = width / 2;
-		// buttonList.get(var1).yPosition = var3;
-		// buttonList.get(var1).displayString = "Hi";
-		// buttonList.get(var1).drawButton(Minecraft.getMinecraft(), k, i1);
-
 	}
 
-	@SuppressWarnings("unchecked")
 	private int[] drawAxis(int axisNum, int xStart, int yStart, int ySpace, int par1, int par2, int totalWidth)
 	{
 		Controller controller = Controllers.getController(joypadIndex);
@@ -148,14 +135,13 @@ public class JoypadCalibrationList extends GuiScrollingList
 		int directionButWidth = 15;
 
 		int maxSize = parent.parent.getFontRenderer().getStringWidth("X Axis:");
-		String stringOut = parent.parent.getFontRenderer().trimStringToWidth(controller.getAxisName(axisNum), maxSize);
+		String title = parent.parent.getFontRenderer().trimStringToWidth(controller.getAxisName(axisNum), maxSize);
 
-		String title = stringOut;
 		parent.drawBoxWithText(xStart, yPos, xStart + totalWidth, yPos + 25, title, 0xAA0000, 0x0000AA);
 		yPos += 10;
 		int xPos = xStart + 5;
 
-		String output = stringOut + ": " + df.format(controller.getAxisValue(axisNum));
+		String output = title + ": " + df.format(controller.getAxisValue(axisNum));
 		parent.write(xPos, yPos, output);
 		xPos += maxSize + parent.parent.getFontRenderer().getStringWidth(" -1.00") + 4;
 		output = "Deadzone: " + df.format(controller.getDeadZone(axisNum));
@@ -174,10 +160,6 @@ public class JoypadCalibrationList extends GuiScrollingList
 			buttonList.add(new GuiButton(axisNum + 300, xPos + controlButWidth * 2 + directionButWidth + xOffset * 3,
 					yPos + yOffset, directionButWidth, 20, ">"));
 		}
-
-		/*
-		 * for (int k = 4 * axisNum; k < 4 * axisNum + 4; k++) { ((GuiButton) buttonList.get(k)).drawButton(Minecraft.getMinecraft(), par1, par2); }
-		 */
 
 		return new int[] { xStart + totalWidth, yPos };
 	}

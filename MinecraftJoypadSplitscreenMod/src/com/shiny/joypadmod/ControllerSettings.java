@@ -85,6 +85,8 @@ public class ControllerSettings
 	public static int inMenuSensitivity = 20;
 	public static int scrollDelay = 50;
 
+	public static int loggingLevel = 1;
+
 	// used for some preliminary safe checks
 	private static int requiredMinButtonCount = 4;
 	private static int requiredButtonCount = 12;
@@ -108,7 +110,7 @@ public class ControllerSettings
 	// controller events to map to an action
 	private static boolean suspendControllerInput = false;
 
-	private static boolean invertYAxis = false;
+	public static boolean invertYAxis = false;
 
 	private static ConfigFile config = null;
 
@@ -116,7 +118,6 @@ public class ControllerSettings
 	{
 		config = new ConfigFile(configFile);
 		config.init();
-		grabMouse = config.grabMouse;
 		controllerUtils = new ControllerUtils();
 		validControllers = new HashMap<String, List<Integer>>();
 		inValidControllers = new HashMap<String, List<Integer>>();
@@ -330,10 +331,6 @@ public class ControllerSettings
 			ControllerSettings.modDisabled = true;
 			return;
 		}
-
-		invertYAxis = config.invertYAxis;
-		inMenuSensitivity = config.inMenuSensitivity;
-		inGameSensitivity = config.inGameSensitivity;
 
 		LogHelper.Info("Initializing Controllers");
 

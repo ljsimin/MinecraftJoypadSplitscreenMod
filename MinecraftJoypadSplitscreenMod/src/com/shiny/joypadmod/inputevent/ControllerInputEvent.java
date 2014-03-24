@@ -2,6 +2,7 @@ package com.shiny.joypadmod.inputevent;
 
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 /**
@@ -112,7 +113,8 @@ public abstract class ControllerInputEvent
 		boolean bRet = false;
 		if (wasReleased)
 		{
-			System.out.println("wasReleased returning true for " + getName());
+			if (ControllerSettings.loggingLevel > 1)
+				LogHelper.Debug("wasReleased returning true for " + getName());
 			bRet = true;
 			wasReleased = false;
 		}

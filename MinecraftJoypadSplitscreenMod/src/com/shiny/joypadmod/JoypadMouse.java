@@ -112,8 +112,6 @@ public class JoypadMouse
 		public static int mcX = 0;
 		public static int mcY = 0;
 
-		public static boolean debug = false;
-
 		private static long lastAxisReading = 0;
 		private static long readingTimeout = 10;
 
@@ -147,7 +145,8 @@ public class JoypadMouse
 			deltaX = (float) (Math.round(horizontalMovement * (float) cameraMultiplier) * var4);
 			deltaY = (float) (Math.round(verticalMovement * (float) cameraMultiplier) * var4);
 
-			LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
+			if (ControllerSettings.loggingLevel > 2)
+				LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
 			lastAxisReading = Minecraft.getSystemTime();
 		}
 
@@ -175,7 +174,7 @@ public class JoypadMouse
 			if (y > scaledResolution.getScaledHeight())
 				y = scaledResolution.getScaledHeight() - 5;
 
-			if (debug)
+			if (ControllerSettings.loggingLevel > 2)
 				LogHelper.Debug("Virtual Mouse x: " + x + " y: " + y);
 
 			mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());

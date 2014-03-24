@@ -14,7 +14,6 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void grabMouseCursor()
 	{
-		LogHelper.Info("grabMouseCursor called");
 		if (JoypadMod.controllerSettings.isInputEnabled())
 			return;
 
@@ -27,7 +26,6 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void ungrabMouseCursor()
 	{
-		LogHelper.Info("ungrabMouseCursor called");
 		if (JoypadMod.controllerSettings.isInputEnabled())
 			return;
 

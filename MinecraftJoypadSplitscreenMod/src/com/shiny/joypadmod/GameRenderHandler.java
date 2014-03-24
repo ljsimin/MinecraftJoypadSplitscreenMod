@@ -33,7 +33,6 @@ public class GameRenderHandler
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
 	static long lastScrollTick = 0;
-	static boolean debugInputEvents = false;
 
 	public static List<ControllerBinding> preRenderGuiBucket = new ArrayList<ControllerBinding>();
 	public static List<ControllerBinding> preRenderGameBucket = new ArrayList<ControllerBinding>();
@@ -110,7 +109,6 @@ public class GameRenderHandler
 				// fixes issue with transitioning from inGui to game movement continuing
 				if (Minecraft.getSystemTime() - lastInGameTick < 50)
 				{
-					System.out.println("Unpressing all buttons");
 					ControllerSettings.unpressAll();
 					Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 				}
@@ -123,7 +121,6 @@ public class GameRenderHandler
 				// fixes issue with transitioning from inGame to Gui movement continuing
 				if (Minecraft.getSystemTime() - lastInGuiTick < 50)
 				{
-					System.out.println("Unpressing all buttons");
 					ControllerSettings.unpressAll();
 					Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 				}
@@ -221,7 +218,7 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGameTick < 200)
 				continue;
 
-			if (debugInputEvents)
+			if (ControllerSettings.loggingLevel > 3)
 			{
 				try
 				{
@@ -269,7 +266,7 @@ public class GameRenderHandler
 			if (Minecraft.getSystemTime() - lastInGuiTick < 100)
 				continue;
 
-			if (debugInputEvents)
+			if (ControllerSettings.loggingLevel > 3)
 			{
 				try
 				{
