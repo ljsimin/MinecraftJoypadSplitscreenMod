@@ -2,6 +2,8 @@ package com.shiny.joypadmod.helpers;
 
 import java.util.logging.Level;
 
+import com.shiny.joypadmod.ControllerSettings;
+
 import cpw.mods.fml.common.FMLLog;
 
 public class LogHelper
@@ -23,7 +25,8 @@ public class LogHelper
 
 	public static void Info(String Message)
 	{
-		FMLLog.log(Level.INFO, Message);
+		if (ControllerSettings.loggingLevel > 0)
+			FMLLog.log(Level.INFO, Message);
 	}
 
 	public static void Trace(String Message)

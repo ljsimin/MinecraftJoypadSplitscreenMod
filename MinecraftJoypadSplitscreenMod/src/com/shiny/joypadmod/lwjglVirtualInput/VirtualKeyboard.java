@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.input.Keyboard;
 
+import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class VirtualKeyboard
@@ -51,7 +52,8 @@ public class VirtualKeyboard
 
 		if (keyHelper(keycode, 1))
 		{
-			LogHelper.Info("Pressing key " + Keyboard.getKeyName(keycode));
+			if (ControllerSettings.loggingLevel > 1)
+				LogHelper.Info("Pressing key " + Keyboard.getKeyName(keycode));
 			keyState[keycode] = 1;
 			holdKey(keycode, true);
 		}
@@ -68,7 +70,8 @@ public class VirtualKeyboard
 
 		if (isValidKey(keycode, true) && (!onlyIfPressed || keyState[keycode] == 1))
 		{
-			LogHelper.Info("Releasing key " + Keyboard.getKeyName(keycode));
+			if (ControllerSettings.loggingLevel > 1)
+				LogHelper.Info("Releasing key " + Keyboard.getKeyName(keycode));
 			keyHelper(keycode, 0);
 			keyState[keycode] = 0;
 			holdKey(keycode, false);
@@ -87,7 +90,8 @@ public class VirtualKeyboard
 			return;
 		}
 
-		LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
+		if (ControllerSettings.loggingLevel > 2)
+			LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try
@@ -139,7 +143,8 @@ public class VirtualKeyboard
 
 		if (keyBufferField != null)
 		{
-			LogHelper.Debug("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
+			if (ControllerSettings.loggingLevel > 1)
+				LogHelper.Info("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
 			try
 			{
 				((ByteBuffer) keyBufferField.get(null)).compact();

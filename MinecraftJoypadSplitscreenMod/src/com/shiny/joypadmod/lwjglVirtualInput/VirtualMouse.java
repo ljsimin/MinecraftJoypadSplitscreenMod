@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.input.Mouse;
 
+import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class VirtualMouse
@@ -25,8 +26,6 @@ public class VirtualMouse
 	private static int lastY = 0;
 
 	private static boolean created = false;
-
-	private static boolean debug = false;
 
 	private VirtualMouse()
 	{}
@@ -72,7 +71,7 @@ public class VirtualMouse
 		if (!checkCreated())
 			return false;
 
-		if (debug)
+		if (ControllerSettings.loggingLevel > 1)
 			LogHelper.Info("Moving mouse: dx:" + dx + " dy:" + dy);
 		addMouseEvent((byte) -1, (byte) 0, dx, dy, 0, 1000);
 		try
@@ -95,11 +94,13 @@ public class VirtualMouse
 
 		if (onlyIfNotHeld && buttonsDown[button] != 0)
 		{
-			LogHelper.Info("rejecting mouse button press as its already indicated as held");
+			if (ControllerSettings.loggingLevel > 1)
+				LogHelper.Info("rejecting mouse button press as its already indicated as held");
 			return true;
 		}
 
-		LogHelper.Info("Holding mouse button: " + button);
+		if (ControllerSettings.loggingLevel > 1)
+			LogHelper.Info("Holding mouse button: " + button);
 		setMouseButton(button, true);
 		addMouseEvent((byte) button, (byte) 1, lastX, lastY, 0, 1000);
 		buttonsDown[button] = 1;
@@ -114,7 +115,8 @@ public class VirtualMouse
 		if (onlyIfHeld && buttonsDown[button] != 1)
 			return true;
 
-		LogHelper.Info("Releasing mouse button: " + button);
+		if (ControllerSettings.loggingLevel > 1)
+			LogHelper.Info("Releasing mouse button: " + button);
 		setMouseButton(button, false);
 		addMouseEvent((byte) button, (byte) 0, lastX, lastY, 0, 1000);
 		buttonsDown[button] = 0;
@@ -131,7 +133,8 @@ public class VirtualMouse
 		if (!checkCreated())
 			return false;
 
-		LogHelper.Info("Setting scroll wheel: " + event_dwheel);
+		if (ControllerSettings.loggingLevel > 1)
+			LogHelper.Info("Setting scroll wheel: " + event_dwheel);
 		addMouseEvent((byte) -1, (byte) 0, 0, 0, event_dwheel, 10000);
 		return true;
 	}
@@ -141,7 +144,7 @@ public class VirtualMouse
 		if (!checkCreated())
 			return false;
 
-		if (debug)
+		if (ControllerSettings.loggingLevel > 3)
 			LogHelper.Info("Setting mouse position to x:" + x + " y:" + y);
 
 		try
@@ -163,7 +166,8 @@ public class VirtualMouse
 
 	public static boolean setMouseButton(int button, boolean down)
 	{
-		LogHelper.Info("Hacking mouse button: " + button);
+		if (ControllerSettings.loggingLevel > 3)
+			LogHelper.Info("Hacking mouse button: " + button);
 		try
 		{
 			((ByteBuffer) buttonField.get(null)).put(button, (byte) (down ? 1 : 0));
@@ -190,8 +194,9 @@ public class VirtualMouse
 		if (!checkCreated())
 			return false;
 
-		LogHelper.Info("AddMouseEvent: eventButton: " + eventButton + " eventState: " + eventState + " event_dx: "
-				+ event_dx + " event_dy: " + event_dy + " event_dwheel: " + event_dwheel);
+		if (ControllerSettings.loggingLevel > 1)
+			LogHelper.Info("AddMouseEvent: eventButton: " + eventButton + " eventState: " + eventState + " event_dx: "
+					+ event_dx + " event_dy: " + event_dy + " event_dwheel: " + event_dwheel);
 
 		try
 		{
