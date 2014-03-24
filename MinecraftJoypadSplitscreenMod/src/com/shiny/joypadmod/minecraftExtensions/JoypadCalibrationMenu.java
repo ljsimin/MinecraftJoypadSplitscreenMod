@@ -28,7 +28,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	private int boxSpacing = 5;
 	private String lastControllerEvent = "";
 
-	private JoypadCalibrationList calibrationList;
+	private JoypadCalibrationList calibrationList = null;
 
 	String[] instructions = new String[] { "1. Press and wiggle all joystick controls",
 			"2. Press auto to find deadzone", "3. Save deadzones" };
@@ -58,7 +58,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "Exit");
 
 		// these buttons will be moved if we display axis values
-		if (joypadIndex != -1)
+		if (joypadIndex != -1 && Controllers.getController(joypadIndex).getAxisCount() > 0)
 		{
 			int listStartY = (instructions.length + 3) * parent.getFontRenderer().FONT_HEIGHT + 20;
 			int entryHeight = 32;
@@ -81,6 +81,9 @@ public class JoypadCalibrationMenu extends GuiScreen
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
 		super.mouseClicked(par1, par2, par3);
+
+		if (calibrationList == null)
+			return;
 
 		for (GuiButton guiButton : calibrationList.buttonList)
 		{
@@ -114,7 +117,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 		drawDefaultBackground();
 
-		this.calibrationList.drawScreen(par1, par2, par3);
+		if (calibrationList != null)
+			calibrationList.drawScreen(par1, par2, par3);
 
 		int ySpace = parent.getFontRenderer().FONT_HEIGHT;
 		String title = "Calibration menu";
@@ -130,6 +134,10 @@ public class JoypadCalibrationMenu extends GuiScreen
 		if (joypadIndex == -1)
 		{
 			write(yStart + ySpace * 2, "Please go back to previous menu and select a controller.");
+		}
+		else if (Controllers.getController(joypadIndex).getAxisCount() <= 0)
+		{
+			write(yStart + ySpace * 2, "This controller has no axes to configure.");
 		}
 		else
 		{
