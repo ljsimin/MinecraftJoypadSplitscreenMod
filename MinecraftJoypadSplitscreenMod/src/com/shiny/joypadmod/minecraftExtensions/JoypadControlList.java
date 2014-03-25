@@ -1,9 +1,14 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
+import java.util.Arrays;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.ControllerSettings;
@@ -24,6 +29,7 @@ public class JoypadControlList extends GuiScrollingList
 	public boolean doubleClicked = false;
 	private JoypadConfigMenu parent;
 	private int lastListSize = 0;
+	private KeyBinding[] akeybinding;
 
 	public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
 	{
@@ -36,12 +42,16 @@ public class JoypadControlList extends GuiScrollingList
 				20); // entryHeight
 		this.parent = parent;
 		this.fontRenderer = fontRenderer;
+
+		akeybinding = (KeyBinding[]) ArrayUtils.clone(parent.mc.gameSettings.keyBindings);
+		Arrays.sort(akeybinding);
 	}
 
 	@Override
 	protected int getSize()
 	{
-		return ControllerSettings.bindingListSize();
+		return akeybinding.length;
+		// return ControllerSettings.bindingListSize();
 	}
 
 	@Override
@@ -140,7 +150,8 @@ public class JoypadControlList extends GuiScrollingList
 			parent.currentSelectedBindingIndex = selectedIndex;
 			lastListSize = getSize();
 		}
-		String mcActionName = ControllerSettings.get(var1).menuString;
+		// String mcActionName = ControllerSettings.get(var1).menuString;
+		String mcActionName = I18n.format(akeybinding[var1].getKeyDescription(), new Object[0]);
 
 		String mcActionButton;
 
@@ -150,8 +161,9 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		else
 		{
-			mcActionButton = ControllerSettings.controllerUtils.getHumanReadableInputName(ControllerSettings.joystick,
-					ControllerSettings.get(var1).inputEvent);
+			// mcActionButton = ControllerSettings.controllerUtils.getHumanReadableInputName(ControllerSettings.joystick,
+			// ControllerSettings.get(var1).inputEvent);
+			mcActionButton = "TEST";
 		}
 		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(mcActionName, 100), this.left + 3, var3 + 2,
 				0xFF2222);

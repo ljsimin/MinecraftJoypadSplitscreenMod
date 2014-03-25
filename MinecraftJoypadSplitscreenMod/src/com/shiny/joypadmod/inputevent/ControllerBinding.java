@@ -16,12 +16,23 @@ public class ControllerBinding
 
 	public enum BindingOptions
 	{
-		MENU_BINDING, GAME_BINDING, IS_TOGGLE, REPEAT_IF_HELD, CLIENT_TICK, RENDER_TICK
+		MENU_BINDING,
+		GAME_BINDING,
+		IS_TOGGLE,
+		REPEAT_IF_HELD,
+		CLIENT_TICK,
+		RENDER_TICK,
+		CATEGORY_MOVEMENT,
+		CATEGORY_INVENTORY,
+		CATEGORY_GAMEPLAY,
+		CATEGORY_MULTIPLAYER,
+		CATEGORY_MISC,		
 	};
 
 	public static String[] BindingOptionsComment = { "Will trigger in menu screens", "Will trigger during game play",
 			"Pressing button once will toggle on / off", "Continues to trigger if held down",
-			"Send the trigger during client tick", "Send the trigger during render tick" };
+			"Send the trigger during client tick", "Send the trigger during render tick", "Movement category in menu",
+			"Inventory", "Gameplay category", "Multiplayer category", "Misc category" };
 
 	/**
 	 * Used as a key for the save file

@@ -179,7 +179,7 @@ public class ControllerSettings
 		bindings[JoyBindingEnum.joyBindNextItem.ordinal()] = new ControllerBinding("joy.nextItem", "Next item",
 				new ButtonInputEvent(joyNo, 5, 1), new int[] { -201 }, 0, EnumSet.of(BindingOptions.GAME_BINDING));
 
-		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.run", "Sprint",
+		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.sprint", "Sprint",
 				new ButtonInputEvent(joyNo, 9, 1), new int[] { Keyboard.KEY_LCONTROL }, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
@@ -207,22 +207,22 @@ public class ControllerSettings
 				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
-		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.movementX+", "Strafe right",
+		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.right", "Strafe right",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
 				new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
-		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.movementX-", "Strafe left",
+		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.left", "Strafe left",
 				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
 				new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
-		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.movementY+", "Move backward",
+		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.back", "Move backward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone),
 				new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
 
-		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.movementY-", "Move forward",
+		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.forward", "Move forward",
 				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
 				new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, 0, EnumSet.of(
 						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
