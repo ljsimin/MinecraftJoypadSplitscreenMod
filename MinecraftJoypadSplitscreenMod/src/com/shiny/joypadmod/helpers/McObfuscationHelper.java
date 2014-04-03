@@ -72,7 +72,12 @@ public class McObfuscationHelper
 		}
 	}
 
-	public static String getCategory(KeyBinding key)
+	public static String getKeyDescription(KeyBinding key)
+	{
+		return key.getKeyDescription();
+	}
+
+	public static String getKeyCategory(KeyBinding key)
 	{
 		return key.getKeyCategory();
 	}
