@@ -82,10 +82,9 @@ public class ControllerBinding
 			return true;
 
 		return false;
-
 	}
 
-	public String getCategory()
+	public String getCategoryString()
 	{
 		if (bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
 			return "joy.categories.gameplay";

@@ -102,10 +102,10 @@ public class JoypadControlList extends GuiScrollingList
 						this.parent.getCurrentControllerId(), -1, 1), new int[] { McObfuscationHelper.keyCode(key) },
 						0, EnumSet.of(BindingOptions.GAME_BINDING, bindCategory));
 			}
-			if (b.getCategory() != category)
+			if (b.getCategoryString() != category)
 			{
 				// get any other bindings that are of this category but not originating from Minecraft
-				List<ControllerBinding> otherBindings = ControllerSettings.getMatchingBindings(ControllerBinding
+				List<ControllerBinding> otherBindings = ControllerSettings.getBindingsWithCategory(ControllerBinding
 						.mapMinecraftCategory(category));
 				for (ControllerBinding binding : otherBindings)
 				{
@@ -114,7 +114,7 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				ControllerBinding catBinding = new ControllerBinding(null, null, null, null, 0, b.bindingOptions);
 				joyBindings.add(catBinding);
-				category = b.getCategory();
+				category = b.getCategoryString();
 			}
 			joyBindings.add(b);
 		}
@@ -222,7 +222,7 @@ public class JoypadControlList extends GuiScrollingList
 		if (joyBindings.get(var1).inputString == null)
 		{
 			// this is a new category
-			String category = McObfuscationHelper.lookupString(joyBindings.get(var1).getCategory());
+			String category = McObfuscationHelper.lookupString(joyBindings.get(var1).getCategoryString());
 
 			this.fontRenderer.drawString(category,
 					this.left + this.listWidth / 2 - this.fontRenderer.getStringWidth(category) / 2, var3 + 5, -1);

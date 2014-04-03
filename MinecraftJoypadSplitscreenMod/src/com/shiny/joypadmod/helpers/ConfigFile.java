@@ -179,6 +179,8 @@ public class ConfigFile
 			{
 				ControllerBinding binding = new ControllerBinding(key + "," + bindSettings, joyNo,
 						lastConfigFileVersion);
+				if (!binding.hasCategory())
+					binding.bindingOptions.add(BindingOptions.CATEGORY_MISC);
 				ControllerSettings.userDefinedBindings.add(binding);
 			}
 			catch (Exception ex)
