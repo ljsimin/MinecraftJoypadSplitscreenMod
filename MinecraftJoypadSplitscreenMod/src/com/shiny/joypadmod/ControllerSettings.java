@@ -309,8 +309,6 @@ public class ControllerSettings
 
 		for (ControllerBinding b : userBindings)
 		{
-			if (!b.hasCategory())
-				b.bindingOptions.add(BindingOptions.CATEGORY_MISC);
 			joyBindingsMap.put(b.inputString, b);
 		}
 	}
