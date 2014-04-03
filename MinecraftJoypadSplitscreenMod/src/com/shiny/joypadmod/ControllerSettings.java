@@ -320,12 +320,14 @@ public class ControllerSettings
 		return joyBindingsMap.get(key);
 	}
 
-	public static List<ControllerBinding> getMatchingBindings(BindingOptions option)
+	public static List<ControllerBinding> getBindingsWithCategory(BindingOptions option)
 	{
 		List<ControllerBinding> cList = new ArrayList<ControllerBinding>();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
-			if (entry.getValue().bindingOptions.contains(option))
+			if (!entry.getValue().hasCategory() && option == BindingOptions.CATEGORY_MISC)
+				cList.add(entry.getValue());
+			else if (entry.getValue().bindingOptions.contains(option))
 				cList.add(entry.getValue());
 		}
 		return cList;
