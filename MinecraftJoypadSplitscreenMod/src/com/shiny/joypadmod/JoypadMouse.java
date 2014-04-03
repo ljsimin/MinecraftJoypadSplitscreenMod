@@ -3,7 +3,6 @@ package com.shiny.joypadmod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
-import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
@@ -131,12 +130,12 @@ public class JoypadMouse
 			float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
 			float var4 = var3;
 
-			float xPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXplus : JoyBindingEnum.joyCameraXplus).getAnalogReading();
-			float xMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiXminus : JoyBindingEnum.joyCameraXminus).getAnalogReading();
+			float xPlus = ControllerSettings.get(inGui ? "joy.guiX+" : "joy.cameraX+").getAnalogReading();
+			float xMinus = ControllerSettings.get(inGui ? "joy.guiX-" : "joy.cameraX-").getAnalogReading();
 			float horizontalMovement = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
 
-			float yPlus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYplus : JoyBindingEnum.joyCameraYplus).getAnalogReading();
-			float yMinus = ControllerSettings.get(inGui ? JoyBindingEnum.joyGuiYminus : JoyBindingEnum.joyCameraYminus).getAnalogReading();
+			float yPlus = ControllerSettings.get(inGui ? "joy.guiY+" : "joy.cameraY+").getAnalogReading();
+			float yMinus = ControllerSettings.get(inGui ? "joy.guiY-" : "joy.cameraY-").getAnalogReading();
 			float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
 			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity

@@ -23,16 +23,18 @@ public class ControllerBinding
 		CLIENT_TICK,
 		RENDER_TICK,
 		CATEGORY_MOVEMENT,
+		CATEGORY_GUICONTROL,
 		CATEGORY_INVENTORY,
 		CATEGORY_GAMEPLAY,
 		CATEGORY_MULTIPLAYER,
-		CATEGORY_MISC,		
+		CATEGORY_MISC,
 	};
 
 	public static String[] BindingOptionsComment = { "Will trigger in menu screens", "Will trigger during game play",
 			"Pressing button once will toggle on / off", "Continues to trigger if held down",
-			"Send the trigger during client tick", "Send the trigger during render tick", "Movement category in menu",
-			"Inventory", "Gameplay category", "Multiplayer category", "Misc category" };
+			"Send the trigger during client tick", "Send the trigger during render tick",
+			"Shows up in Movement category in menu", "Shows up in GUI category in menu", "Inventory category in menu",
+			"Gameplay category in menu", "Multiplayer category in menu", "Misc category in menu" };
 
 	/**
 	 * Used as a key for the save file
@@ -59,9 +61,60 @@ public class ControllerBinding
 		this.bindingOptions = options;
 	}
 
+	public ControllerBinding(String bindingString, int joyNo, double lastConfigFileVersion)
+	{
+		this.setToConfigFileString(bindingString, joyNo, lastConfigFileVersion);
+	}
+
 	public void setKeybinding(int[] keyCodes)
 	{
 		this.keyCodes = keyCodes;
+	}
+
+	public boolean hasCategory()
+	{
+		if ((bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_GUICONTROL))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_MISC)))
+			return true;
+
+		return false;
+
+	}
+
+	public String getCategory()
+	{
+		if (bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
+			return "joy.categories.gameplay";
+		if (bindingOptions.contains(BindingOptions.CATEGORY_GUICONTROL))
+			return "joy.categories.guicontrol";
+		if (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
+			return "joy.categories.inventory";
+		if (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
+			return "joy.categories.movement";
+		if (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
+			return "joy.categories.multiplayer";
+
+		return "joy.categories.misc";
+	}
+
+	public static BindingOptions mapMinecraftCategory(String category)
+	{
+		if (category.contains("gameplay"))
+			return BindingOptions.CATEGORY_GAMEPLAY;
+		if (category.contains("guicontrol"))
+			return BindingOptions.CATEGORY_GUICONTROL;
+		if (category.contains("inventory"))
+			return BindingOptions.CATEGORY_INVENTORY;
+		if (category.contains("movement"))
+			return BindingOptions.CATEGORY_MOVEMENT;
+		if (category.contains("multiplayer"))
+			return BindingOptions.CATEGORY_MULTIPLAYER;
+
+		return BindingOptions.CATEGORY_MISC;
 	}
 
 	private void handleMouse(boolean pressed, int code, boolean firstPress)
@@ -218,21 +271,20 @@ public class ControllerBinding
 	public String toConfigFileString()
 	{
 		String s = menuString + ",";
-		if (this.inputString.toLowerCase().contains("user."))
-		{
-			if (keyCodes != null)
-			{
-				s += "{";
-				for (int i = 0; i < keyCodes.length; i++)
-				{
-					s += Keyboard.getKeyName(keyCodes[i]);
 
-					if (i + 1 < keyCodes.length)
-						s += " ";
-				}
-				s += "},";
+		if (keyCodes != null)
+		{
+			s += "{";
+			for (int i = 0; i < keyCodes.length; i++)
+			{
+				s += keyCodes[i];
+
+				if (i + 1 < keyCodes.length)
+					s += " ";
 			}
+			s += "},";
 		}
+
 		if (inputEvent != null)
 			s += inputEvent.toConfigFileString();
 
@@ -254,16 +306,10 @@ public class ControllerBinding
 		if (s == null)
 			return false;
 
-		if (this.toConfigFileString().equals(s) && this.inputEvent.controllerNumber == joyNo)
-		{
-			return true;
-		}
-
 		LogHelper.Info("setToConfigFileString called with following values: " + s);
 
-		// TODO, verify using regex
 		String[] settings = s.split(",");
-		int minToProcess = 5;
+		int minToProcess = 6;
 		if (settings.length < minToProcess)
 		{
 			LogHelper.Error("Expected " + minToProcess + " arguments when parsing config setting: \"" + s
@@ -279,11 +325,11 @@ public class ControllerBinding
 		try
 		{
 			int i = 0;
-			if (settings[i].toLowerCase().contains("user."))
-			{
-				this.inputString = settings[i++];
-				this.menuString = settings[i++];
+			this.inputString = settings[i++];
+			this.menuString = settings[i++];
 
+			if (settings[i].contains("{") && settings[i].contains("}"))
+			{
 				String[] keyCodesS = settings[i].replaceAll("\\{", "").replaceAll("\\}", "").split(" ");
 				keyCodes = new int[keyCodesS.length];
 				for (int j = 0; j < keyCodesS.length; j++)
@@ -294,35 +340,25 @@ public class ControllerBinding
 					}
 					catch (NumberFormatException nfe)
 					{
-						int key = Keyboard.getKeyIndex(keyCodesS[j]);
-						if (key == Keyboard.KEY_NONE)
-						{
-							char[] chars = keyCodesS[j].toCharArray();
-							for (int c1 = 0; c1 < chars.length; c1++)
-							{
-								if (chars[c1] == '/')
-								{
-									keyCodes[j] = Keyboard.KEY_SLASH;
-								}
-								else
-									keyCodes[j] = Character.toUpperCase(chars[c1]);
-								if (c1 < chars.length - 2)
-									j++;
-							}
-						}
-						else
-							keyCodes[j] = Keyboard.getKeyIndex(keyCodesS[j]);
+						keyCodes[j] = Keyboard.getKeyIndex(keyCodesS[j]);
 					}
 				}
 				i++;
 			}
-			else
-				this.menuString = settings[i++];
 
 			event = ControllerInputEvent.EventType.valueOf(settings[i++]);
 			eventIndex = Integer.parseInt(settings[i++]);
 			threshold = Float.parseFloat(settings[i++]);
 			deadzone = Float.parseFloat(settings[i++]);
+
+			if (bindingOptions == null)
+			{
+				bindingOptions = EnumSet.noneOf(BindingOptions.class);
+			}
+			else
+			{
+				bindingOptions.clear();
+			}
 
 			while (i < settings.length)
 			{

@@ -10,7 +10,6 @@ import net.minecraft.client.gui.GuiScreen;
 
 import org.lwjgl.input.Controllers;
 
-import com.shiny.joypadmod.ControllerSettings.JoyBindingEnum;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
@@ -34,8 +33,8 @@ public class GameRenderHandler
 	private static long lastInGameTick = 0;
 	static long lastScrollTick = 0;
 
-	public static List<ControllerBinding> preRenderGuiBucket = new ArrayList<ControllerBinding>();
-	public static List<ControllerBinding> preRenderGameBucket = new ArrayList<ControllerBinding>();
+	public static List<String> preRenderGuiBucket = new ArrayList<String>();
+	public static List<String> preRenderGameBucket = new ArrayList<String>();
 
 	public static void HandlePreRender()
 	{
@@ -43,7 +42,6 @@ public class GameRenderHandler
 		{
 			if (mc.currentScreen != null && !ControllerSettings.isSuspended())
 			{
-
 				if (mc.currentScreen instanceof GuiControls)
 				{
 					if (!allowOrigControlsMenu)
@@ -63,9 +61,9 @@ public class GameRenderHandler
 					VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 					if (preRenderGuiBucket.size() > 0)
 					{
-						for (ControllerBinding b : preRenderGuiBucket)
+						for (String mapKey : preRenderGuiBucket)
 						{
-							b.wasPressed(true, true);
+							ControllerSettings.get(mapKey).wasPressed(true, true);
 						}
 						preRenderGuiBucket.clear();
 					}
@@ -75,7 +73,7 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
-				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+				for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 				{
 					if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
 						binding.isPressed();
@@ -83,9 +81,9 @@ public class GameRenderHandler
 
 				if (preRenderGameBucket.size() > 0)
 				{
-					for (ControllerBinding b : preRenderGameBucket)
+					for (String mapKey : preRenderGameBucket)
 					{
-						b.wasPressed(true, true);
+						ControllerSettings.get(mapKey).wasPressed(true, true);
 					}
 					preRenderGameBucket.clear();
 				}
@@ -125,7 +123,7 @@ public class GameRenderHandler
 					Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 				}
 
-				for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+				for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 				{
 					binding.isPressed();
 				}
@@ -195,8 +193,8 @@ public class GameRenderHandler
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
 		}
 
-		ControllerSettings.get(JoyBindingEnum.joyGuiScrollDown).isPressed();
-		ControllerSettings.get(JoyBindingEnum.joyGuiScrollUp).isPressed();
+		ControllerSettings.get("joy.scrollDown").isPressed();
+		ControllerSettings.get("joy.scrollUp").isPressed();
 	}
 
 	private static void HandleJoystickInGui()
@@ -205,7 +203,7 @@ public class GameRenderHandler
 		// JoypadMouse.updateXY();
 		VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 
-		for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
+		for (ControllerBinding binding = ControllerSettings.startMenuBindIteration(); binding != null; binding = ControllerSettings.getNextMenuAutoBinding())
 		{
 			if (!binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
 				binding.isPressed();
@@ -223,7 +221,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							ControllerSettings.joystick, Controllers.getEventControlIndex());
+							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()
@@ -236,13 +234,13 @@ public class GameRenderHandler
 				}
 			}
 
-			for (ControllerBinding binding : ControllerSettings.getMenuAutoHandleBindings())
+			for (ControllerBinding binding = ControllerSettings.startMenuBindIteration(); binding != null; binding = ControllerSettings.getNextMenuAutoBinding())
 			{
 				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
 				{
 					if (binding.wasPressed(false))
 					{
-						preRenderGuiBucket.add(binding);
+						preRenderGuiBucket.add(binding.inputString);
 						break;
 					}
 				}
@@ -254,7 +252,7 @@ public class GameRenderHandler
 
 	private static void HandleJoystickInGame()
 	{
-		for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+		for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 		{
 			binding.isPressed();
 		}
@@ -271,7 +269,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							ControllerSettings.joystick, Controllers.getEventControlIndex());
+							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()
@@ -289,20 +287,20 @@ public class GameRenderHandler
 			// hack in sprint
 			if (ModVersionHelper.getVersion() == 164)
 			{
-				if (ControllerSettings.get(JoyBindingEnum.joyBindRun).wasPressed())
+				if (ControllerSettings.get("joy.sprint").wasPressed())
 				{
 					mc.thePlayer.setSprinting(true);
 					continue;
 				}
 			}
 
-			for (ControllerBinding binding : ControllerSettings.getGameAutoHandleBindings())
+			for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 			{
 				if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
 				{
 					if (binding.wasPressed(false))
 					{
-						preRenderGameBucket.add(binding);
+						preRenderGameBucket.add(binding.inputString);
 					}
 				}
 				else
@@ -324,7 +322,7 @@ public class GameRenderHandler
 				String[] names = McObfuscationHelper.getMcVarNames("parentScreen");
 				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui,
 						names[0], names[1]);
-				mc.displayGuiScreen(new JoypadConfigMenu(parent, gui));
+				mc.displayGuiScreen(new JoypadConfigMenu(parent));
 			}
 			catch (Exception ex)
 			{
@@ -356,7 +354,7 @@ public class GameRenderHandler
 
 	public static boolean CheckIfModEnabled()
 	{
-		if (mc == null || !JoypadMod.controllerSettings.isInputEnabled() || ControllerSettings.joystick == null)
+		if (mc == null || !JoypadMod.controllerSettings.isInputEnabled() || ControllerSettings.joyNo == -1)
 		{
 			return false;
 		}

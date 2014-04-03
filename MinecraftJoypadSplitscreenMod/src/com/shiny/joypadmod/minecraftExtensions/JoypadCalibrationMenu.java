@@ -38,7 +38,13 @@ public class JoypadCalibrationMenu extends GuiScreen
 		super();
 		this.joypadIndex = joypadIndex;
 		this.parent = parent;
+	}
+
+	@Override
+	public void onGuiClosed()
+	{
 		ControllerSettings.applySavedDeadZones(joypadIndex);
+		super.onGuiClosed();
 	}
 
 	@SuppressWarnings("unchecked")
