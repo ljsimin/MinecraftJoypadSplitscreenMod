@@ -88,7 +88,7 @@ public class JoypadControlList extends GuiScrollingList
 
 		for (KeyBinding key : akeybinding)
 		{
-			String target = key.getKeyDescription().replace("key.", "joy.");
+			String target = McObfuscationHelper.getKeyDescription(key).replace("key.", "joy.");
 			ControllerBinding b;
 			if (ControllerSettings.joyBindingsMap.containsKey(target))
 			{
@@ -97,8 +97,8 @@ public class JoypadControlList extends GuiScrollingList
 			else
 			{
 				BindingOptions bindCategory = ControllerBinding.mapMinecraftCategory(McObfuscationHelper
-						.getCategory(key));
-				b = new ControllerBinding(target, key.getKeyDescription(), new ButtonInputEvent(
+						.getKeyCategory(key));
+				b = new ControllerBinding(target, McObfuscationHelper.getKeyDescription(key), new ButtonInputEvent(
 						this.parent.getCurrentControllerId(), -1, 1), new int[] { McObfuscationHelper.keyCode(key) },
 						0, EnumSet.of(BindingOptions.GAME_BINDING, bindCategory));
 			}

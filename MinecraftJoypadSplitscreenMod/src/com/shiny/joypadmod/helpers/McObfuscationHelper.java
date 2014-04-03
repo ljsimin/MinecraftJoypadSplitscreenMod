@@ -3,6 +3,7 @@ package com.shiny.joypadmod.helpers;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 
 // the point of this class is to have a central location for calls to all the
@@ -69,6 +70,28 @@ public class McObfuscationHelper
 		default:
 			return new String[] { fieldOrFunctionName, "unknown" };
 		}
+	}
+
+	public static String getKeyDescription(KeyBinding key)
+	{
+		return key.keyDescription;
+	}
+
+	public static String getKeyCategory(KeyBinding key)
+	{
+		return "NOT READY IN 1.6.4";// key.getKeyCategory();
+	}
+
+	public static String lookupString(String input)
+	{
+		String translation = I18n.getStringParams(input.replace("joy.", "key."), new Object[0]);
+		if (translation.compareTo(input) == 0)
+		{
+			// translation failed so try to lookup with original category name
+			translation = I18n.getStringParams(input, new Object[0]);
+		}
+		return translation;
+
 	}
 
 }
