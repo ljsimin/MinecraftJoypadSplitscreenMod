@@ -21,8 +21,16 @@ public class AxisInputEvent extends ControllerInputEvent
 		}
 		else
 		{
-			LogHelper.Error("Attempted to create a binding with invalid axis number. Axis index requested: "
-					+ axisNumber + " axis available: " + Controllers.getController(controllerNumber).getAxisCount());
+			if (controllerId < 0)
+			{
+				LogHelper.Error("Tried to create an axis with invalid controller number");
+			}
+			else
+			{
+				LogHelper.Error("Attempted to create a binding with invalid axis number. Axis index requested: "
+						+ axisNumber + " axis available: " + Controllers.getController(controllerNumber).getAxisCount());
+			}
+
 			LogHelper.Warn("Processing will continue with invalid axis " + axisNumber
 					+ ".  Binding will not respond until rebound and may cause instability in mod.");
 		}
@@ -84,7 +92,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	public String getDescription()
 	{
 		if (!isValid())
-			return "Not set";
+			return "NONE";
 
 		return new StringBuilder().append(getName()).append(" ").append(getDirection(getThreshold())).toString();
 	}
@@ -101,6 +109,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	@Override
 	public boolean isValid()
 	{
-		return axisNumber >= 0 && axisNumber < Controllers.getController(controllerNumber).getAxisCount();
+		return controllerNumber >= 0 && axisNumber >= 0
+				&& axisNumber < Controllers.getController(controllerNumber).getAxisCount();
 	}
 }

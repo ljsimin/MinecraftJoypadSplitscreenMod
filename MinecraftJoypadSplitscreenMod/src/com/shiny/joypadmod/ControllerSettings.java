@@ -29,7 +29,6 @@ import com.shiny.joypadmod.inputevent.AxisInputEvent;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
@@ -40,45 +39,13 @@ public class ControllerSettings
 	public static final float defaultAxisThreshhold = 0.7f;
 	public static final float defaultPovThreshhold = 0.9f;
 
-	public enum JoyBindingEnum
-	{
-		joyBindAttack,
-		joyBindUseItem,
-		joyMovementYminus,
-		joyMovementYplus,
-		joyMovementXminus,
-		joyMovementXplus,
-		joyCameraYminus,
-		joyCameraYplus,
-		joyCameraXminus,
-		joyCameraXplus,
-		joyBindInteract,
-		joyBindJump,
-		joyBindSneak,
-		joyBindRun,
-		joyBindDrop,
-		joyBindInventory,
-		joyBindShiftClick,
-		joyBindPrevItem,
-		joyBindNextItem,
-		joyBindMenu,
-		joyBindGuiLeftClick,
-		joyBindGuiRightClick,
-		joyGuiYminus,
-		joyGuiYplus,
-		joyGuiXminus,
-		joyGuiXplus,
-		joyGuiCloseInventory,
-		joyGuiScrollUp,
-		joyGuiScrollDown
-	}
-
-	private static List<ControllerBinding> joyBindings = null;
 	public static List<ControllerBinding> userDefinedBindings;
+
+	public static Map<String, ControllerBinding> joyBindingsMap = null;
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
-	public static Controller joystick;
+	// public static Controller joystick;
 	public static int joyNo = -1;
 	public static boolean grabMouse = true;
 	public static int inGameSensitivity = 20;
@@ -121,6 +88,7 @@ public class ControllerSettings
 		controllerUtils = new ControllerUtils();
 		validControllers = new HashMap<String, List<Integer>>();
 		inValidControllers = new HashMap<String, List<Integer>>();
+		joyBindingsMap = new HashMap<String, ControllerBinding>();
 		userDefinedBindings = new ArrayList<ControllerBinding>();
 		try
 		{
@@ -132,155 +100,248 @@ public class ControllerSettings
 		}
 	}
 
-	public static ControllerBinding[] getDefaultJoyBindings()
+	private static int currentDisplayedMap = -1;
+
+	public static void setDefaultJoyBindingMap(int joyIndex, boolean updateWithConfigFile)
 	{
-		GameSettings settings = Minecraft.getMinecraft().gameSettings;
-		LogHelper.Info("Setting default joy bindings");
-		ControllerBinding[] bindings = new ControllerBinding[JoyBindingEnum.values().length];
-		bindings[JoyBindingEnum.joyBindJump.ordinal()] = new ControllerBinding("joy.jump", "Jump",
-				new ButtonInputEvent(joyNo, 0, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindJump) }, 0,
-				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindInventory.ordinal()] = new ControllerBinding("joy.inventory", "Open inventory",
-				new ButtonInputEvent(joyNo, 3, 1),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100,
-				EnumSet.of(BindingOptions.GAME_BINDING));
-
-		bindings[JoyBindingEnum.joyBindDrop.ordinal()] = new ControllerBinding("joy.drop", "Drop",
-				new ButtonInputEvent(joyNo, 6, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindDrop) }, 0,
-				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindSneak.ordinal()] = new ControllerBinding("joy.sneak", "Sneak",
-				new ButtonInputEvent(joyNo, 8, 1), new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) }, 0,
-				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindAttack.ordinal()] = new ControllerBinding("joy.attack", "Attack",
-				new AxisInputEvent(joyNo, 4, defaultAxisThreshhold * -1, defaultAxisDeadZone), new int[] { -100 }, 0,
-				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindUseItem.ordinal()] = new ControllerBinding("joy.use", "Use", new AxisInputEvent(
-				joyNo, 4, defaultAxisThreshhold, defaultAxisDeadZone), new int[] { -99 }, 0, EnumSet.of(
-				BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindInteract.ordinal()] = new ControllerBinding("joy.interact", "Interact",
-				new ButtonInputEvent(joyNo, 2, 1), new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING));
-
-		bindings[JoyBindingEnum.joyBindGuiLeftClick.ordinal()] = new ControllerBinding("joy.guiLeftClick",
-				"Left click", new ButtonInputEvent(joyNo, 0, 1), new int[] { -100 }, 0,
-				EnumSet.of(BindingOptions.MENU_BINDING));
-
-		bindings[JoyBindingEnum.joyBindGuiRightClick.ordinal()] = new ControllerBinding("joy.guiRightClick",
-				"Right click", new ButtonInputEvent(joyNo, 2, 1), new int[] { -99 }, 0,
-				EnumSet.of(BindingOptions.MENU_BINDING));
-
-		bindings[JoyBindingEnum.joyBindPrevItem.ordinal()] = new ControllerBinding("joy.prevItem", "Previous item",
-				new ButtonInputEvent(joyNo, 4, 1), new int[] { -199 }, 0, EnumSet.of(BindingOptions.GAME_BINDING));
-
-		bindings[JoyBindingEnum.joyBindNextItem.ordinal()] = new ControllerBinding("joy.nextItem", "Next item",
-				new ButtonInputEvent(joyNo, 5, 1), new int[] { -201 }, 0, EnumSet.of(BindingOptions.GAME_BINDING));
-
-		bindings[JoyBindingEnum.joyBindRun.ordinal()] = new ControllerBinding("joy.sprint", "Sprint",
-				new ButtonInputEvent(joyNo, 9, 1), new int[] { Keyboard.KEY_LCONTROL }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyBindMenu.ordinal()] = new ControllerBinding("joy.menu", "Open menu",
-				new ButtonInputEvent(joyNo, 7, 1), new int[] { Keyboard.KEY_ESCAPE }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.MENU_BINDING));
-
-		bindings[JoyBindingEnum.joyBindShiftClick.ordinal()] = new ControllerBinding("joy.shiftClick", "Shift-click",
-				new ButtonInputEvent(joyNo, 1, 1), new int[] { Keyboard.KEY_LSHIFT, -100 }, 0, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyCameraXplus.ordinal()] = new ControllerBinding("joy.cameraX+", "Look right",
-				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyCameraXminus.ordinal()] = new ControllerBinding("joy.cameraX-", "Look left",
-				new AxisInputEvent(joyNo, 3, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyCameraYminus.ordinal()] = new ControllerBinding("joy.cameraY-", "Look up",
-				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyCameraYplus.ordinal()] = new ControllerBinding("joy.cameraY+", "Look down",
-				new AxisInputEvent(joyNo, 2, defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyMovementXplus.ordinal()] = new ControllerBinding("joy.right", "Strafe right",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyMovementXminus.ordinal()] = new ControllerBinding("joy.left", "Strafe left",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyMovementYplus.ordinal()] = new ControllerBinding("joy.back", "Move backward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyMovementYminus.ordinal()] = new ControllerBinding("joy.forward", "Move forward",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyGuiXplus.ordinal()] = new ControllerBinding("joy.guiX+", "GUI right",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyGuiXminus.ordinal()] = new ControllerBinding("joy.guiX-", "GUI left",
-				new AxisInputEvent(joyNo, 1, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyGuiYplus.ordinal()] = new ControllerBinding("joy.guiY+", "GUI down",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyGuiYminus.ordinal()] = new ControllerBinding("joy.guiY-", "GUI up",
-				new AxisInputEvent(joyNo, 0, defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD));
-
-		bindings[JoyBindingEnum.joyGuiCloseInventory.ordinal()] = new ControllerBinding("joy.closeInventory",
-				"Close container", new ButtonInputEvent(joyNo, 3, 1),
-				new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100,
-				EnumSet.of(BindingOptions.MENU_BINDING));
-
-		bindings[JoyBindingEnum.joyGuiScrollDown.ordinal()] = new ControllerBinding("joy.scrollDown", "Scroll down",
-				new ButtonInputEvent(joyNo, 5, 1), new int[] { -201 }, scrollDelay, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK));
-
-		bindings[JoyBindingEnum.joyGuiScrollUp.ordinal()] = new ControllerBinding("joy.scrollUp", "Scroll up",
-				new ButtonInputEvent(joyNo, 4, 1), new int[] { -199 }, scrollDelay, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK));
-
-		return bindings;
-	}
-
-	public static ControllerBinding get(JoyBindingEnum joyBinding)
-	{
-		return get(joyBinding.ordinal());
-	}
-
-	public static ControllerBinding get(int joyBindingIndex)
-	{
-		if (joyBindings != null)
-			return joyBindings.get(joyBindingIndex);
-
-		return null;
-	}
-
-	public static void delete(int joyBindingIndex)
-	{
-		config.deleteControllerBinding(joystick.getName(), joyBindings.get(joyBindingIndex));
-		ControllerBinding binding = get(joyBindingIndex);
-		joyBindings.remove(joyBindingIndex);
-
-		if (binding.inputString.contains("user."))
+		if (currentDisplayedMap == joyIndex)
 		{
-			userDefinedBindings.remove(binding);
+			LogHelper.Info("Skipping setting up the joybinding map as it is already set up for this joypad");
+			return;
+		}
+
+		currentDisplayedMap = joyIndex;
+
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		LogHelper.Info("Setting default joy binding map");
+
+		joyBindingsMap.clear();
+
+		joyBindingsMap.put(
+				"joy.jump",
+				new ControllerBinding("joy.jump", "Jump", new ButtonInputEvent(joyIndex, 0, 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindJump) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.inventory",
+				new ControllerBinding("joy.inventory", "Open inventory", new ButtonInputEvent(joyIndex, 3, 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.drop",
+				new ControllerBinding("joy.drop", "Drop", new ButtonInputEvent(joyIndex, 6, 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindDrop) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.sneak",
+				new ControllerBinding("joy.sneak", "Sneak", new ButtonInputEvent(joyIndex, 8, 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.attack",
+				new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyIndex, 4, defaultAxisThreshhold
+						* -1, defaultAxisDeadZone), new int[] { -100 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.use",
+				new ControllerBinding("joy.use", "Use", new AxisInputEvent(joyIndex, 4, defaultAxisThreshhold,
+						defaultAxisDeadZone), new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.interact",
+				new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyIndex, 2, 1),
+						new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.guiLeftClick",
+				new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyIndex, 0, 1),
+						new int[] { -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
+								BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.guiRightClick",
+				new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyIndex, 2, 1),
+						new int[] { -99 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
+								BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.prevItem",
+				new ControllerBinding("joy.prevItem", "Previous item", new ButtonInputEvent(joyIndex, 4, 1),
+						new int[] { -199 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+								BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.nextItem",
+				new ControllerBinding("joy.nextItem", "Next item", new ButtonInputEvent(joyIndex, 5, 1),
+						new int[] { -201 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+								BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.sprint",
+				new ControllerBinding("joy.sprint", "Sprint", new ButtonInputEvent(joyIndex, 9, 1),
+						new int[] { Keyboard.KEY_LCONTROL }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.menu",
+				new ControllerBinding("joy.menu", "Open menu", new ButtonInputEvent(joyIndex, 7, 1),
+						new int[] { Keyboard.KEY_ESCAPE }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+								BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_MISC)));
+
+		joyBindingsMap.put(
+				"joy.shiftClick",
+				new ControllerBinding("joy.shiftClick", "Shift-click", new ButtonInputEvent(joyIndex, 1, 1), new int[] {
+						Keyboard.KEY_LSHIFT, -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.cameraX+",
+				new ControllerBinding("joy.cameraX+", "Look right", new AxisInputEvent(joyIndex, 3,
+						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.cameraX-",
+				new ControllerBinding("joy.cameraX-", "Look left", new AxisInputEvent(joyIndex, 3,
+						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.cameraY-",
+				new ControllerBinding("joy.cameraY-", "Look up", new AxisInputEvent(joyIndex, 2, defaultAxisThreshhold
+						* -1, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.cameraY+",
+				new ControllerBinding("joy.cameraY+", "Look down", new AxisInputEvent(joyIndex, 2,
+						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+
+		joyBindingsMap.put(
+				"joy.right",
+				new ControllerBinding("joy.right", "Strafe right", new AxisInputEvent(joyIndex, 1,
+						defaultAxisThreshhold, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.left",
+				new ControllerBinding("joy.left", "Strafe left", new AxisInputEvent(joyIndex, 1, defaultAxisThreshhold
+						* -1, defaultAxisDeadZone), new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.back",
+				new ControllerBinding("joy.back", "Move backward", new AxisInputEvent(joyIndex, 0,
+						defaultAxisThreshhold, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.forward",
+				new ControllerBinding("joy.forward", "Move forward", new AxisInputEvent(joyIndex, 0,
+						defaultAxisThreshhold * -1, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, 0, EnumSet.of(
+								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_MOVEMENT)));
+
+		joyBindingsMap.put(
+				"joy.guiX+",
+				new ControllerBinding("joy.guiX+", "GUI right", new AxisInputEvent(joyIndex, 1, defaultAxisThreshhold,
+						defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.guiX-",
+				new ControllerBinding("joy.guiX-", "GUI left", new AxisInputEvent(joyIndex, 1, defaultAxisThreshhold
+						* -1, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.guiY+",
+				new ControllerBinding("joy.guiY+", "GUI down", new AxisInputEvent(joyIndex, 0, defaultAxisThreshhold,
+						defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.guiY-",
+				new ControllerBinding("joy.guiY-", "GUI up", new AxisInputEvent(joyIndex, 0,
+						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+
+		joyBindingsMap.put(
+				"joy.closeInventory",
+				new ControllerBinding("joy.closeInventory", "Close container", new ButtonInputEvent(joyIndex, 3, 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100, EnumSet.of(
+								BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.scrollDown",
+				new ControllerBinding("joy.scrollDown", "Scroll down", new ButtonInputEvent(joyIndex, 5, 1),
+						new int[] { -201 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
+								BindingOptions.CATEGORY_INVENTORY)));
+
+		joyBindingsMap.put(
+				"joy.scrollUp",
+				new ControllerBinding("joy.scrollUp", "Scroll up", new ButtonInputEvent(joyIndex, 4, 1),
+						new int[] { -199 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
+								BindingOptions.CATEGORY_INVENTORY)));
+
+		if (updateWithConfigFile)
+			config.updateControllerBindings(joyIndex, Controllers.getController(joyIndex).getName());
+
+		List<ControllerBinding> userBindings = config.getUserBindings(joyIndex);
+
+		for (ControllerBinding b : userBindings)
+		{
+			if (!b.hasCategory())
+				b.bindingOptions.add(BindingOptions.CATEGORY_MISC);
+			joyBindingsMap.put(b.inputString, b);
+		}
+	}
+
+	public static ControllerBinding get(String key)
+	{
+		return joyBindingsMap.get(key);
+	}
+
+	public static List<ControllerBinding> getMatchingBindings(BindingOptions option)
+	{
+		List<ControllerBinding> cList = new ArrayList<ControllerBinding>();
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
+		{
+			if (entry.getValue().bindingOptions.contains(option))
+				cList.add(entry.getValue());
+		}
+		return cList;
+	}
+
+	public static void delete(String key)
+	{
+		ControllerBinding binding = joyBindingsMap.get(key);
+		if (binding != null)
+		{
+			if (binding.inputString.contains("user."))
+			{
+				userDefinedBindings.remove(binding);
+			}
+			joyBindingsMap.remove(key);
+			config.deleteUserBinding(binding);
 		}
 
 	}
@@ -314,9 +375,7 @@ public class ControllerSettings
 
 	public static int bindingListSize()
 	{
-		if (joyBindings == null)
-			return 0;
-		return joyBindings.size();
+		return joyBindingsMap.size();
 	}
 
 	public void init()
@@ -424,38 +483,33 @@ public class ControllerSettings
 				return false;
 			}
 
-			joystick = Controllers.getController(controllerNo);
+			ControllerSettings.setDefaultJoyBindingMap(controllerNo, true);
 			joyNo = controllerNo;
-			controllerUtils.printDeadZones(joystick);
-
-			joyBindings = config.getControllerBindings(controllerNo, joystick.getName());
-
+			controllerUtils.printDeadZones(Controllers.getController(controllerNo));
 			inputEnabled = true;
+
+			applySavedDeadZones(joyNo);
+
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
-			ControllerSettings.resetGameAutoHandleBindings();
-			ControllerSettings.resetMenuAutoHandleBindings();
+			return true;
 		}
 		catch (Exception e)
 		{
 			LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
-			joystick = null;
 			inputEnabled = false;
 		}
-
-		return joystick != null;
+		return false;
 	}
 
-	public void setDefaultBindings()
+	public void setDefaultBindings(int joyNo)
 	{
-		if (joyNo < 0 || joystick == null || joyBindings == null)
-			return;
-
-		ControllerBinding[] bindings = getDefaultJoyBindings();
-		for (int i = 0; i < bindings.length; i++)
+		if (joyNo >= 0 && joyNo < Controllers.getControllerCount())
 		{
-			if (!bindings[i].equals(joyBindings.get(i)))
+			setDefaultJoyBindingMap(joyNo, false);
+			for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 			{
-				setControllerBinding(i, bindings[i].inputEvent);
+				if (!entry.getValue().inputString.contains("user."))
+					config.saveControllerBinding(Controllers.getController(joyNo).getName(), entry.getValue());
 			}
 		}
 	}
@@ -505,60 +559,27 @@ public class ControllerSettings
 		return ControllerSettings.suspendControllerInput;
 	}
 
-	public static void setControllerBinding(int bindingIndex, ControllerInputEvent inputEvent)
+	public static void setControllerBinding(int joyNo, String bindingKey, ControllerBinding binding)
 	{
-		// TODO: update the userdefinedbinding list as well if we will ever use its input event
-		ControllerSettings.joyBindings.get(bindingIndex).inputEvent = inputEvent;
-
-		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
-			ControllerSettings.resetGameAutoHandleBindings();
-
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
-			ControllerSettings.resetMenuAutoHandleBindings();
+		ControllerSettings.joyBindingsMap.put(bindingKey, binding);
+		config.saveControllerBinding(Controllers.getController(joyNo).getName(), binding);
 	}
 
-	public static void setControllerBinding(int bindingIndex, ControllerBinding binding)
+	public static void unsetControllerBinding(int joyIndex, String key)
 	{
-		ControllerSettings.joyBindings.set(bindingIndex, binding);
-		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
-			ControllerSettings.resetGameAutoHandleBindings();
-
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
-			ControllerSettings.resetMenuAutoHandleBindings();
-	}
-
-	public static void unsetControllerBinding(int bindingIndex)
-	{
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
-			ControllerSettings.resetGameAutoHandleBindings();
-
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
-			ControllerSettings.resetMenuAutoHandleBindings();
-
-		ControllerSettings.joyBindings.get(bindingIndex).inputEvent = new ButtonInputEvent(0, -1, 1);
-		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
-	}
-
-	public static void addControllerBinding(ControllerBinding binding)
-	{
-		joyBindings.add(binding);
-
-		if (binding.inputString.contains("user."))
+		ControllerBinding binding = joyBindingsMap.get(key);
+		if (binding != null)
 		{
-			userDefinedBindings.add(binding);
+			binding.inputEvent = new ButtonInputEvent(0, -1, 1);
+			config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
 		}
+	}
 
-		int bindingIndex = joyBindings.size() - 1;
-
-		config.saveControllerBinding(joystick.getName(), joyBindings.get(bindingIndex));
-
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.GAME_BINDING))
-			ControllerSettings.resetGameAutoHandleBindings();
-
-		if (joyBindings.get(bindingIndex).bindingOptions.contains(BindingOptions.MENU_BINDING))
-			ControllerSettings.resetMenuAutoHandleBindings();
+	public static void addUserBinding(ControllerBinding binding)
+	{
+		joyBindingsMap.put(binding.inputString, binding);
+		userDefinedBindings.add(binding);
+		config.saveControllerBinding(null, binding);
 	}
 
 	private static void addControllerToList(Map<String, List<Integer>> listToUse, String name, int id)
@@ -598,7 +619,7 @@ public class ControllerSettings
 
 	private void logControllerInfo(Controller controller)
 	{
-		LogHelper.Info("Found controller " + controller.getName() + " (" + joyNo + ")");
+		LogHelper.Info("Found controller " + controller.getName() + " (" + controller.getIndex() + ")");
 		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
 		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
 	}
@@ -634,10 +655,10 @@ public class ControllerSettings
 		}
 	}
 
-	public static void setToggle(int bindingIndex, boolean b)
+	public static void setToggle(int joyNo, String bindingKey, boolean b)
 	{
 
-		ControllerBinding binding = joyBindings.get(bindingIndex);
+		ControllerBinding binding = joyBindingsMap.get(bindingKey);
 		boolean changed = false;
 		if (b)
 		{
@@ -650,75 +671,57 @@ public class ControllerSettings
 
 		if (changed)
 		{
-			setControllerBinding(bindingIndex, binding);
+			setControllerBinding(joyNo, bindingKey, binding);
 		}
 	}
 
-	private static List<ControllerBinding> gameAutoHandleBindings = null;
-	private static List<ControllerBinding> menuAutoHandleBindings = null;
+	private static Iterator<Entry<String, ControllerBinding>> gameBindIterator;
+	private static Iterator<Entry<String, ControllerBinding>> menuBindIterator;
 
-	public static List<ControllerBinding> getGameAutoHandleBindings()
+	private static ControllerBinding getNextBinding(Iterator<Entry<String, ControllerBinding>> current,
+			BindingOptions target)
 	{
-		if (gameAutoHandleBindings == null)
+		while (current.hasNext())
 		{
-			if (joyNo != -1)
-				applySavedDeadZones(joyNo);
-			gameAutoHandleBindings = new ArrayList<ControllerBinding>();
-			for (ControllerBinding binding : joyBindings)
-			{
-				if (binding.keyCodes != null && binding.keyCodes.length != 0
-						&& binding.bindingOptions.contains(BindingOptions.GAME_BINDING))
-					gameAutoHandleBindings.add(binding);
-			}
+			Map.Entry<String, ControllerBinding> entry = current.next();
+			if (entry.getValue().keyCodes != null && entry.getValue().keyCodes.length != 0
+					&& entry.getValue().bindingOptions.contains(target))
+				return entry.getValue();
 		}
 
-		return gameAutoHandleBindings;
+		return null;
 	}
 
-	public static List<ControllerBinding> getMenuAutoHandleBindings()
+	public static ControllerBinding getNextGameAutoBinding()
 	{
-		if (menuAutoHandleBindings == null)
-		{
-			if (joyNo != -1)
-				applySavedDeadZones(joyNo);
-
-			menuAutoHandleBindings = new ArrayList<ControllerBinding>();
-			for (ControllerBinding binding : joyBindings)
-			{
-				if (binding.keyCodes != null && binding.keyCodes.length != 0
-						&& binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
-					menuAutoHandleBindings.add(binding);
-			}
-		}
-
-		return menuAutoHandleBindings;
+		return getNextBinding(gameBindIterator, BindingOptions.GAME_BINDING);
 	}
 
-	public static void resetGameAutoHandleBindings()
+	public static ControllerBinding getNextMenuAutoBinding()
 	{
-		if (gameAutoHandleBindings != null)
-		{
-			gameAutoHandleBindings.clear();
-			gameAutoHandleBindings = null;
-		}
+		return getNextBinding(menuBindIterator, BindingOptions.MENU_BINDING);
 	}
 
-	public static void resetMenuAutoHandleBindings()
+	public static ControllerBinding startGameBindIteration()
 	{
-		if (menuAutoHandleBindings != null)
-		{
-			menuAutoHandleBindings.clear();
-			menuAutoHandleBindings = null;
-		}
+		gameBindIterator = joyBindingsMap.entrySet().iterator();
+		return getNextGameAutoBinding();
+	}
+
+	public static ControllerBinding startMenuBindIteration()
+	{
+		menuBindIterator = joyBindingsMap.entrySet().iterator();
+		return getNextMenuAutoBinding();
 	}
 
 	public static void unpressAll()
 	{
-		for (ControllerBinding binding : joyBindings)
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
-			if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-				binding.toggleState = false;
+			if (entry.getValue().bindingOptions.contains(BindingOptions.IS_TOGGLE))
+				entry.getValue().toggleState = false;
 		}
+
 		KeyBinding.unPressAllKeys();
 		VirtualMouse.unpressAllButtons();
 	}

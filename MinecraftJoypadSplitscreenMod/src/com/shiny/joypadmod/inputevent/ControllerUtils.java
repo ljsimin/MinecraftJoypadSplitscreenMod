@@ -145,6 +145,10 @@ public class ControllerUtils
 
 	public String getHumanReadableInputName(Controller controller, ControllerInputEvent inputEvent)
 	{
+		if (controller == null)
+		{
+			return "NONE";
+		}
 		if (controller.getName().toLowerCase().contains("xinput")
 				|| controller.getName().toLowerCase().contains("xusb")
 				|| controller.getName().toLowerCase().contains("xbox"))

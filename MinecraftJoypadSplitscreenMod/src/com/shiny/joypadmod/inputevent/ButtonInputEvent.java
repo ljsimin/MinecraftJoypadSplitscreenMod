@@ -30,7 +30,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	public String getName()
 	{
 		if (!isValid())
-			return "Not Set";
+			return "NONE";
 		return Controllers.getController(controllerNumber).getButtonName(buttonNumber);
 	}
 
@@ -50,6 +50,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	@Override
 	public boolean isValid()
 	{
-		return buttonNumber >= 0 && buttonNumber < Controllers.getController(controllerNumber).getButtonCount();
+		return controllerNumber >= 0 && buttonNumber >= 0
+				&& buttonNumber < Controllers.getController(controllerNumber).getButtonCount();
 	}
 }
