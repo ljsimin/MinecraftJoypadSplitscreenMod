@@ -86,10 +86,11 @@ public class JoypadControlList extends GuiScrollingList
 		joyBindings
 				.add(new ControllerBinding(null, null, null, null, 0, EnumSet.of(BindingOptions.CATEGORY_GUICONTROL)));
 
+		ControllerBinding b = null;
 		for (KeyBinding key : akeybinding)
 		{
 			String target = McObfuscationHelper.getKeyDescription(key).replace("key.", "joy.");
-			ControllerBinding b;
+
 			if (ControllerSettings.joyBindingsMap.containsKey(target))
 			{
 				b = ControllerSettings.joyBindingsMap.get(target);
@@ -105,18 +106,25 @@ public class JoypadControlList extends GuiScrollingList
 			if (b.getCategoryString() != category)
 			{
 				// get any other bindings that are of this category but not originating from Minecraft
-				List<ControllerBinding> otherBindings = ControllerSettings.getBindingsWithCategory(ControllerBinding
-						.mapMinecraftCategory(category));
-				for (ControllerBinding binding : otherBindings)
-				{
-					if (!joyBindings.contains(binding))
-						joyBindings.add(binding);
-				}
+				getBindingsWithCategory(ControllerBinding.mapMinecraftCategory(category));
 				ControllerBinding catBinding = new ControllerBinding(null, null, null, null, 0, b.bindingOptions);
 				joyBindings.add(catBinding);
 				category = b.getCategoryString();
 			}
 			joyBindings.add(b);
+		}
+		// get any leftover bindings that may have been missed
+		if (b != null)
+			getBindingsWithCategory(ControllerBinding.mapMinecraftCategory(b.getCategoryString()));
+	}
+
+	private void getBindingsWithCategory(BindingOptions category)
+	{
+		List<ControllerBinding> otherBindings = ControllerSettings.getBindingsWithCategory(category);
+		for (ControllerBinding binding : otherBindings)
+		{
+			if (!joyBindings.contains(binding))
+				joyBindings.add(binding);
 		}
 	}
 
