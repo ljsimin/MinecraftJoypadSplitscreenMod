@@ -1,6 +1,7 @@
 package com.shiny.joypadmod.inputevent;
 
 import java.util.EnumSet;
+import java.util.Locale;
 
 import net.minecraft.client.Minecraft;
 
@@ -84,20 +85,22 @@ public class ControllerBinding
 		return false;
 	}
 
+	public BindingOptions getCategory()
+	{
+		for (BindingOptions option : bindingOptions)
+		{
+			if (option.toString().contains("CATEGORY_"))
+				return option;
+		}
+		return BindingOptions.CATEGORY_MISC;
+
+	}
+
 	public String getCategoryString()
 	{
-		if (bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
-			return "joy.categories.gameplay";
-		if (bindingOptions.contains(BindingOptions.CATEGORY_GUICONTROL))
-			return "joy.categories.guicontrol";
-		if (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
-			return "joy.categories.inventory";
-		if (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
-			return "joy.categories.movement";
-		if (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
-			return "joy.categories.multiplayer";
-
-		return "joy.categories.misc";
+		BindingOptions category = getCategory();
+		String target = category.toString().split("_")[1].toLowerCase(Locale.ENGLISH);
+		return "joy.categories." + target;
 	}
 
 	public static BindingOptions mapMinecraftCategory(String category)
