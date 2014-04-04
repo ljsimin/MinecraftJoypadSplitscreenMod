@@ -84,11 +84,14 @@ public class McObfuscationHelper
 
 	public static String lookupString(String input)
 	{
-		String translation = I18n.getStringParams(input.replace("joy.", "key."), new Object[0]);
+		String translation = I18n.getStringParams(input, new Object[0]);
 		if (translation.compareTo(input) == 0)
 		{
-			// translation failed so try to lookup with original category name
-			translation = I18n.getStringParams(input, new Object[0]);
+			String keyString = input.replace("joy.", "key.");
+			// translation failed so try to lookup with the key name
+			translation = I18n.getStringParams(keyString, new Object[0]);
+			if (translation.compareTo(keyString) == 0)
+				return input;
 		}
 		return translation;
 

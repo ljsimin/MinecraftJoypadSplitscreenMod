@@ -99,6 +99,8 @@ public class JoypadMouse
 
 	public static class AxisReader
 	{
+		private static Minecraft mc = Minecraft.getMinecraft();
+
 		// last delta movement of axis
 		public static float deltaX;
 		public static float deltaY;
@@ -113,8 +115,6 @@ public class JoypadMouse
 
 		private static long lastAxisReading = 0;
 		private static long readingTimeout = 10;
-
-		private static Minecraft mc = Minecraft.getMinecraft();
 
 		// this is the equivalent of moving the mouse around on your joypad
 		public static void pollAxis()
@@ -159,26 +159,40 @@ public class JoypadMouse
 
 			pollAxis();
 
-			int dx = (int) deltaX;
-			int dy = (int) deltaY;
-			x += dx;
-			y += dy;
+			if (mc.currentScreen != null)
+			{
+				x += (int) deltaX;
+				y += (int) deltaY;
 
-			if (x < 0)
-				x = 0;
-			if (y < 0)
-				y = 0;
-			if (x > scaledResolution.getScaledWidth())
-				x = scaledResolution.getScaledWidth() - 5;
-			if (y > scaledResolution.getScaledHeight())
-				y = scaledResolution.getScaledHeight() - 5;
+				if (x < 0)
+					x = 0;
+				if (y < 0)
+					y = 0;
+				if (x > scaledResolution.getScaledWidth())
+					x = scaledResolution.getScaledWidth() - 5;
+				if (y > scaledResolution.getScaledHeight())
+					y = scaledResolution.getScaledHeight() - 5;
 
-			if (ControllerSettings.loggingLevel > 2)
-				LogHelper.Debug("Virtual Mouse x: " + x + " y: " + y);
+				if (ControllerSettings.loggingLevel > 2)
+					LogHelper.Debug("Virtual Mouse x: " + x + " y: " + y);
+
+				mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
+				mcX = x * scaledResolution.getScaleFactor();
+			}
+		}
+
+		public static void centerCrosshairs()
+		{
+			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
+					mc.displayHeight);
+
+			x = scaledResolution.getScaledWidth() / 2;
+			y = scaledResolution.getScaledHeight() / 2;
 
 			mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
 			mcX = x * scaledResolution.getScaleFactor();
 		}
+
 	}
 
 }

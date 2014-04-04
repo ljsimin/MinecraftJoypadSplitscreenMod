@@ -318,15 +318,13 @@ public class ControllerSettings
 		return joyBindingsMap.get(key);
 	}
 
-	public static List<ControllerBinding> getBindingsWithCategory(BindingOptions option)
+	public static List<String> getBindingsWithCategory(String categoryString)
 	{
-		List<ControllerBinding> cList = new ArrayList<ControllerBinding>();
+		List<String> cList = new ArrayList<String>();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
-			if (!entry.getValue().hasCategory() && option == BindingOptions.CATEGORY_MISC)
-				cList.add(entry.getValue());
-			else if (entry.getValue().bindingOptions.contains(option))
-				cList.add(entry.getValue());
+			if (entry.getValue().getCategoryString().compareTo(categoryString) == 0)
+				cList.add(entry.getValue().inputString);
 		}
 		return cList;
 	}
@@ -344,33 +342,6 @@ public class ControllerSettings
 			config.deleteUserBinding(binding);
 		}
 
-	}
-
-	public static int getUnusedUserIndex()
-	{
-		for (int i = 0; i < 1000; i++)
-		{
-			boolean foundMatch = false;
-			for (ControllerBinding binding : userDefinedBindings)
-			{
-				try
-				{
-					String idString = binding.inputString.substring(binding.inputString.indexOf('.') + 1);
-					if (Integer.parseInt(idString) == i)
-					{
-						foundMatch = true;
-						break;
-					}
-				}
-				catch (Exception ex)
-				{
-					LogHelper.Error("Exception caught getting unused user index. " + ex.toString());
-				}
-			}
-			if (!foundMatch)
-				return i;
-		}
-		return 9999;
 	}
 
 	public static int bindingListSize()
@@ -435,23 +406,23 @@ public class ControllerSettings
 			if (Controllers.getControllerCount() > 0)
 			{
 				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
-				for (int joyNo = 0; joyNo < Controllers.getControllerCount(); joyNo++)
+				for (int joyIndex = 0; joyIndex < Controllers.getControllerCount(); joyIndex++)
 				{
-					Controller thisController = Controllers.getController(joyNo);
+					Controller thisController = Controllers.getController(joyIndex);
 
 					logControllerInfo(thisController);
 
 					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
 							requiredMinButtonCount, requiredAxisCount))
 					{
-						LogHelper.Info("Controller #" + joyNo + " ( " + thisController.getName()
+						LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
 								+ ") meets the input requirements");
-						addControllerToList(validControllers, thisController.getName(), joyNo);
+						addControllerToList(validControllers, thisController.getName(), joyIndex);
 					}
 					else
 					{
 						LogHelper.Info("This controller does not meet the input requirements");
-						addControllerToList(inValidControllers, thisController.getName(), joyNo);
+						addControllerToList(inValidControllers, thisController.getName(), joyIndex);
 					}
 					LogHelper.Info("---");
 				}
@@ -491,6 +462,7 @@ public class ControllerSettings
 			applySavedDeadZones(joyNo);
 
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
+			JoypadMouse.AxisReader.centerCrosshairs();
 			return true;
 		}
 		catch (Exception e)
@@ -501,15 +473,15 @@ public class ControllerSettings
 		return false;
 	}
 
-	public void setDefaultBindings(int joyNo)
+	public void resetBindings(int joyIndex)
 	{
-		if (joyNo >= 0 && joyNo < Controllers.getControllerCount())
+		if (joyIndex >= 0 && joyIndex < Controllers.getControllerCount())
 		{
-			setDefaultJoyBindingMap(joyNo, false);
+			setDefaultJoyBindingMap(joyIndex, false);
 			for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 			{
 				if (!entry.getValue().inputString.contains("user."))
-					config.saveControllerBinding(Controllers.getController(joyNo).getName(), entry.getValue());
+					config.saveControllerBinding(Controllers.getController(joyIndex).getName(), entry.getValue());
 			}
 		}
 	}
@@ -519,18 +491,23 @@ public class ControllerSettings
 		return inputEnabled;
 	}
 
-	public void setInputEnabled(boolean b)
+	public void setInputEnabled(int joyIndex, boolean b)
 	{
-		inputEnabled = b;
 		if (!b)
 		{
+			inputEnabled = false;
 			config.updatePreferedJoy(-1, null);
-		}
-		else
-		{
-			config.updatePreferedJoy(joyNo, null);
+			return;
 		}
 
+		if (joyNo != joyIndex && !setController(joyIndex))
+		{
+			return;
+		}
+
+		inputEnabled = true;
+		config.updatePreferedJoy(joyNo, null);
+		JoypadMouse.AxisReader.centerCrosshairs();
 	}
 
 	private static long suspendMax;
@@ -559,10 +536,10 @@ public class ControllerSettings
 		return ControllerSettings.suspendControllerInput;
 	}
 
-	public static void setControllerBinding(int joyNo, String bindingKey, ControllerBinding binding)
+	public static void setControllerBinding(int joyIndex, String bindingKey, ControllerBinding binding)
 	{
 		ControllerSettings.joyBindingsMap.put(bindingKey, binding);
-		config.saveControllerBinding(Controllers.getController(joyNo).getName(), binding);
+		config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
 	}
 
 	public static void unsetControllerBinding(int joyIndex, String key)
@@ -655,7 +632,7 @@ public class ControllerSettings
 		}
 	}
 
-	public static void setToggle(int joyNo, String bindingKey, boolean b)
+	public static void setToggle(int joyIndex, String bindingKey, boolean b)
 	{
 
 		ControllerBinding binding = joyBindingsMap.get(bindingKey);
@@ -671,7 +648,7 @@ public class ControllerSettings
 
 		if (changed)
 		{
-			setControllerBinding(joyNo, bindingKey, binding);
+			setControllerBinding(joyIndex, bindingKey, binding);
 		}
 	}
 

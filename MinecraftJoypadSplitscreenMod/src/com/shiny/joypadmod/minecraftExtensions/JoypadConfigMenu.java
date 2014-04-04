@@ -276,19 +276,21 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 101: // PREV
 			// disable for safety
-			JoypadMod.controllerSettings.setInputEnabled(false);
+			JoypadMod.controllerSettings.setInputEnabled(-1, false);
 			currentJoyIndex = getJoypadIndex(-1);
 			updateControllerButton();
 			break;
 		case 102: // NEXT
 			// disable for safety
-			JoypadMod.controllerSettings.setInputEnabled(false);
+			JoypadMod.controllerSettings.setInputEnabled(-1, false);
 			currentJoyIndex = getJoypadIndex(1);
 			updateControllerButton();
 			break;
 		case 400: // Reset
 			if (currentJoyIndex != -1)
-				JoypadMod.controllerSettings.setDefaultBindings(currentJoyIndex);
+			{
+				JoypadMod.controllerSettings.resetBindings(currentJoyIndex);
+			}
 			break;
 		case 401: // invert
 			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
@@ -344,7 +346,7 @@ public class JoypadConfigMenu extends GuiScreen
 			mc.displayGuiScreen(new GuiControls(this, mc.gameSettings));
 			break;
 		case 503: // unhide controllers
-			JoypadMod.controllerSettings.setInputEnabled(false);
+			JoypadMod.controllerSettings.setInputEnabled(-1, false);
 			if (guiButton.displayString.contains("Other"))
 			{
 				getControllers(false);
@@ -436,10 +438,10 @@ public class JoypadConfigMenu extends GuiScreen
 							this.getCurrentControllerId(), -1, 1), new int[] { Keyboard.getKeyIndex(key) }, 0,
 							EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 									BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_MISC));
-					if (this.optionList != null && !this.optionList.joyBindings.contains(binding))
+					if (this.optionList != null && !this.optionList.joyBindKeys.contains(binding.inputString))
 					{
 						ControllerSettings.addUserBinding(binding);
-						this.optionList.joyBindings.add(binding);
+						this.optionList.joyBindKeys.add(binding.inputString);
 					}
 
 					break;
@@ -459,7 +461,7 @@ public class JoypadConfigMenu extends GuiScreen
 		{
 			lastJoyIndex = currentJoyIndex;
 			if (this.optionList != null)
-				this.optionList.updateJoyBindings();
+				this.optionList.updatejoyBindKeys();
 		}
 
 		this.drawCenteredString(getFontRenderer(), "Joypad Mod Controls - Press space to toggle controller", width / 2,
@@ -570,7 +572,8 @@ public class JoypadConfigMenu extends GuiScreen
 	private void toggleController()
 	{
 		LogHelper.Info("Enable/disable input");
-		JoypadMod.controllerSettings.setInputEnabled(!JoypadMod.controllerSettings.isInputEnabled());
+		JoypadMod.controllerSettings.setInputEnabled(getCurrentControllerId(),
+				!JoypadMod.controllerSettings.isInputEnabled());
 		updateControllerButton();
 	}
 
