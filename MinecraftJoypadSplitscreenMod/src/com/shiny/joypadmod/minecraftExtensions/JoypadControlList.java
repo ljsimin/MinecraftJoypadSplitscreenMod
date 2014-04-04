@@ -99,11 +99,6 @@ public class JoypadControlList extends GuiScrollingList
 			{
 				joyKey = McObfuscationHelper.getKeyDescription(key);
 				thisCategory = McObfuscationHelper.getKeyCategory(key).replace("key.", "joy.");
-				/*
-				 * BindingOptions bindCategory = ControllerBinding.mapMinecraftCategory(McObfuscationHelper.getKeyCategory(key)); binding = new ControllerBinding(target,
-				 * McObfuscationHelper.getKeyDescription(key).replace("key.", "joy."), new ButtonInputEvent(this.parent.getCurrentControllerId(), -1, 1), new int[] { McObfuscationHelper.keyCode(key)
-				 * }, 0, EnumSet.of(BindingOptions.GAME_BINDING, bindCategory));
-				 */
 			}
 			if (thisCategory.compareTo(category) != 0)
 			{
@@ -190,7 +185,7 @@ public class JoypadControlList extends GuiScrollingList
 
 		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(controlDescription, 110), this.left + 3, var3
 				+ buttonHeight / 2 - this.fontRenderer.FONT_HEIGHT / 2, 0xFF2222);
-	
+
 		drawControlButtons(var1, this.left + 120, var3, joyBindKeys.get(var1), var1 == selectedIndex);
 
 		if (bindingIndexToUpdate != -1)
@@ -378,9 +373,10 @@ public class JoypadControlList extends GuiScrollingList
 				if (keyInputString.compareTo(bindingKey) == 0)
 				{
 					b = new ControllerBinding(keyInputString, keyInputString, new ButtonInputEvent(
-							parent.getCurrentControllerId(), -1, 1), new int[] { kb.getKeyCode() }, 0, EnumSet.of(
-							BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
-							ControllerBinding.mapMinecraftCategory(McObfuscationHelper.getKeyCategory(kb))));
+							parent.getCurrentControllerId(), -1, 1), new int[] { McObfuscationHelper.keyCode(kb) }, 0,
+							EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+									BindingOptions.RENDER_TICK,
+									ControllerBinding.mapMinecraftCategory(McObfuscationHelper.getKeyCategory(kb))));
 				}
 			}
 		}
