@@ -79,7 +79,7 @@ public class McObfuscationHelper
 
 	public static String getKeyCategory(KeyBinding key)
 	{
-		return "NOT READY IN 1.6.4";// key.getKeyCategory();
+		return "joy.categories.updateFor1.6.4";// key.getKeyCategory();
 	}
 
 	public static String lookupString(String input)
