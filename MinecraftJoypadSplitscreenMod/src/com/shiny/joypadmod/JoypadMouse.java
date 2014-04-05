@@ -115,6 +115,7 @@ public class JoypadMouse
 
 		private static long lastAxisReading = 0;
 		private static long readingTimeout = 10;
+		private static long last0Reading = 0;
 
 		// this is the equivalent of moving the mouse around on your joypad
 		public static void pollAxis()
@@ -126,26 +127,34 @@ public class JoypadMouse
 			if (Minecraft.getSystemTime() - lastAxisReading < readTimeout)
 				return;
 
-			// minecrafts original crazy calculation has found its way here
-			float var3 = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
-			float var4 = var3;
-
-			float xPlus = ControllerSettings.get(inGui ? "joy.guiX+" : "joy.cameraX+").getAnalogReading();
-			float xMinus = ControllerSettings.get(inGui ? "joy.guiX-" : "joy.cameraX-").getAnalogReading();
+			float xPlus = getReading(inGui ? "joy.guiX+" : "joy.cameraX+");
+			float xMinus = getReading(inGui ? "joy.guiX-" : "joy.cameraX-");
 			float horizontalMovement = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
 
-			float yPlus = ControllerSettings.get(inGui ? "joy.guiY+" : "joy.cameraY+").getAnalogReading();
-			float yMinus = ControllerSettings.get(inGui ? "joy.guiY-" : "joy.cameraY-").getAnalogReading();
+			float yPlus = getReading(inGui ? "joy.guiY+" : "joy.cameraY+");
+			float yMinus = getReading(inGui ? "joy.guiY-" : "joy.cameraY-");
 			float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
 
-			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
-					: ControllerSettings.inGameSensitivity * 2);
+			deltaX = horizontalMovement;
+			deltaY = verticalMovement;
 
-			deltaX = (float) (Math.round(horizontalMovement * (float) cameraMultiplier) * var4);
-			deltaY = (float) (Math.round(verticalMovement * (float) cameraMultiplier) * var4);
+			if (deltaX == 0 && deltaY == 0)
+			{
+				last0Reading = Minecraft.getSystemTime();
+				return;
+			}
+
+			float cameraMultiplier = getCameraMultiplier(inGui);
+
+			// minecrafts original crazy calculation has found its way here
+			float magicNumber = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
+
+			deltaX *= cameraMultiplier * magicNumber;
+			deltaY *= cameraMultiplier * magicNumber;
 
 			if (ControllerSettings.loggingLevel > 2)
 				LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
+			
 			lastAxisReading = Minecraft.getSystemTime();
 		}
 
@@ -191,6 +200,31 @@ public class JoypadMouse
 
 			mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
 			mcX = x * scaledResolution.getScaleFactor();
+		}
+
+		private static float getReading(String bindKey)
+		{
+			return ControllerSettings.get(bindKey).getAnalogReading();
+		}
+
+		private static float getCameraMultiplier(boolean inGui)
+		{
+			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
+					: ControllerSettings.inGameSensitivity * 2);
+
+			long elapsed = Minecraft.getSystemTime() - last0Reading;
+			if (elapsed < 500)
+			{
+				float base = cameraMultiplier * 0.5f;
+
+				// increase the multiplier by 10% every 100 ms
+				cameraMultiplier = base + (base * elapsed) / 500;
+				if (ControllerSettings.loggingLevel > 2)
+					LogHelper.Info("CameraMultiplier " + cameraMultiplier);
+			}
+
+			return cameraMultiplier;
+
 		}
 
 	}
