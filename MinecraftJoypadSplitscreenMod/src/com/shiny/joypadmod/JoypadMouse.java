@@ -154,7 +154,7 @@ public class JoypadMouse
 
 			if (ControllerSettings.loggingLevel > 2)
 				LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
-			
+
 			lastAxisReading = Minecraft.getSystemTime();
 		}
 
@@ -204,7 +204,9 @@ public class JoypadMouse
 
 		private static float getReading(String bindKey)
 		{
-			return ControllerSettings.get(bindKey).getAnalogReading();
+			if (ControllerSettings.get(bindKey).inputEvent.pressedOnce())
+				return ControllerSettings.get(bindKey).getAnalogReading();
+			return 0;
 		}
 
 		private static float getCameraMultiplier(boolean inGui)

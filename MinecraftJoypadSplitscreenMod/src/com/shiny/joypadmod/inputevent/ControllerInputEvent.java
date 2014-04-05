@@ -20,6 +20,8 @@ public abstract class ControllerInputEvent
 	protected float deadzone;
 	protected boolean isActive;
 	protected boolean wasReleased;
+	// switch whether this has ever been pressed in its lifetime
+	protected boolean pressedOnce;
 
 	public enum EventType
 	{
@@ -38,6 +40,7 @@ public abstract class ControllerInputEvent
 		this.deadzone = deadzone;
 		isActive = false;
 		wasReleased = false;
+		pressedOnce = false;
 	}
 
 	// subclasses will check the controller event to see if it matches their subclass type
@@ -55,6 +58,16 @@ public abstract class ControllerInputEvent
 	public EventType getEventType()
 	{
 		return type;
+	}
+
+	public boolean isActive()
+	{
+		return isActive;
+	}
+
+	public boolean pressedOnce()
+	{
+		return pressedOnce;
 	}
 
 	public boolean isPressed()
@@ -82,7 +95,9 @@ public abstract class ControllerInputEvent
 		boolean bRet = wasPressedRaw() && meetsThreshold();
 
 		if (bRet)
+		{
 			isActive = true;
+		}
 
 		if (isActive && wasReleased)
 		{
@@ -101,6 +116,7 @@ public abstract class ControllerInputEvent
 
 		if (Controllers.getEventSource().getIndex() == controllerNumber && isTargetEvent())
 		{
+			pressedOnce = true;
 			return true;
 		}
 
