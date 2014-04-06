@@ -178,9 +178,16 @@ public class GameRenderHandler
 
 	private static void UpdateInGameCamera()
 	{
-		JoypadMouse.updateXY();
-		mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX,
-				JoypadMouse.AxisReader.deltaY * (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
+		if (JoypadMouse.AxisReader.pollNeeded(false))
+		{
+			JoypadMouse.updateXY();
+			mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX,
+					JoypadMouse.AxisReader.deltaY * (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
+		}
+		else
+		{
+			LogHelper.Info("Not updating camera this tick");
+		}
 	}
 
 	private static void HandleDragAndScrolling()
