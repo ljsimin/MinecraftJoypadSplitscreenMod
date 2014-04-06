@@ -108,7 +108,8 @@ public class JoypadMouse
 		public static int mcY = 0;
 
 		private static long lastAxisReading = 0;
-		private static long readingTimeout = 30;
+		private static long guiPollTimeout = 30;
+		private static long gamePollTimeout = 10;
 		private static long last0Reading = 0;
 
 		// pollAxis()
@@ -126,7 +127,7 @@ public class JoypadMouse
 		{
 			boolean inGui = mc.currentScreen != null;
 
-			if (inGui && (Minecraft.getSystemTime() - lastAxisReading < readingTimeout))
+			if (!pollNeeded(inGui))
 				return;
 
 			float xPlus = getReading(inGui ? "joy.guiX+" : "joy.cameraX+");
@@ -177,7 +178,7 @@ public class JoypadMouse
 
 		public static void updateXY()
 		{
-			if (mc.currentScreen != null && (Minecraft.getSystemTime() - lastAxisReading < readingTimeout))
+			if (!pollNeeded(mc.currentScreen != null))
 				return;
 
 			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
@@ -217,6 +218,14 @@ public class JoypadMouse
 
 			mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
 			mcX = x * scaledResolution.getScaleFactor();
+		}
+
+		public static boolean pollNeeded(boolean inGui)
+		{
+			if (Minecraft.getSystemTime() - lastAxisReading < (inGui ? guiPollTimeout : gamePollTimeout))
+				return false;
+
+			return true;
 		}
 
 		private static float getReading(String bindKey)
