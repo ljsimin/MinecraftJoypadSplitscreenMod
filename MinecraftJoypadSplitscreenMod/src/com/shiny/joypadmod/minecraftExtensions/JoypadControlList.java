@@ -250,10 +250,8 @@ public class JoypadControlList extends GuiScrollingList
 				{
 					if (binding.inputEvent.getEventType() != EventType.AXIS)
 					{
-						if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-							binding.bindingOptions.remove(BindingOptions.IS_TOGGLE);
-						else
-							binding.bindingOptions.add(BindingOptions.IS_TOGGLE);
+						ControllerSettings.setToggle(parent.currentJoyIndex, binding.inputString,
+								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
 					}
 				}
 			}
