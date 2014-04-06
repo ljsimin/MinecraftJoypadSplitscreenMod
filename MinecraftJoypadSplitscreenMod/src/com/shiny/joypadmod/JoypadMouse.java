@@ -42,7 +42,6 @@ public class JoypadMouse
 	{
 		if (!VirtualMouse.isButtonDown(0))
 		{
-			// McGuiHelper.guiMouseDown(AxisReader.x, AxisReader.y, 0);
 			VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
 			VirtualMouse.holdMouseButton(0, true);
 		}
@@ -52,8 +51,6 @@ public class JoypadMouse
 	{
 		if (VirtualMouse.isButtonDown(0))
 		{
-			// McGuiHelper.guiMouseUp(AxisReader.x, AxisReader.y, 0);
-			// VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
 			VirtualMouse.releaseMouseButton(0, true);
 		}
 	}
@@ -67,7 +64,6 @@ public class JoypadMouse
 	{
 		if (!VirtualMouse.isButtonDown(1))
 		{
-			// McGuiHelper.guiMouseDown(AxisReader.x, AxisReader.y, 1);
 			VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
 			VirtualMouse.holdMouseButton(1, true);
 		}
@@ -77,8 +73,6 @@ public class JoypadMouse
 	{
 		if (VirtualMouse.isButtonDown(1))
 		{
-			// McGuiHelper.guiMouseUp(AxisReader.x, AxisReader.y, 1);
-			// VirtualMouse.setXY(AxisReader.mcX, AxisReader.mcY);
 			VirtualMouse.releaseMouseButton(1, true);
 		}
 	}
@@ -114,26 +108,56 @@ public class JoypadMouse
 		public static int mcY = 0;
 
 		private static long lastAxisReading = 0;
-		private static long readingTimeout = 10;
+		private static long readingTimeout = 30;
 		private static long last0Reading = 0;
 
+		// pollAxis()
 		// this is the equivalent of moving the mouse around on your joypad
+		// the current algorithm as of 4/6/2014
+		// 1) get reading of axis (will be between -1.0 && 1.0)
+		// 2) if reading of both axis == 0 exit ( note: a 0 reading will be partly determined by the deadzones )
+		// 3) sensitivityValue = current menu/game sensitivity value (set by user)
+		// 4) if axisReading > axisThreshold, delta = axisReading * sensitivityValue
+		// 5) if in game && axisReading < axisThreshold / 2, delta = axisReading * sensitivityValue * 0.3
+		// 6) if axisReading < axisThreshold, delta = axisReading * sensitivityValue * 0.5
+		// a second modifier will apply if the axisReading > axisThreshold and is currently within the first 500ms of being pressed
+		// this will start by halving the sensitivityValue and over the course of 500ms add an additional 10% until it is sending the full sensitivity value
 		public static void pollAxis()
 		{
 			boolean inGui = mc.currentScreen != null;
-			long readTimeout = inGui ? readingTimeout + ControllerSettings.inMenuSensitivity : readingTimeout
-					+ ControllerSettings.inGameSensitivity;
 
-			if (Minecraft.getSystemTime() - lastAxisReading < readTimeout)
+			if (inGui && (Minecraft.getSystemTime() - lastAxisReading < readingTimeout))
 				return;
 
 			float xPlus = getReading(inGui ? "joy.guiX+" : "joy.cameraX+");
 			float xMinus = getReading(inGui ? "joy.guiX-" : "joy.cameraX-");
-			float horizontalMovement = Math.abs(xPlus) > Math.abs(xMinus) ? xPlus : xMinus;
+			float horizontalMovement;
+			float horizontalThreshold;
+			if (Math.abs(xPlus) > Math.abs(xMinus))
+			{
+				horizontalMovement = xPlus;
+				horizontalThreshold = ControllerSettings.get(inGui ? "joy.guiX+" : "joy.cameraX+").inputEvent.getThreshold();
+			}
+			else
+			{
+				horizontalMovement = xMinus;
+				horizontalThreshold = ControllerSettings.get(inGui ? "joy.guiX-" : "joy.cameraX-").inputEvent.getThreshold();
+			}
 
 			float yPlus = getReading(inGui ? "joy.guiY+" : "joy.cameraY+");
 			float yMinus = getReading(inGui ? "joy.guiY-" : "joy.cameraY-");
-			float verticalMovement = Math.abs(yPlus) > Math.abs(yMinus) ? yPlus : yMinus;
+			float verticalMovement;
+			float verticalThreshold;
+			if (Math.abs(yPlus) > Math.abs(yMinus))
+			{
+				verticalMovement = yPlus;
+				verticalThreshold = ControllerSettings.get(inGui ? "joy.guiY+" : "joy.cameraY+").inputEvent.getThreshold();
+			}
+			else
+			{
+				verticalMovement = yMinus;
+				verticalThreshold = ControllerSettings.get(inGui ? "joy.guiY-" : "joy.cameraY-").inputEvent.getThreshold();
+			}
 
 			deltaX = horizontalMovement;
 			deltaY = verticalMovement;
@@ -144,23 +168,16 @@ public class JoypadMouse
 				return;
 			}
 
-			float cameraMultiplier = getCameraMultiplier(inGui);
-
-			// minecrafts original crazy calculation has found its way here
-			float magicNumber = mc.gameSettings.mouseSensitivity * 0.4F + 0.2F;
-
-			deltaX *= cameraMultiplier * magicNumber;
-			deltaY *= cameraMultiplier * magicNumber;
-
+			deltaX = calculateFinalDelta(inGui, deltaX, horizontalThreshold);
+			deltaY = calculateFinalDelta(inGui, deltaY, verticalThreshold);
 			if (ControllerSettings.loggingLevel > 2)
-				LogHelper.Debug("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
-
+				LogHelper.Info("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
 			lastAxisReading = Minecraft.getSystemTime();
 		}
 
 		public static void updateXY()
 		{
-			if (Minecraft.getSystemTime() - lastAxisReading < readingTimeout)
+			if (mc.currentScreen != null && (Minecraft.getSystemTime() - lastAxisReading < readingTimeout))
 				return;
 
 			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
@@ -209,26 +226,44 @@ public class JoypadMouse
 			return 0;
 		}
 
-		private static float getCameraMultiplier(boolean inGui)
+		private static float getModifiedMultiplier(float currentMultiplier)
 		{
-			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
-					: ControllerSettings.inGameSensitivity * 2);
-
 			long elapsed = Minecraft.getSystemTime() - last0Reading;
 			if (elapsed < 500)
 			{
-				float base = cameraMultiplier * 0.5f;
+				float base = currentMultiplier * 0.5f;
 
 				// increase the multiplier by 10% every 100 ms
-				cameraMultiplier = base + (base * elapsed) / 500;
+				currentMultiplier = base + (base * elapsed) / 500;
 				if (ControllerSettings.loggingLevel > 2)
-					LogHelper.Info("CameraMultiplier " + cameraMultiplier);
+					LogHelper.Info("CameraMultiplier " + currentMultiplier);
 			}
 
-			return cameraMultiplier;
-
+			return currentMultiplier;
 		}
 
+		private static float calculateFinalDelta(boolean inGui, float currentDelta, float currentThreshold)
+		{
+			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
+					: ControllerSettings.inGameSensitivity);
+
+			if (!inGui && Math.abs(currentDelta) < Math.abs(currentThreshold / 2))
+				cameraMultiplier *= 0.3;
+			else if (Math.abs(currentDelta) < Math.abs(currentThreshold))
+				cameraMultiplier *= 0.5;
+			else
+				cameraMultiplier = getModifiedMultiplier(cameraMultiplier);
+
+			float finalDelta = currentDelta * cameraMultiplier;
+
+			// return at minimum a 1 or -1
+			if (finalDelta < 1.0 && finalDelta > 0.0)
+				finalDelta = 1.0f;
+			else if (finalDelta < 0 && finalDelta > -1.0)
+				finalDelta = -1.0f;
+
+			return finalDelta;
+		}
 	}
 
 }
