@@ -228,6 +228,8 @@ public class ConfigFile
 				{
 					// update the default binding with the values from the config file
 					defaultBinding.inputEvent = tempBinding.inputEvent;
+					if (tempBinding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
+						defaultBinding.bindingOptions.add(BindingOptions.IS_TOGGLE);
 				}
 				else
 				{
