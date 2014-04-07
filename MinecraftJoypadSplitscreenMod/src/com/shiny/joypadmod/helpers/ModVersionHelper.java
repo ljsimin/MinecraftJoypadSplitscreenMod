@@ -4,6 +4,7 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -35,7 +36,7 @@ public class ModVersionHelper
 	}
 
 	// 1.7.2
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void tickRender(RenderTickEvent event)
 	{
 		if (event.phase == TickEvent.Phase.START)
@@ -48,7 +49,7 @@ public class ModVersionHelper
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void tickRenderClient(ClientTickEvent event)
 	{
 		if (event.phase == TickEvent.Phase.START)
