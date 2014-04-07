@@ -230,6 +230,8 @@ public class ConfigFile
 					defaultBinding.inputEvent = tempBinding.inputEvent;
 					if (tempBinding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
 						defaultBinding.bindingOptions.add(BindingOptions.IS_TOGGLE);
+					if (tempBinding.bindingOptions.contains(BindingOptions.RENDER_TICK))
+						defaultBinding.bindingOptions.add(BindingOptions.RENDER_TICK);
 				}
 				else
 				{
