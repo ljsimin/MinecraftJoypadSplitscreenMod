@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 public class JoypadMouse
@@ -230,8 +231,16 @@ public class JoypadMouse
 
 		private static float getReading(String bindKey)
 		{
-			if (ControllerSettings.get(bindKey).inputEvent.pressedOnce())
-				return ControllerSettings.get(bindKey).getAnalogReading();
+			boolean isButton = ControllerSettings.get(bindKey).inputEvent.getEventType() == EventType.BUTTON;
+
+			if (isButton || ControllerSettings.get(bindKey).inputEvent.pressedOnce())
+			{
+				float f = ControllerSettings.get(bindKey).getAnalogReading();
+				if (isButton && bindKey.contains("-"))
+					f *= -1;
+				return f;
+			}
+
 			return 0;
 		}
 

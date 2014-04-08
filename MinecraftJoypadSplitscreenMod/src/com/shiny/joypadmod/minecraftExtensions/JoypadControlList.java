@@ -72,7 +72,7 @@ public class JoypadControlList extends GuiScrollingList
 
 	public void updatejoyBindKeys()
 	{
-		joyBindKeys.clear();
+		joyBindKeys = new ArrayList<String>();
 
 		KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(parent.mc.gameSettings.keyBindings);
 
@@ -111,6 +111,8 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		// get any leftover bindings that may have been missed
 		getBindingsWithCategory(thisCategory);
+
+		sortBindKeys();
 	}
 
 	private void getBindingsWithCategory(String category)
@@ -121,6 +123,29 @@ public class JoypadControlList extends GuiScrollingList
 			if (!joyBindKeys.contains(bindingKeys))
 				joyBindKeys.add(bindingKeys);
 		}
+	}
+
+	private void sortBindKeys()
+	{
+		int lastCategoryStart = -1;
+		String[] list = joyBindKeys.toArray(new String[joyBindKeys.size()]);
+		for (int i = 0; i < list.length; i++)
+		{
+			if (list[i].contains("categories") || (i + 1 == list.length && i++ > 0))
+			{
+				if (lastCategoryStart != -1)
+				{
+					// found current category end
+					if (lastCategoryStart < i - 2)
+					{
+						Arrays.sort(list, lastCategoryStart + 1, i);
+					}
+				}
+				lastCategoryStart = i;
+			}
+		}
+
+		joyBindKeys = Arrays.asList(list);
 	}
 
 	@Override
@@ -184,7 +209,7 @@ public class JoypadControlList extends GuiScrollingList
 		String controlDescription = McObfuscationHelper.lookupString(joyBindKeys.get(var1));
 
 		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(controlDescription, 110), this.left + 3, var3
-				+ buttonHeight / 2 - this.fontRenderer.FONT_HEIGHT / 2, 0xFF2222);
+				+ buttonHeight / 2 - this.fontRenderer.FONT_HEIGHT / 2, -1);
 
 		drawControlButtons(var1, this.left + 120, var3, joyBindKeys.get(var1), var1 == selectedIndex);
 
