@@ -662,7 +662,7 @@ public class ControllerSettings
 		while (current.hasNext())
 		{
 			Map.Entry<String, ControllerBinding> entry = current.next();
-			if (entry.getValue().bindingOptions.contains(target))
+			if (entry.getValue().bindingOptions.contains(target) && entry.getValue().inputEvent.isValid())
 				return entry.getValue();
 		}
 
