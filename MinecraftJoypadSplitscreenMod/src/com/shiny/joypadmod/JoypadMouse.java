@@ -253,6 +253,14 @@ public class JoypadMouse
 
 		private static float calculateFinalDelta(boolean inGui, float currentDelta, float currentThreshold)
 		{
+			if (Math.abs(currentDelta) < 0.01)
+				return 0;
+
+			if (Math.abs(currentDelta) < Math.abs(currentThreshold / 3))
+			{
+				return (currentDelta < 0 ? -1 : 1);
+			}
+
 			float cameraMultiplier = (inGui ? ControllerSettings.inMenuSensitivity
 					: ControllerSettings.inGameSensitivity);
 
