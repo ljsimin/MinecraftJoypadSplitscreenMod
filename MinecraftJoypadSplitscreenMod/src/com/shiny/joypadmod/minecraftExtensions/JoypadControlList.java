@@ -103,6 +103,8 @@ public class JoypadControlList extends GuiScrollingList
 			}
 			if (thisCategory.compareTo(category) != 0)
 			{
+				if (joyBindKeys.contains(thisCategory))
+					continue;
 				// get any other bindings that are of the outgoing category but not originating from Minecraft
 				getBindingsWithCategory(category);
 				joyBindKeys.add(thisCategory);
