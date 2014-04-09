@@ -81,7 +81,7 @@ public class JoypadControlList extends GuiScrollingList
 
 		ControllerSettings.setDefaultJoyBindingMap(parent.getCurrentControllerId(), true);
 
-		String category = "joy.categories.guicontrol";
+		String category = "joy.categories.ui";
 		joyBindKeys.add(category);
 
 		String thisCategory = "";

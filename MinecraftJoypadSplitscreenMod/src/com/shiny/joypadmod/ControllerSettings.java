@@ -161,17 +161,13 @@ public class ControllerSettings
 				new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyIndex, 2, 1),
 						new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.guiLeftClick",
+		joyBindingsMap.put("joy.guiLeftClick",
 				new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyIndex, 0, 1),
-						new int[] { -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.CATEGORY_GUICONTROL)));
+						new int[] { -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.guiRightClick",
+		joyBindingsMap.put("joy.guiRightClick",
 				new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyIndex, 2, 1),
-						new int[] { -99 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.CATEGORY_GUICONTROL)));
+						new int[] { -99 }, 0, EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.prevItem",
@@ -262,25 +258,25 @@ public class ControllerSettings
 				"joy.guiX+",
 				new ControllerBinding("joy.guiX+", "GUI right", new AxisInputEvent(joyIndex, 1, defaultAxisThreshhold,
 						defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.guiX-",
 				new ControllerBinding("joy.guiX-", "GUI left", new AxisInputEvent(joyIndex, 1, defaultAxisThreshhold
 						* -1, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.guiY+",
 				new ControllerBinding("joy.guiY+", "GUI down", new AxisInputEvent(joyIndex, 0, defaultAxisThreshhold,
 						defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.guiY-",
 				new ControllerBinding("joy.guiY-", "GUI up", new AxisInputEvent(joyIndex, 0,
 						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GUICONTROL)));
+						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.closeInventory",
@@ -292,15 +288,13 @@ public class ControllerSettings
 				"joy.scrollDown",
 				new ControllerBinding("joy.scrollDown", "Scroll down", new ButtonInputEvent(joyIndex, 5, 1),
 						new int[] { -201 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
-								BindingOptions.CATEGORY_GUICONTROL)));
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put(
 				"joy.scrollUp",
 				new ControllerBinding("joy.scrollUp", "Scroll up", new ButtonInputEvent(joyIndex, 4, 1),
 						new int[] { -199 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
-								BindingOptions.CATEGORY_GUICONTROL)));
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
 		if (updateWithConfigFile)
 			config.updateControllerBindings(joyIndex, Controllers.getController(joyIndex).getName());
