@@ -1,5 +1,3 @@
-joy.categories.guicontrol=Menu controls
-
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
 joy.guiY+=Cursor down

@@ -24,7 +24,7 @@ public class ControllerBinding
 		CLIENT_TICK,
 		RENDER_TICK,
 		CATEGORY_MOVEMENT,
-		CATEGORY_GUICONTROL,
+		CATEGORY_UI,
 		CATEGORY_INVENTORY,
 		CATEGORY_GAMEPLAY,
 		CATEGORY_MULTIPLAYER,
@@ -34,7 +34,7 @@ public class ControllerBinding
 	public static String[] BindingOptionsComment = { "Will trigger in menu screens", "Will trigger during game play",
 			"Pressing button once will toggle on / off", "Continues to trigger if held down",
 			"Send the trigger during client tick", "Send the trigger during render tick",
-			"Shows up in Movement category in menu", "Shows up in GUI category in menu", "Inventory category in menu",
+			"Shows up in Movement category in menu", "Shows up in UI category in menu", "Inventory category in menu",
 			"Gameplay category in menu", "Multiplayer category in menu", "Misc category in menu" };
 
 	/**
@@ -75,7 +75,7 @@ public class ControllerBinding
 	public boolean hasCategory()
 	{
 		if ((bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_GUICONTROL))
+				|| (bindingOptions.contains(BindingOptions.CATEGORY_UI))
 				|| (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
 				|| (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
 				|| (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
@@ -105,15 +105,15 @@ public class ControllerBinding
 
 	public static BindingOptions mapMinecraftCategory(String category)
 	{
-		if (category.contains("gameplay"))
+		if (category.contains(".gameplay"))
 			return BindingOptions.CATEGORY_GAMEPLAY;
-		if (category.contains("guicontrol"))
-			return BindingOptions.CATEGORY_GUICONTROL;
-		if (category.contains("inventory"))
+		if (category.contains(".ui"))
+			return BindingOptions.CATEGORY_UI;
+		if (category.contains(".inventory"))
 			return BindingOptions.CATEGORY_INVENTORY;
-		if (category.contains("movement"))
+		if (category.contains(".movement"))
 			return BindingOptions.CATEGORY_MOVEMENT;
-		if (category.contains("multiplayer"))
+		if (category.contains(".multiplayer"))
 			return BindingOptions.CATEGORY_MULTIPLAYER;
 
 		return BindingOptions.CATEGORY_MISC;
