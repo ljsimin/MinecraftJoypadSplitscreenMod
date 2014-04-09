@@ -73,7 +73,7 @@ public class JoypadControlList extends GuiScrollingList
 
 	public void updatejoyBindKeys()
 	{
-		joyBindKeys = new ArrayList<String>();
+		joyBindKeys.clear();
 
 		KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(parent.mc.gameSettings.keyBindings);
 
@@ -145,8 +145,9 @@ public class JoypadControlList extends GuiScrollingList
 				lastCategoryStart = i;
 			}
 		}
-
-		joyBindKeys = Arrays.asList(list);
+		joyBindKeys.clear();
+		for (int i = 0; i < list.length; i++)
+			joyBindKeys.add(list[i]);
 	}
 
 	@Override
