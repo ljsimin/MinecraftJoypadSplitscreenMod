@@ -6,13 +6,14 @@ set mcMod=%APPDATA%\.minecraft\mods
 set modFileNamePrefix=JoypadMod-1.6.4
 
 if Exist %dest%\shiny rmdir /s %dest%\shiny
-copy resources\mcmod.info %mcp%
 xcopy %src% %dest% /E
+xcopy resources %mcp%\joypadResources /E
 pushd .
 cd %mcp%
 call recompile.bat
 call reobfuscate.bat
-copy mcmod.info reobf\minecraft
+xcopy joypadResources reobf\minecraft /E
+
 
 start reobf\minecraft
 echo Zip up the mcMod.info along with the COM folder, name it %modFileNamePrefix%-{version_number}.zip and press any key to continue
