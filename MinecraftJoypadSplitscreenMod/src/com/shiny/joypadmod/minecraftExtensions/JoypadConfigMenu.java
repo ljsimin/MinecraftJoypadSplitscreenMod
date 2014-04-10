@@ -17,6 +17,7 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
@@ -150,10 +151,10 @@ public class JoypadConfigMenu extends GuiScreen
 
 		// prev controller button
 		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYOffset, controllerButtonWidth / 3, 20,
-				"PREV"));
+				"<<"));
 		// next controller button
 		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 3, buttonYStart_top + buttonYOffset,
-				controllerButtonWidth / 3, 20, "NEXT"));
+				controllerButtonWidth / 3, 20, ">>"));
 
 		// other controllers
 		addButton(new GuiButton(503, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
@@ -165,7 +166,8 @@ public class JoypadConfigMenu extends GuiScreen
 
 		// invert axis toggle
 		addButton(new GuiButton(401, buttonXStart_top, buttonYStart_top + buttonYOffset, invertButtonWidth, 20,
-				"Invert : " + (ControllerSettings.getInvertYAxis() ? "on" : "off")));
+				sGet("controlMenu.invert") + ": "
+						+ (ControllerSettings.getInvertYAxis() ? sGet("options.on") : sGet("options.off"))));
 
 		sensitivityXStart = buttonXStart_top + invertButtonWidth + 1;
 		sensitivityYStart = buttonYStart_top + buttonYOffset;
@@ -213,8 +215,8 @@ public class JoypadConfigMenu extends GuiScreen
 		int calibrateButtonWidth = controllerButtonWidth + buttonXStart_top - topRowButtonXOffset;
 
 		addButton(new GuiButton(500, topRowButtonXOffset, buttonYStart_top + buttonYOffset, controllerButtonWidth
-				+ buttonXStart_top - topRowButtonXOffset, 20, this.getFontRenderer().trimStringToWidth("Calibrate",
-				calibrateButtonWidth)));
+				+ buttonXStart_top - topRowButtonXOffset, 20, this.getFontRenderer().trimStringToWidth(
+				sGet("controlMenu.calibrate"), calibrateButtonWidth)));
 
 		buttonYOffset += 20;
 		// the middle section will be populated with the controller settings so
@@ -233,18 +235,18 @@ public class JoypadConfigMenu extends GuiScreen
 		int rightButtonWidth = controllerButtonWidth + buttonXStart_top - rightButtonsXStart;
 
 		addButton(new GuiButton(610, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
-				rightButtonWidth, 20, "Add Key"));
+				rightButtonWidth, 20, sGet("controlMenu.addKey")));
 
 		// add bottom buttons
 		buttonNum = 0;
 
 		addButton(new GuiButton(400, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
-				bottomButtonWidth, 20, "Reset"));
+				bottomButtonWidth, 20, sGet("controls.resetAll")));
 
 		addButton(new GuiButton(501, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
-				bottomButtonWidth, 20, "Done"));
+				bottomButtonWidth, 20, sGet("gui.done")));
 		addButton(new GuiButton(502, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
-				bottomButtonWidth, 20, "Mouse menu"));
+				bottomButtonWidth, 20, sGet("controlMenu.mouseMenu")));
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
 	}
@@ -347,15 +349,15 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 503: // unhide controllers
 			JoypadMod.controllerSettings.setInputEnabled(-1, false);
-			if (guiButton.displayString.contains("Other"))
+			if (guiButton.displayString.equals(sGet("controlMenu.otherControls")))
 			{
 				getControllers(false);
-				guiButton.displayString = guiButton.displayString.replace("Other", "Valid");
+				guiButton.displayString = sGet("controlMenu.validControls");
 			}
 			else
 			{
 				getControllers(true);
-				guiButton.displayString = guiButton.displayString.replace("Valid", "Other");
+				guiButton.displayString = sGet("controlMenu.otherControls");
 			}
 			enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0);
 			if (controllers.size() > 0)
@@ -380,7 +382,7 @@ public class JoypadConfigMenu extends GuiScreen
 		String ret = "";
 
 		if (controllers.size() == 0)
-			return "No controllers found!";
+			return sGet("controlMenu.noControllers");
 
 		try
 		{
@@ -392,14 +394,15 @@ public class JoypadConfigMenu extends GuiScreen
 				Controller control = Controllers.getController(joyNo);
 				if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 				{
-					ret += "Controller " + (joyIndex + 1) + " of " + controllers.size();
-					ret += "-Buttons: " + control.getButtonCount();
-					ret += " Axis: " + control.getAxisCount();
+					ret += String.format("%s %d/%d - ", sGet("controlMenu.controller"), joyIndex + 1,
+							controllers.size());
+					ret += String.format("%s: %d ", sGet("controlMenu.buttons"), control.getButtonCount());
+					ret += String.format("%s: %d", sGet("controlMenu.axis"), control.getAxisCount());
 				}
 				else if (joyInfo == JoyInfoEnum.name)
 				{
 					ret += control.getName() + ": ";
-					ret += JoypadMod.controllerSettings.isInputEnabled() ? "on" : "off";
+					ret += JoypadMod.controllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off");
 				}
 			}
 		}
@@ -424,7 +427,7 @@ public class JoypadConfigMenu extends GuiScreen
 		{
 			if (Minecraft.getSystemTime() - customBindingTickStart > 5000)
 				customBindingTickStart = 0;
-			changeButtonText(customBindingKeyIndex, "Press Key");
+			changeButtonText(customBindingKeyIndex, sGet("controlMenu.pressKey"));
 			for (int i = 0; i < Keyboard.KEYBOARD_SIZE; i++)
 			{
 				if (Keyboard.isKeyDown(i))
@@ -451,8 +454,8 @@ public class JoypadConfigMenu extends GuiScreen
 		{
 			if (customBindingKeyIndex != -1)
 			{
-				changeButtonText(customBindingKeyIndex,
-						customBindingKeyIndex == ButtonsEnum.addCustom.ordinal() ? "Add key" : "Change key");
+				changeButtonText(customBindingKeyIndex, sGet("controlMenu.addKey"));
+				customBindingKeyIndex = -1;
 			}
 		}
 
@@ -462,9 +465,9 @@ public class JoypadConfigMenu extends GuiScreen
 			if (this.optionList != null)
 				this.optionList.updatejoyBindKeys();
 		}
-
-		this.drawCenteredString(getFontRenderer(), "Joypad Mod Controls - Press space to toggle controller", width / 2,
-				labelYStart, -1);
+		String titleText = String.format("Joypad Mod %s - %s", sGet("controls.title"),
+				sGet("controlMenu.toggleInstructions"));
+		this.drawCenteredString(getFontRenderer(), titleText, width / 2, labelYStart, -1);
 
 		// output TEXT buttons Axis, POV count here
 		String joyStickInfoText = getJoystickInfo(currentJoyIndex, JoyInfoEnum.buttonAxisInfo);
@@ -561,8 +564,8 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private void toggleOnOffButton(boolean b, int index)
 	{
-		String s1 = b ? "off" : "on";
-		String s2 = b ? "on" : "off";
+		String s1 = b ? sGet("options.off") : sGet("options.on");
+		String s2 = b ? sGet("options.on") : sGet("options.off");
 		String newString = ((GuiButton) buttonList.get(index)).displayString.replace(s1, s2);
 
 		changeButtonText(index, newString);
@@ -622,6 +625,10 @@ public class JoypadConfigMenu extends GuiScreen
 		// return this.field_146289_q;
 		// return this.fontRenderer;
 		return this.fontRendererObj;
+	}
 
+	public String sGet(String inputCode)
+	{
+		return McObfuscationHelper.lookupString(inputCode);
 	}
 }
