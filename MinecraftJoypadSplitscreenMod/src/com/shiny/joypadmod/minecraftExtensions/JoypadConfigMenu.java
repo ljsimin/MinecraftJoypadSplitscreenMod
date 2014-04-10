@@ -241,7 +241,7 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonNum = 0;
 
 		addButton(new GuiButton(400, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
-				bottomButtonWidth, 20, sGet("controls.resetAll")));
+				bottomButtonWidth, 20, sGet("controls.reset")));
 
 		addButton(new GuiButton(501, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("gui.done")));
