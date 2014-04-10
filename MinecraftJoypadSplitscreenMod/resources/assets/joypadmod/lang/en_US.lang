@@ -33,6 +33,7 @@ joy.shiftClick=Shift click
 
 joy.menu=Menu
 
+controls.reset=Reset
 key.attack=Attack/Destroy
 key.back=Walk Backwards
 key.categories.gameplay=Gameplay
