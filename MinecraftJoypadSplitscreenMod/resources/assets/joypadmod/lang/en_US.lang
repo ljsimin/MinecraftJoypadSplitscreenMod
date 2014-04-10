@@ -1,3 +1,16 @@
+controlMenu.addKey=Add Key
+controlMenu.axis=Axis
+controlMenu.buttons=Buttons
+controlMenu.calibrate=Calibrate
+controlMenu.controller=Controller
+controlMenu.invert=Invert
+controlMenu.mouseMenu=Mouse Menu
+controlMenu.noControllers=No controllers found!
+controlMenu.otherControls=Other controllers
+controlMenu.pressKey=Press key...
+controlMenu.toggleInstructions=Press space to toggle controller
+controlMenu.validControls=Valid controllers
+
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
 joy.guiY+=Cursor down
