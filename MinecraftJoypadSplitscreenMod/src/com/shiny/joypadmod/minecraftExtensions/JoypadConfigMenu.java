@@ -246,7 +246,7 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(501, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("gui.done")));
 		addButton(new GuiButton(502, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
-				bottomButtonWidth, 20, sGet("controlMenu.mouseMenu")));
+				bottomButtonWidth, 20, sGet("controlMenu.mouse") + " " + sGet("joy.menu")));
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
 	}
@@ -629,6 +629,61 @@ public class JoypadConfigMenu extends GuiScreen
 
 	public String sGet(String inputCode)
 	{
+		String ret = "";
+		if (inputCode.contains("X-") || inputCode.contains("prev"))
+			ret += symGet(JSyms.lArrow);
+		else if (inputCode.contains("X+") || inputCode.contains("next"))
+			ret += symGet(JSyms.rArrow);
+		else if (inputCode.contains("Y-") || inputCode.contains("Up"))
+			ret += symGet(JSyms.uArrow);
+		else if (inputCode.contains("Y+") || inputCode.contains("Down"))
+			ret += symGet(JSyms.dArrow);
+
+		if (ret != "")
+		{
+			if (inputCode.contains("camera"))
+				ret = McObfuscationHelper.lookupString("controlMenu.look") + " " + ret;
+			else if (inputCode.contains("gui"))
+				ret = McObfuscationHelper.lookupString("controlMenu.mouse") + " " + ret;
+			else if (inputCode.contains("scroll"))
+				ret = McObfuscationHelper.lookupString("controlMenu.scroll") + " " + ret;
+			else if (inputCode.contains("Item") || (inputCode.contains("Item")))
+				ret = McObfuscationHelper.lookupString("controlMenu.hotbar") + " " + ret;
+
+			return ret;
+		}
+
 		return McObfuscationHelper.lookupString(inputCode);
+	}
+
+	public enum JSyms
+	{
+		lArrow, rArrow, uArrow, dArrow, eCircle, fCircle, unbind, remove
+	};
+
+	public char symGet(JSyms sym)
+	{
+		switch (sym)
+		{
+		case lArrow:
+			return 0x2B05;
+		case rArrow:
+			return 0x27A1;
+		case uArrow:
+			return 0x2B06;
+		case dArrow:
+			return 0x2B07;
+		case unbind:
+			return '-';
+		case eCircle:
+			return 9675;
+		case fCircle:
+			return 9679;
+		case remove:
+			return 0x2716;
+		default:
+			return '?';
+
+		}
 	}
 }

@@ -26,6 +26,7 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu.JSyms;
 
 import cpw.mods.fml.client.GuiScrollingList;
 
@@ -200,14 +201,14 @@ public class JoypadControlList extends GuiScrollingList
 		if (joyBindKeys.get(var1).contains("categories."))
 		{
 			// this is a new category
-			String category = McObfuscationHelper.lookupString(joyBindKeys.get(var1));
+			String category = parent.sGet(joyBindKeys.get(var1));
 
 			this.fontRenderer.drawString(category,
 					this.left + this.listWidth / 2 - this.fontRenderer.getStringWidth(category) / 2, var3 + 5, -1);
 			return;
 		}
 
-		String controlDescription = McObfuscationHelper.lookupString(joyBindKeys.get(var1));
+		String controlDescription = parent.sGet(joyBindKeys.get(var1));
 
 		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(controlDescription, 110), this.left + 3, var3
 				+ buttonHeight / 2 - this.fontRenderer.FONT_HEIGHT / 2, -1);
@@ -304,13 +305,13 @@ public class JoypadControlList extends GuiScrollingList
 
 		// - or x
 		// draw a minus if the button is currently valid
-		char optionRemove = '-';
+		char optionRemove = parent.symGet(JSyms.unbind);
 		boolean enable = true;
 		if (!binding.inputEvent.isValid())
 		{
 			// else draw an X if the button is currently invalid and its a user binding
 			if (binding.inputString.contains("user."))
-				optionRemove = (char) 0x2716;
+				optionRemove = parent.symGet(JSyms.remove);
 			else
 				// disable the button if the input is currently invalid
 				enable = false;
@@ -324,9 +325,9 @@ public class JoypadControlList extends GuiScrollingList
 			// draw the toggle option button
 			if (binding.inputEvent.getEventType() != EventType.AXIS)
 			{
-				char toggle = 9675;
+				char toggle = parent.symGet(JSyms.eCircle);
 				if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-					toggle = 9679;
+					toggle = parent.symGet(JSyms.fCircle);
 				b = new GuiButton(10003, x + controlButtonWidth + smallButtonWidth, y, smallButtonWidth, buttonHeight,
 						"" + toggle);
 				b.drawButton(mc, k, i1);

@@ -1,3 +1,30 @@
+controlMenu.addKey=新しいキーの追加
+controlMenu.axis=Axis
+controlMenu.buttons=ボタン
+controlMenu.calibrate=調整する
+controlMenu.controller=コントローラー
+controlMenu.hotbar=ホットバー
+controlMenu.invert=反転
+controlMenu.look=みる
+controlMenu.mouse=マウス
+controlMenu.scroll=スクロール
+controlMenu.noControllers=コントローラー　未発見！
+controlMenu.otherControls=Other controllers
+controlMenu.pressKey=キーを押す...
+controlMenu.toggleInstructions=スペースキーでコントローラーの切り替え（オン・オフ）
+controlMenu.validControls=Valid controllers
+
+joy.guiRightClick=マウス右ボタン
+joy.guiLeftClick=マウス左ボタン
+
+joy.closeInventory=クローズ
+joy.shiftClick=Shiftキーを押しながらクリック
+
+joy.interact=アクション
+joy.menu=メニュー
+
+controls.reset=リセット
+
 key.attack=攻撃する/壊す
 key.back=後退
 key.categories.gameplay=ゲームプレイ

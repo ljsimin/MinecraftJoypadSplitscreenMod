@@ -3,8 +3,11 @@ controlMenu.axis=Axis
 controlMenu.buttons=Buttons
 controlMenu.calibrate=Calibrate
 controlMenu.controller=Controller
+controlMenu.hotbar=Hotbar
 controlMenu.invert=Invert
-controlMenu.mouseMenu=Mouse Menu
+controlMenu.look=Look
+controlMenu.mouse=Mouse
+controlMenu.scroll=Scroll
 controlMenu.noControllers=No controllers found!
 controlMenu.otherControls=Other controllers
 controlMenu.pressKey=Press key...
@@ -13,28 +16,16 @@ controlMenu.validControls=Valid controllers
 
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
-joy.guiY+=Cursor down
-joy.guiY-=Cursor up
-joy.guiX-=Cursor left
-joy.guiX+=Cursor right
-joy.scrollUp=Scroll up
-joy.scrollDown=Scroll down
-
-joy.cameraX+=Look right
-joy.cameraX-=Look left
-joy.cameraY+=Look down
-joy.cameraY-=Look up
-joy.interact=Interact
 
 joy.closeInventory=Close inventory
-joy.nextItem=Next hotbar item
-joy.prevItem=Prev hotbar item
 joy.shiftClick=Shift click
 
+joy.interact=Interact
 joy.menu=Menu
 
 controls.reset=Reset
-key.attack=Attack/Destroy
+
+ey.attack=Attack/Destroy
 key.back=Walk Backwards
 key.categories.gameplay=Gameplay
 key.categories.inventory=Inventory
