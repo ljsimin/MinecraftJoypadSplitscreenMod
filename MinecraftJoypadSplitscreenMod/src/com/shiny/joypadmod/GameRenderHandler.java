@@ -244,11 +244,12 @@ public class GameRenderHandler
 					if (binding.wasPressed(false))
 					{
 						preRenderGuiBucket.add(binding.inputString);
-						break;
 					}
 				}
-				else if (binding.wasPressed())
-					break;
+				else
+				{
+					binding.wasPressed();
+				}
 			}
 		}
 	}
