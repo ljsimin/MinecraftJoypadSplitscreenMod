@@ -374,6 +374,9 @@ public class ConfigFile
 			bRet = !deleteKey(category, key);
 			config.get(category, key, value);
 
+			LogHelper.Info(String.format("updateKey %s %s:%s with %s", bRet ? "created" : "updated", category, key,
+					value));
+
 			if (save)
 				config.save();
 		}
