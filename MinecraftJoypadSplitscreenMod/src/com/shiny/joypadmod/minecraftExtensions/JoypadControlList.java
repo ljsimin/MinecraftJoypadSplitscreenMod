@@ -274,7 +274,8 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				else if (lastXClick <= x + controlButtonWidth + smallButtonWidth * 2)
 				{
-					if (binding.inputEvent.getEventType() != EventType.AXIS)
+					if (binding.inputEvent.getEventType() != EventType.AXIS
+							&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
 					{
 						ControllerSettings.setToggle(parent.currentJoyIndex, binding.inputString,
 								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
@@ -319,11 +320,13 @@ public class JoypadControlList extends GuiScrollingList
 
 		if (enable)
 		{
+			// draw the remove/unbind option for this binding
 			b = new GuiButton(10002, x + controlButtonWidth, y, smallButtonWidth, buttonHeight, "" + optionRemove);
 			b.drawButton(mc, k, i1);
 
 			// draw the toggle option button
-			if (binding.inputEvent.getEventType() != EventType.AXIS)
+			if (binding.inputEvent.getEventType() != EventType.AXIS
+					&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
 			{
 				char toggle = parent.symGet(JSyms.eCircle);
 				if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
