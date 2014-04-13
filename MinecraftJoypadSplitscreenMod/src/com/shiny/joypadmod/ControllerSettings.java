@@ -297,9 +297,9 @@ public class ControllerSettings
 								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
 		if (updateWithConfigFile)
-			config.updateControllerBindings(joyIndex, Controllers.getController(joyIndex).getName());
+			config.getJoypadSavedBindings(joyIndex, Controllers.getController(joyIndex).getName());
 
-		List<ControllerBinding> userBindings = config.getUserBindings(joyIndex);
+		List<ControllerBinding> userBindings = config.getUserDefinedBindings(joyIndex);
 
 		for (ControllerBinding b : userBindings)
 		{
@@ -455,6 +455,8 @@ public class ControllerSettings
 
 			applySavedDeadZones(joyNo);
 
+			config.updatePreferedJoy(controllerNo, Controllers.getController(controllerNo).getName());
+
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 			JoypadMouse.AxisReader.centerCrosshairs();
 			return true;
@@ -495,13 +497,14 @@ public class ControllerSettings
 			return;
 		}
 
-		if (joyNo != joyIndex && !setController(joyIndex))
+		if (joyNo != joyIndex)
 		{
+			setController(joyIndex);
 			return;
 		}
 
 		inputEnabled = true;
-		config.updatePreferedJoy(joyNo, null);
+		config.updatePreferedJoy(joyIndex, Controllers.getController(joyIndex).getName());
 		JoypadMouse.AxisReader.centerCrosshairs();
 	}
 
@@ -719,6 +722,15 @@ public class ControllerSettings
 		}
 		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
 		LogHelper.Info("Saved deadzones for " + controller.getName());
+	}
+
+	public static void saveCurrentJoyBindings(String joyName)
+	{
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
+		{
+			if (entry.getValue().inputEvent.isValid())
+				config.saveControllerBinding(joyName, entry.getValue());
+		}
 	}
 
 	public static void applySavedDeadZones(int joyId)
