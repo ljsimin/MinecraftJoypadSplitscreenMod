@@ -1,6 +1,7 @@
 package com.shiny.joypadmod.helpers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -8,9 +9,7 @@ import net.minecraftforge.common.ConfigCategory;
 import net.minecraftforge.common.Configuration;
 
 import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 
-import com.google.common.collect.Iterables;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -22,10 +21,12 @@ public class ConfigFile
 	public String preferedJoyName;
 
 	private Configuration config;
+	private File _configFile;
 	private String userName;
 	private String defaultCategory;
 	private String userCategory;
 	private String bindingComment = "S:<actionID>=<Menu String>,{ <keycode> },<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>,<BINDING_OPTIONS1>,<BINDING_OPTIONS2>...";
+	private List<ControllerBinding> controlBindingsFromConfigFile = new ArrayList<ControllerBinding>();
 
 	private double lastConfigFileVersion;
 
@@ -36,7 +37,13 @@ public class ConfigFile
 
 	public ConfigFile(File configFile)
 	{
-		config = new Configuration(configFile, true);
+		_configFile = configFile;
+		reload();
+	}
+
+	private void reload()
+	{
+		config = new Configuration(_configFile, true);
 	}
 
 	public void init()
@@ -75,6 +82,12 @@ public class ConfigFile
 		ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
+		if (lastConfigFileVersion < 0.0953)
+		{
+			// delete outdated NumBindings tag
+			this.deleteKey("-UserBindings-", "NumBindings");
+		}
+
 		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
 				+ sharedProfile + ". GrabMouse = " + ControllerSettings.grabMouse + ".  invertYAxis = "
 				+ ControllerSettings.invertYAxis + ". ConfigVersion " + lastConfigFileVersion
@@ -83,27 +96,8 @@ public class ConfigFile
 
 		addBindingOptionsComment();
 		addGlobalOptionsComment();
-		config.save();
-	}
 
-	public void addBindingOptionsComment()
-	{
-		BindingOptions[] bos = ControllerBinding.BindingOptions.values();
-		for (BindingOptions bo : bos)
-		{
-			config.get("-BindingOptions-", bo.toString(), " " + ControllerBinding.BindingOptionsComment[bo.ordinal()]);
-		}
-		config.addCustomCategoryComment("-BindingOptions-",
-				"List of valid binding options that can be combined with Controller events");
-	}
-
-	public void addGlobalOptionsComment()
-	{
-		config.addCustomCategoryComment(
-				"-Global-",
-				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)\r\n"
-						+ "LoggingLevel = 0-4 levels of logging ranging from next to none to very verbose. 1 recommended unless debugging.\r\n"
-						+ "SharedProfile = Will share joypad settings across all users except for invert");
+		updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
 	}
 
 	public void addComment(String category, String comment)
@@ -115,8 +109,8 @@ public class ConfigFile
 	public void updatePreferedJoy(int joyNo, String joyName)
 	{
 		String category = userCategory;
-		updateKey(category, "JoyNo", "" + joyNo);
-		updateKey(category, "JoyName", joyName);
+		updateKey(category, "JoyNo", "" + joyNo, false);
+		updateKey(category, "JoyName", joyName, true);
 	}
 
 	public void updateConfigFileSetting(UserJoypadSettings setting, String value)
@@ -134,7 +128,12 @@ public class ConfigFile
 			break;
 		}
 
-		updateKey(category, setting.toString(), value);
+		updateKey(category, setting.toString(), value, true);
+	}
+
+	public void updateConfigFileSettingEx(String category, String key, String value)
+	{
+		updateKey(category, key, value, true);
 	}
 
 	public void applySavedDeadZones(Controller c)
@@ -161,12 +160,22 @@ public class ConfigFile
 		}
 	}
 
-	public void updateConfigFileSettingEx(String category, String key, String value)
+	public void deleteUserBinding(ControllerBinding binding)
 	{
-		updateKey(category, key, value);
+		String catToUpdate = "-UserBindings-";
+
+		LogHelper.Info("Attempting to delete " + binding.inputString + " " + binding.toConfigFileString() + " for "
+				+ catToUpdate);
+
+		deleteKey(catToUpdate, binding.inputString);
 	}
 
-	public List<ControllerBinding> getUserBindings(int joyNo)
+	public void saveControllerBinding(String joyName, ControllerBinding binding)
+	{
+		saveControllerBindingInternal(joyName, binding, true);
+	}
+
+	public List<ControllerBinding> getUserDefinedBindings(int joyNo)
 	{
 		String category = "-UserBindings-";
 		ControllerSettings.userDefinedBindings.clear();
@@ -192,97 +201,43 @@ public class ConfigFile
 		return ControllerSettings.userDefinedBindings;
 	}
 
-	private boolean setControllerBinding(int joyNo, double lastJoyConfigVersion, ConfigCategory joyCategory)
-	{
-		LogHelper.Info("Parsing user settings in " + joyCategory.getQualifiedName());
-		String bindSettings = "Not Set";
-		try
-		{
-			if (!joyCategory.getChildren().isEmpty())
-			{
-				boolean bRet = true;
-				for (ConfigCategory child : joyCategory.getChildren())
-				{
-					if (!setControllerBinding(joyNo, lastJoyConfigVersion, child))
-						bRet = false;
-				}
-				return bRet;
-			}
-			String key = Iterables.getFirst(joyCategory.keySet(), "");
-			// get binding string from the configuration file
-			bindSettings = joyCategory.get(key).getString();
-			if (!bindSettings.isEmpty())
-			{
-				// create binding based on this string from config file
-				ControllerBinding tempBinding = new ControllerBinding(key + "," + bindSettings, joyNo,
-						lastJoyConfigVersion);
-				// check if this binding string was valid
-				if (tempBinding.inputString == null)
-				{
-					LogHelper.Error("Found invalid entry in the config file: " + bindSettings + " ignoring");
-					return false;
-				}
-				// get corresponding default binding if it exists
-				ControllerBinding defaultBinding = ControllerSettings.joyBindingsMap.get(tempBinding.inputString);
-				if (defaultBinding != null && lastJoyConfigVersion < 0.0953)
-				{
-					// update the default binding with the values from the config file
-					defaultBinding.inputEvent = tempBinding.inputEvent;
-					if (tempBinding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-						defaultBinding.bindingOptions.add(BindingOptions.IS_TOGGLE);
-					if (tempBinding.bindingOptions.contains(BindingOptions.RENDER_TICK))
-						defaultBinding.bindingOptions.add(BindingOptions.RENDER_TICK);
-				}
-				else
-				{
-					LogHelper.Info("Found a non default binding in the config file. Will add it to the list of bindings."
-							+ bindSettings);
-					ControllerSettings.joyBindingsMap.put(tempBinding.inputString, tempBinding);
-				}
-				joyCategory.setComment(bindingComment);
-				if (lastJoyConfigVersion < 0.0953)
-				{
-					saveControllerBinding(Controllers.getController(joyNo).getName(),
-							ControllerSettings.joyBindingsMap.get(tempBinding.inputString));
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Error("Failed parsing " + joyCategory.getQualifiedName() + " string value: " + bindSettings + " "
-					+ ex.toString());
-			return false;
-		}
-		return true;
-	}
-
-	public void updateControllerBindings(int joyNo, String joyName)
+	public void getJoypadSavedBindings(int joyNo, String joyName)
 	{
 		String category = defaultCategory + "." + joyName;
-		LogHelper.Info("Attempting to get joy info for " + category);
+
+		if (!config.hasCategory(category))
+			return;
+
+		double lastJoyConfigVersion = config.get(category, "ConfigVersion", 0.07).getDouble(0.07);
+
+		boolean cleanupBindings = lastJoyConfigVersion < 0.0953;
+
+		int numBindingsFound = populateBindingList(joyNo, joyName, lastJoyConfigVersion, cleanupBindings);
+		if (numBindingsFound <= 0)
+			return;
+
 		try
 		{
-			double lastJoyConfigVersion = config.get(category, "ConfigVersion", 0.07).getDouble(0.07);
-
-			if (lastJoyConfigVersion < 0.0953)
+			if (cleanupBindings)
 			{
-				// changed run to sprint so delete the old run. it will need to be rebound later
-				if (this.updateKey(category + ".joy", "run", "", true))
-					LogHelper.Info("Removed outdated binding \"run\". Please rebind \"sprint\" if necessary");
+				config.save();
+				this.reload();
 			}
 
-			if (config.hasCategory(category + ".joy"))
+			for (ControllerBinding binding : controlBindingsFromConfigFile)
 			{
-				for (ConfigCategory joySettings : config.getCategory(category + ".joy").getChildren())
+				try
 				{
-					setControllerBinding(joyNo, lastJoyConfigVersion, joySettings);
+					saveControllerBindingInternal(joyName, binding, false);
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Failed trying to save controller binding: " + binding.toConfigFileString()
+							+ " Exception: " + ex.toString());
 				}
 			}
 
-			updatePreferedJoy(joyNo, joyName);
-			updateKey(category, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION));
-			updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION));
-			config.save();
+			updateKey(category, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
 		}
 		catch (Exception ex)
 		{
@@ -290,7 +245,80 @@ public class ConfigFile
 		}
 	}
 
-	public void saveControllerBinding(String joyName, ControllerBinding binding)
+	private int populateBindingList(int joyNo, String joyName, double lastJoyConfigVersion, boolean cleanupCategories)
+	{
+		if (joyNo < 0)
+		{
+			LogHelper.Info("Not processing joyNo " + joyNo);
+			return 0;
+		}
+
+		controlBindingsFromConfigFile.clear();
+
+		String category = defaultCategory + "." + joyName;
+
+		processJoyCategory(config.getCategory(category), joyNo, lastJoyConfigVersion, cleanupCategories);
+
+		return controlBindingsFromConfigFile.size();
+
+	}
+
+	private void processJoyCategory(ConfigCategory joyCategory, int joyNo, double lastVersion, boolean cleanupCategories)
+	{
+		if (!joyCategory.getChildren().isEmpty())
+		{
+			for (ConfigCategory child : joyCategory.getChildren())
+			{
+				processJoyCategory(child, joyNo, lastVersion, cleanupCategories);
+				if (cleanupCategories)
+				{
+					joyCategory.removeChild(child);
+				}
+			}
+			return;
+		}
+
+		for (String key : joyCategory.keySet())
+		{
+			String bindSettings = joyCategory.get(key).getString();
+			if (!bindSettings.isEmpty())
+			{
+				try
+				{
+					ControllerBinding b = new ControllerBinding(key + "," + bindSettings, joyNo, lastVersion);
+					if (b.inputString != null)
+					{
+						if (cleanupCategories)
+						{
+							ControllerBinding targetBinding = ControllerSettings.get(b.inputString);
+							if (targetBinding != null)
+							{
+								targetBinding.inputEvent = b.inputEvent;
+								if (b.bindingOptions.contains(BindingOptions.IS_TOGGLE))
+									targetBinding.bindingOptions.add(BindingOptions.IS_TOGGLE);
+								if (b.bindingOptions.contains(BindingOptions.RENDER_TICK))
+									targetBinding.bindingOptions.add(BindingOptions.RENDER_TICK);
+								b = targetBinding;
+							}
+						}
+						controlBindingsFromConfigFile.add(b);
+						ControllerSettings.joyBindingsMap.put(b.inputString, b);
+					}
+
+				}
+				catch (Exception ex)
+				{
+					LogHelper.Error("Failed parsing config string " + bindSettings);
+				}
+			}
+			if (cleanupCategories)
+			{
+				joyCategory.remove(key);
+			}
+		}
+	}
+
+	private void saveControllerBindingInternal(String joyName, ControllerBinding binding, boolean save)
 	{
 		String catToUpdate;
 		boolean userBinding = binding.inputString.toLowerCase().contains("user");
@@ -306,18 +334,14 @@ public class ConfigFile
 		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for "
 				+ catToUpdate);
 
-		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString());
+		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString(), save);
+		ConfigCategory cc = config.getCategory(catToUpdate);
+		cc.setComment(bindingComment);
 
-	}
-
-	public void deleteUserBinding(ControllerBinding binding)
-	{
-		String catToUpdate = "-UserBindings-";
-
-		LogHelper.Info("Attempting to delete " + binding.inputString + " " + binding.toConfigFileString() + " for "
-				+ catToUpdate);
-
-		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString(), true);
+		if (save)
+		{
+			config.save();
+		}
 	}
 
 	private String createConfigSettingString(String joyName, String controlString)
@@ -325,28 +349,33 @@ public class ConfigFile
 		return defaultCategory + "." + joyName + "." + controlString;
 	}
 
-	private boolean updateKey(String category, String key, String value)
+	private boolean deleteKey(String category, String key)
 	{
-		return updateKey(category, key, value, false);
+		if (!config.hasCategory(category))
+			return false;
+
+		if (null != config.getCategory(category).remove(key))
+		{
+			config.save();
+			LogHelper.Info("Deleted category " + category + " key " + key);
+			return true;
+		}
+
+		return false;
 	}
 
-	// boolean true returns if a new key was created or deleted.
+	// boolean true returns if a new key was created
 	// false means key was updated
-	private boolean updateKey(String category, String key, String value, boolean delete)
+	private boolean updateKey(String category, String key, String value, boolean save)
 	{
-		boolean bRet = true;
+		boolean bRet = false;
 		try
 		{
-			if (config.hasKey(category, key))
-			{
-				config.getCategory(category).remove(key);
-				bRet = delete ? true : false;
-			}
-			if (!delete)
-			{
-				config.get(category, key, value);
-			}
-			config.save();
+			bRet = !deleteKey(category, key);
+			config.get(category, key, value);
+
+			if (save)
+				config.save();
 		}
 		catch (Exception ex)
 		{
@@ -354,5 +383,25 @@ public class ConfigFile
 					+ ex.toString());
 		}
 		return bRet;
+	}
+
+	private void addBindingOptionsComment()
+	{
+		BindingOptions[] bos = ControllerBinding.BindingOptions.values();
+		for (BindingOptions bo : bos)
+		{
+			config.get("-BindingOptions-", bo.toString(), " " + ControllerBinding.BindingOptionsComment[bo.ordinal()]);
+		}
+		config.addCustomCategoryComment("-BindingOptions-",
+				"List of valid binding options that can be combined with Controller events");
+	}
+
+	private void addGlobalOptionsComment()
+	{
+		config.addCustomCategoryComment(
+				"-Global-",
+				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)\r\n"
+						+ "LoggingLevel = 0-4 levels of logging ranging from next to none to very verbose. 1 recommended unless debugging.\r\n"
+						+ "SharedProfile = Will share joypad settings across all users except for invert");
 	}
 }

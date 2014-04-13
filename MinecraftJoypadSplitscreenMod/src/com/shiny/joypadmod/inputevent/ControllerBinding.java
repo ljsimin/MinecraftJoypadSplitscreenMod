@@ -329,6 +329,26 @@ public class ControllerBinding
 		{
 			int i = 0;
 			this.inputString = settings[i++];
+			if (lastConfigFileVersion < 0.0953)
+			{
+				// remap old names
+				if (this.inputString.contains("run"))
+				{
+					this.inputString = "joy.sprint";
+				}
+				else if (this.inputString.contains("movement"))
+				{
+					if (this.inputString.contains("Y-"))
+						this.inputString = "joy.forward";
+					else if (this.inputString.contains("Y+"))
+						this.inputString = "joy.back";
+					else if (this.inputString.contains("X-"))
+						this.inputString = "joy.left";
+					else if (this.inputString.contains("X+"))
+						this.inputString = "joy.right";
+				}
+
+			}
 			this.menuString = settings[i++];
 
 			if (settings[i].contains("{") && settings[i].contains("}"))
