@@ -459,6 +459,7 @@ public class ControllerSettings
 
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 			JoypadMouse.AxisReader.centerCrosshairs();
+			unpressAll();
 			return true;
 		}
 		catch (Exception e)
@@ -481,6 +482,8 @@ public class ControllerSettings
 					config.saveControllerBinding(Controllers.getController(joyIndex).getName(), entry.getValue());
 			}
 		}
+
+		unpressAll();
 	}
 
 	public boolean isInputEnabled()
@@ -490,6 +493,7 @@ public class ControllerSettings
 
 	public void setInputEnabled(int joyIndex, boolean b)
 	{
+		unpressAll();
 		if (!b)
 		{
 			inputEnabled = false;
@@ -547,6 +551,7 @@ public class ControllerSettings
 		{
 			binding.inputEvent = new ButtonInputEvent(0, -1, 1);
 			config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
+			unpressAll();
 		}
 	}
 
