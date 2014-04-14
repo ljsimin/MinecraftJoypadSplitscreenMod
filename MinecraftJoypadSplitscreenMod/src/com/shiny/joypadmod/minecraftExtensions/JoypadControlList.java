@@ -262,10 +262,22 @@ public class JoypadControlList extends GuiScrollingList
 						Controllers.getController(this.parent.currentJoyIndex), binding.inputEvent);
 			}
 		}
-		if (controlButtonStr.equals("NONE") && !bindingKey.contains("joy."))
+		if (controlButtonStr.equals("NONE"))
 		{
-			controlButtonStr = this.checkKeyCodeBound(bindingKey, controlButtonStr);
-			if (!controlButtonStr.equals("NONE"))
+			if (binding != null)
+			{
+				if (binding.keyCodes != null && binding.keyCodes.length == 1 && binding.bindingOptions != null
+						&& binding.bindingOptions.contains(BindingOptions.GAME_BINDING))
+				{
+					controlButtonStr = this.checkKeyCodeBound(binding.keyCodes[0], controlButtonStr);
+				}
+			}
+			else
+			{
+				controlButtonStr = this.checkKeyCodeBound(bindingKey, controlButtonStr);
+			}
+
+			if (ControllerSettings.loggingLevel > 1 && !controlButtonStr.equals("NONE"))
 			{
 				LogHelper.Info(String.format(
 						"Found that binding %s has a ControllerBinding (%s) that activates same code. ", bindingKey,
@@ -315,6 +327,19 @@ public class JoypadControlList extends GuiScrollingList
 		}
 	}
 
+	private String checkKeyCodeBound(int keyCode, String defaultStr)
+	{
+		ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode, BindingOptions.GAME_BINDING);
+
+		if (b != null)
+		{
+			return ControllerSettings.controllerUtils.getHumanReadableInputName(
+					Controllers.getController(this.parent.currentJoyIndex), b.inputEvent);
+		}
+
+		return defaultStr;
+	}
+
 	private String checkKeyCodeBound(String bindingKey, String defaultStr)
 	{
 		KeyBinding kb = McKeyBindHelper.getMinecraftKeyBind(bindingKey);
@@ -323,13 +348,7 @@ public class JoypadControlList extends GuiScrollingList
 			int keyCode = McObfuscationHelper.keyCode(kb);
 			if (keyCode != Keyboard.KEY_NONE)
 			{
-				ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode,
-						BindingOptions.GAME_BINDING);
-				if (b != null)
-				{
-					return ControllerSettings.controllerUtils.getHumanReadableInputName(
-							Controllers.getController(this.parent.currentJoyIndex), b.inputEvent);
-				}
+				return checkKeyCodeBound(keyCode, defaultStr);
 			}
 		}
 		return defaultStr;
