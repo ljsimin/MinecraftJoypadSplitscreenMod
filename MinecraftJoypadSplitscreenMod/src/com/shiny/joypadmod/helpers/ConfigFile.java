@@ -280,6 +280,16 @@ public class ConfigFile
 
 		for (String key : joyCategory.keySet())
 		{
+			if (!key.contains("joy."))
+			{
+				// check to see if Minecraft is currently using this binding
+				if (McKeyBindHelper.getMinecraftKeyBind(key) == null)
+				{
+					LogHelper.Info("Skipping binding " + key
+							+ " from config file as Minecraft isn't using it this session");
+					continue;
+				}
+			}
 			String bindSettings = joyCategory.get(key).getString();
 			if (!bindSettings.isEmpty())
 			{
