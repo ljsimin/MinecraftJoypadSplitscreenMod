@@ -14,10 +14,12 @@ import net.minecraft.client.settings.KeyBinding;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
@@ -228,6 +230,9 @@ public class JoypadControlList extends GuiScrollingList
 		}
 	}
 
+	private int controlButtonWidth = 60;
+	private int smallButtonWidth = 15;
+
 	private void drawControlButtons(int id, int x, int y, String bindingKey, boolean slotSelected)
 	{
 		if (bindingKey == null)
@@ -241,51 +246,13 @@ public class JoypadControlList extends GuiScrollingList
 		final int i1 = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight()
 				/ mc.displayHeight - 1;
 
-		int controlButtonWidth = 60;
-		int smallButtonWidth = 15;
+		// check if any buttons need updating
+		if (slotSelected && !checkButtonPressAction(id, x, y, bindingKey))
+		{
+			return;
+		}
 
 		ControllerBinding binding = ControllerSettings.get(bindingKey);
-
-		// check if any buttons need updating
-		if (slotSelected && lastYClick >= y && lastYClick <= y + buttonHeight && lastXClick >= x)
-		{
-			lastYClick = 0;
-			// we are in range of the buttons
-			if (lastXClick <= x + controlButtonWidth)
-			{
-				bindingIndexToUpdate = id;
-				controllerTickStart = Minecraft.getSystemTime();
-				ControllerSettings.suspendControllerInput(true, 10000);
-			}
-			else if (binding != null)
-			{
-				if (lastXClick <= x + controlButtonWidth + smallButtonWidth)
-				{
-					if (binding.inputEvent.isValid())
-					{
-						ControllerSettings.unsetControllerBinding(parent.getCurrentControllerId(), binding.inputString);
-						binding.inputEvent = new ButtonInputEvent(-1, -1, 0);
-					}
-					else if (binding.inputString.contains("user"))
-					{
-						// delete this user binding
-						ControllerSettings.delete(binding.inputString);
-						joyBindKeys.remove(id);
-						return;
-					}
-
-				}
-				else if (lastXClick <= x + controlButtonWidth + smallButtonWidth * 2)
-				{
-					if (binding.inputEvent.getEventType() != EventType.AXIS
-							&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
-					{
-						ControllerSettings.setToggle(parent.currentJoyIndex, binding.inputString,
-								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
-					}
-				}
-			}
-		}
 
 		String controlButtonStr = "NONE";
 		if (this.parent.currentJoyIndex != -1)
@@ -296,6 +263,16 @@ public class JoypadControlList extends GuiScrollingList
 			{
 				controlButtonStr = ControllerSettings.controllerUtils.getHumanReadableInputName(
 						Controllers.getController(this.parent.currentJoyIndex), binding.inputEvent);
+			}
+		}
+		if (controlButtonStr.equals("NONE") && !bindingKey.contains("joy."))
+		{
+			controlButtonStr = this.checkKeyCodeBound(bindingKey, controlButtonStr);
+			if (!controlButtonStr.equals("NONE"))
+			{
+				LogHelper.Info(String.format(
+						"Found that binding %s has a ControllerBinding (%s) that activates same code. ", bindingKey,
+						controlButtonStr));
 			}
 		}
 
@@ -339,6 +316,70 @@ public class JoypadControlList extends GuiScrollingList
 				b.drawButton(mc, k, i1);
 			}
 		}
+	}
+
+	private String checkKeyCodeBound(String bindingKey, String defaultStr)
+	{
+		KeyBinding kb = McKeyBindHelper.getMinecraftKeyBind(bindingKey);
+		if (kb != null)
+		{
+			int keyCode = McObfuscationHelper.keyCode(kb);
+			if (keyCode != Keyboard.KEY_NONE)
+			{
+				ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode,
+						BindingOptions.GAME_BINDING);
+				if (b != null)
+				{
+					return ControllerSettings.controllerUtils.getHumanReadableInputName(
+							Controllers.getController(this.parent.currentJoyIndex), b.inputEvent);
+				}
+			}
+		}
+		return defaultStr;
+	}
+
+	private boolean checkButtonPressAction(int id, int x, int y, String bindingKey)
+	{
+		if (lastYClick >= y && lastYClick <= y + buttonHeight && lastXClick >= x)
+		{
+			ControllerBinding binding = ControllerSettings.get(bindingKey);
+			lastYClick = 0;
+			// we are in range of the buttons
+			if (lastXClick <= x + controlButtonWidth)
+			{
+				bindingIndexToUpdate = id;
+				controllerTickStart = Minecraft.getSystemTime();
+				ControllerSettings.suspendControllerInput(true, 10000);
+			}
+			else if (binding != null)
+			{
+				if (lastXClick <= x + controlButtonWidth + smallButtonWidth)
+				{
+					if (binding.inputEvent.isValid())
+					{
+						ControllerSettings.unsetControllerBinding(parent.getCurrentControllerId(), binding.inputString);
+					}
+					else if (binding.inputString.contains("user"))
+					{
+						// delete this user binding
+						ControllerSettings.delete(binding.inputString);
+						joyBindKeys.remove(id);
+						return false;
+					}
+
+				}
+				else if (lastXClick <= x + controlButtonWidth + smallButtonWidth * 2)
+				{
+					if (binding.inputEvent.getEventType() != EventType.AXIS
+							&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
+					{
+						ControllerSettings.setToggle(parent.currentJoyIndex, binding.inputString,
+								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private boolean getControllerInput()
@@ -398,18 +439,13 @@ public class JoypadControlList extends GuiScrollingList
 
 		if (b == null)
 		{
-			// key originates from Minecraft Keybind
-			for (KeyBinding kb : parent.mc.gameSettings.keyBindings)
+			KeyBinding kb = McKeyBindHelper.getMinecraftKeyBind(bindingKey);
+			if (kb != null)
 			{
-				String keyInputString = McObfuscationHelper.getKeyDescription(kb);
-				if (keyInputString.compareTo(bindingKey) == 0)
-				{
-					b = new ControllerBinding(keyInputString, keyInputString, new ButtonInputEvent(
-							parent.getCurrentControllerId(), -1, 1), new int[] { McObfuscationHelper.keyCode(kb) }, 0,
-							EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
-									BindingOptions.RENDER_TICK,
-									ControllerBinding.mapMinecraftCategory(McObfuscationHelper.getKeyCategory(kb))));
-				}
+				b = new ControllerBinding(bindingKey, bindingKey, new ButtonInputEvent(parent.getCurrentControllerId(),
+						-1, 1), new int[] { McObfuscationHelper.keyCode(kb) }, 0, EnumSet.of(
+						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK,
+						ControllerBinding.mapMinecraftCategory(McObfuscationHelper.getKeyCategory(kb))));
 			}
 		}
 

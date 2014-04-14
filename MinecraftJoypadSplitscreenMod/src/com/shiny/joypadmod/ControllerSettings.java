@@ -23,6 +23,7 @@ import org.lwjgl.input.Keyboard;
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.AxisInputEvent;
@@ -459,6 +460,7 @@ public class ControllerSettings
 
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 			JoypadMouse.AxisReader.centerCrosshairs();
+			checkIfBindingsNeedUpdating();
 			unpressAll();
 			return true;
 		}
@@ -478,7 +480,7 @@ public class ControllerSettings
 			setDefaultJoyBindingMap(joyIndex, false);
 			for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 			{
-				if (!entry.getValue().inputString.contains("user."))
+				if (!entry.getKey().contains("user."))
 					config.saveControllerBinding(Controllers.getController(joyIndex).getName(), entry.getValue());
 			}
 		}
@@ -747,5 +749,52 @@ public class ControllerSettings
 
 		config.applySavedDeadZones(Controllers.getController(joyId));
 
+	}
+
+	public static ControllerBinding findControllerBindingWithKey(int keyCode, BindingOptions option)
+	{
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
+		{
+			if (entry.getValue().inputEvent.isValid() && entry.getValue().keyCodes != null
+					&& entry.getValue().bindingOptions != null && entry.getValue().bindingOptions.contains(option))
+			{
+				for (int bindKeyCode : entry.getValue().keyCodes)
+				{
+					if (bindKeyCode == keyCode)
+					{
+						return entry.getValue();
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	// call this when there is a possibility of a key change
+	public static void checkIfBindingsNeedUpdating()
+	{
+		if (joyNo < 0)
+			return;
+
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
+		{
+			if (entry.getValue().inputEvent.isValid() && entry.getValue().keyCodes != null
+					&& entry.getValue().keyCodes.length >= 1 && !entry.getKey().contains("user."))
+			{
+				KeyBinding kb = McKeyBindHelper.getMinecraftKeyBind(entry.getKey());
+				if (kb == null && entry.getKey().contains("joy."))
+					kb = McKeyBindHelper.getMinecraftKeyBind(entry.getKey().replace("joy.", "key."));
+				if (kb != null)
+				{
+					int keyCode = McObfuscationHelper.keyCode(kb);
+					if (entry.getValue().keyCodes[0] != keyCode)
+					{
+						entry.getValue().keyCodes = new int[] { keyCode };
+						setControllerBinding(joyNo, entry.getKey(), entry.getValue());
+					}
+				}
+			}
+		}
 	}
 }

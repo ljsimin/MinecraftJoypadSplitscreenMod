@@ -261,6 +261,7 @@ public class JoypadConfigMenu extends GuiScreen
 		{
 			ControllerSettings.saveSensitivityValues();
 		}
+		ControllerSettings.checkIfBindingsNeedUpdating();
 	}
 
 	@Override
