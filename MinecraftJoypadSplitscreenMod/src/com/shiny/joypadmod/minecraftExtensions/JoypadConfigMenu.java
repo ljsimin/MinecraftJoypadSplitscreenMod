@@ -158,7 +158,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 		// other controllers
 		addButton(new GuiButton(503, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
-				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, "Other controls"));
+				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, sGet("controlMenu.otherControls")));
 
 		buttonYOffset += 22;
 
@@ -409,7 +409,7 @@ public class JoypadConfigMenu extends GuiScreen
 		}
 		catch (Exception ex)
 		{
-			ret += " Exception caught getting controller info! " + ex.getClass();
+			ret += " Exception caught getting controller info! " + ex.toString();
 		}
 		return ret;
 	}
@@ -631,27 +631,32 @@ public class JoypadConfigMenu extends GuiScreen
 	public String sGet(String inputCode)
 	{
 		String ret = "";
-		if (inputCode.contains("X-") || inputCode.contains("prev"))
-			ret += symGet(JSyms.lArrow);
-		else if (inputCode.contains("X+") || inputCode.contains("next"))
-			ret += symGet(JSyms.rArrow);
-		else if (inputCode.contains("Y-") || inputCode.contains("Up"))
-			ret += symGet(JSyms.uArrow);
-		else if (inputCode.contains("Y+") || inputCode.contains("Down"))
-			ret += symGet(JSyms.dArrow);
-
-		if (ret != "")
+		if (inputCode.contains("joy."))
 		{
-			if (inputCode.contains("camera"))
-				ret = McObfuscationHelper.lookupString("controlMenu.look") + " " + ret;
-			else if (inputCode.contains("gui"))
-				ret = McObfuscationHelper.lookupString("controlMenu.mouse") + " " + ret;
-			else if (inputCode.contains("scroll"))
-				ret = McObfuscationHelper.lookupString("controlMenu.scroll") + " " + ret;
-			else if (inputCode.contains("Item") || (inputCode.contains("Item")))
-				ret = McObfuscationHelper.lookupString("controlMenu.hotbar") + " " + ret;
+			if (inputCode.contains("X-") || inputCode.contains("prev"))
+				ret += symGet(JSyms.lArrow);
+			else if (inputCode.contains("X+") || inputCode.contains("next"))
+				ret += symGet(JSyms.rArrow);
+			else if (inputCode.contains("Y-") || inputCode.contains("Up"))
+				ret += symGet(JSyms.uArrow);
+			else if (inputCode.contains("Y+") || inputCode.contains("Down"))
+				ret += symGet(JSyms.dArrow);
+			if (inputCode.equals("joy.closeInventory"))
+				return McObfuscationHelper.lookupString("key.inventory") + " " + symGet(JSyms.remove);
 
-			return ret;
+			if (ret != "")
+			{
+				if (inputCode.contains("camera"))
+					ret = McObfuscationHelper.lookupString("controlMenu.look") + " " + ret;
+				else if (inputCode.contains("gui"))
+					ret = McObfuscationHelper.lookupString("controlMenu.mouse") + " " + ret;
+				else if (inputCode.contains("scroll"))
+					ret = McObfuscationHelper.lookupString("controlMenu.scroll") + " " + ret;
+				else if (inputCode.contains("Item") || (inputCode.contains("Item")))
+					ret = McObfuscationHelper.lookupString("key.inventory") + " " + ret;
+
+				return ret;
+			}
 		}
 
 		return McObfuscationHelper.lookupString(inputCode);

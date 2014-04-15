@@ -2,6 +2,7 @@ package com.shiny.joypadmod.minecraftExtensions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -144,7 +145,13 @@ public class JoypadControlList extends GuiScrollingList
 					// found current category end
 					if (lastCategoryStart < i - 2)
 					{
-						Arrays.sort(list, lastCategoryStart + 1, i);
+						Arrays.sort(list, lastCategoryStart + 1, i, new Comparator<String>()
+						{
+							public int compare(String s1, String s2)
+							{
+								return parent.sGet(s1).compareTo(parent.sGet(s2));
+							}
+						});
 					}
 				}
 				lastCategoryStart = i;
