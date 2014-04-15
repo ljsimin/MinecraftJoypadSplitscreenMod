@@ -3,7 +3,6 @@ controlMenu.axis=Axis
 controlMenu.buttons=Buttons
 controlMenu.calibrate=Calibrate
 controlMenu.controller=Controller
-controlMenu.hotbar=Hotbar
 controlMenu.invert=Invert
 controlMenu.look=Look
 controlMenu.mouse=Mouse
@@ -16,16 +15,13 @@ controlMenu.validControls=Valid controllers
 
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
-
-joy.closeInventory=Close inventory
 joy.shiftClick=Shift click
-
 joy.interact=Interact
 joy.menu=Menu
 
 controls.reset=Reset
 
-ey.attack=Attack/Destroy
+key.attack=Attack/Destroy
 key.back=Walk Backwards
 key.categories.gameplay=Gameplay
 key.categories.inventory=Inventory
