@@ -65,7 +65,7 @@ public class GuiSlider extends GuiButton
 		if (!Mouse.isButtonDown(0))
 			this.dragging = false;
 
-		if (this.visible)
+		if (this.drawButton)
 		{
 			if (this.dragging)
 			{
