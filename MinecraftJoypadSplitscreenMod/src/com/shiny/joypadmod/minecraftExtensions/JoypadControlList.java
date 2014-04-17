@@ -49,12 +49,14 @@ public class JoypadControlList extends GuiScrollingList
 	private JoypadConfigMenu parent;
 	private int lastListSize = 0;
 
+	private static Minecraft mc = Minecraft.getMinecraft();
+
 	public List<String> joyBindKeys;
 
 	public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer)
 	{
 
-		super(parent.mc, parent.controlListWidth, // width
+		super(mc, parent.controlListWidth, // width
 				parent.height, // height
 				parent.controlListYStart, // top start
 				parent.controlListYStart + parent.controlListHeight, // bottom end
@@ -78,7 +80,7 @@ public class JoypadControlList extends GuiScrollingList
 	{
 		joyBindKeys.clear();
 
-		KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(parent.mc.gameSettings.keyBindings);
+		KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(mc.gameSettings.keyBindings);
 
 		if (ModVersionHelper.getVersion() >= 172)
 			Arrays.sort(akeybinding);

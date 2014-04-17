@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.StatCollector;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
@@ -60,6 +61,10 @@ public class GuiSlider extends GuiButton
 	@Override
 	protected void mouseDragged(Minecraft minecraft, int mouseX, int mouseY)
 	{
+		// something is awry with this receiving the mouse released event so check manually if button pressed
+		if (!Mouse.isButtonDown(0))
+			this.dragging = false;
+
 		if (this.visible)
 		{
 			if (this.dragging)
@@ -106,13 +111,13 @@ public class GuiSlider extends GuiButton
 
 	public void updateText()
 	{
-		if (this.displayString.equals("controlMenu.sensitivity.game"))
+		if (this.baseDisplayString.equals("controlMenu.sensitivity.game"))
 		{
 			String s = String.format("%s %s: %s", McObfuscationHelper.lookupString("key.categories.gameplay"),
 					McObfuscationHelper.lookupString("options.sensitivity"), (int) (this.sliderValue * 100.0F));
 			this.displayString = s;
 		}
-		else if (this.displayString.equals("controlMenu.sensitivity.menu"))
+		else if (this.baseDisplayString.equals("controlMenu.sensitivity.menu"))
 		{
 			String s = String.format("%s %s: %s", McObfuscationHelper.lookupString("joy.menu"),
 					McObfuscationHelper.lookupString("options.sensitivity"), (int) (this.sliderValue * 100.0F));
