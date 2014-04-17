@@ -20,7 +20,6 @@ import cpw.mods.fml.client.GuiScrollingList;
 
 public class JoypadCalibrationList extends GuiScrollingList
 {
-
 	private Minecraft mc;
 	private int width;
 	private int entryHeight;

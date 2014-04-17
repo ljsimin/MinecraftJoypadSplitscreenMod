@@ -24,33 +24,7 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 
 public class JoypadConfigMenu extends GuiScreen
 {
-
-	public boolean nextClicked = false;
 	public int currentJoyIndex = 0;
-	public int lastJoyIndex = 0;
-	// start of text at top
-	private int labelYStart = 2;
-
-	// top button parameters
-	// Y start of the buttons at the top of the screen
-	private int buttonYStart_top = labelYStart + 12;
-	// Y end of the buttons at the top of the screen
-	public int buttonYEnd_top;
-	// X start of the buttons at the top of the screen
-	public int buttonXStart_top;
-
-	public int sensitivityXStart;
-	public int sensitivityYStart;
-	public int menuSensitivityStringXStart;
-	public int gameSensitivityStringXStart;
-
-	public int controllerStringY;
-
-	// determined by size of screen
-	public int controllerButtonWidth;
-
-	// spacing between the buttons
-	private int buttonYSpacing = 21;
 
 	// control list parameters
 	public int controlListYStart;
@@ -58,21 +32,41 @@ public class JoypadConfigMenu extends GuiScreen
 	public int controlListWidth;
 	public int controlListHeight;
 
+	// start of text at top
+	private int labelYStart = 2;
+
+	// top button parameters
+	// Y start of the buttons at the top of the screen
+	private int buttonYStart_top = labelYStart + 12;
+	// Y end of the buttons at the top of the screen
+	private int buttonYEnd_top;
+	// X start of the buttons at the top of the screen
+	private int buttonXStart_top;
+
+	private int sensitivityXStart;
+	private int sensitivityYStart;
+	private int controllerStringY;
+
+	// determined by size of screen
+	private int controllerButtonWidth;
+
+	// spacing between the buttons
+	private int buttonYSpacing = 21;
+
 	// bottom button parameters
 	private int buttonYStart_bottom;
-	private int bottomButtonWidth = 70;
+	public int bottomButtonWidth = 70;
 
 	private GuiScreen parentScr;
-	public Minecraft mc = Minecraft.getMinecraft();
 
 	private long customBindingTickStart = 0;
 	private int customBindingKeyIndex = -1;
 
-	private int sensitivity_menuStart;
-	private int sensitivity_gameStart;
-
 	private JoypadControlList optionList;
 	private List<Integer> controllers;
+
+	private int sensitivity_menuStart;
+	private int sensitivity_gameStart;
 
 	private enum ButtonsEnum
 	{
@@ -81,18 +75,12 @@ public class JoypadConfigMenu extends GuiScreen
 		next,
 		showInvalid,
 		invert,
-		menuSensitivityDown,
-		menuSensitivityDownSmall,
-		menuSensitivityupSmall,
-		menuSensitivityup,
-		gameSensitivityDown,
-		gameSensitivityDownSmall,
-		gameSensitivityupSmall,
-		gameSensitivityup,
-		calibrate,
+		menuSensitivity,
+		gameSensitivity,
 		addCustom,
 		reset,
 		done,
+		advanced,
 		mouseMenu
 	}
 
@@ -157,7 +145,7 @@ public class JoypadConfigMenu extends GuiScreen
 				controllerButtonWidth / 3, 20, ">>"));
 
 		// other controllers
-		addButton(new GuiButton(503, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
+		addButton(new GuiButton(200, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
 				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, sGet("controlMenu.otherControls")));
 
 		buttonYOffset += 22;
@@ -165,58 +153,24 @@ public class JoypadConfigMenu extends GuiScreen
 		int invertButtonWidth = 66;
 
 		// invert axis toggle
-		addButton(new GuiButton(401, buttonXStart_top, buttonYStart_top + buttonYOffset, invertButtonWidth, 20,
+		addButton(new GuiButton(300, buttonXStart_top, buttonYStart_top + buttonYOffset, invertButtonWidth, 20,
 				sGet("controlMenu.invert") + ": "
 						+ (ControllerSettings.getInvertYAxis() ? sGet("options.on") : sGet("options.off"))));
 
 		sensitivityXStart = buttonXStart_top + invertButtonWidth + 1;
 		sensitivityYStart = buttonYStart_top + buttonYOffset;
-		int topRowButtonXOffset = sensitivityXStart;
+		// int topRowButtonXOffset = sensitivityXStart;
 
-		int sensitivityButtonWidth = 15;
-
-		// menu sensitivity down
-		addButton(new GuiButton(420, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				"<<"));
-		topRowButtonXOffset += sensitivityButtonWidth - 2;
-		addButton(new GuiButton(421, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				"<"));
-
-		menuSensitivityStringXStart = topRowButtonXOffset + sensitivityButtonWidth + 1;
-		topRowButtonXOffset += 27 + sensitivityButtonWidth;
-
-		// menu sensitivity up
-		addButton(new GuiButton(422, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				">"));
-		topRowButtonXOffset += sensitivityButtonWidth - 2;
-		addButton(new GuiButton(423, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				">>"));
-
-		topRowButtonXOffset += sensitivityButtonWidth + 2;
-
-		// gui sensitivity down
-		addButton(new GuiButton(425, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				"<<"));
-		topRowButtonXOffset += sensitivityButtonWidth - 2;
-		addButton(new GuiButton(426, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				"<"));
-
-		gameSensitivityStringXStart = topRowButtonXOffset + sensitivityButtonWidth + 1;
-		topRowButtonXOffset += 27 + sensitivityButtonWidth;
-
-		// game sensitivity up
-		addButton(new GuiButton(427, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				">"));
-		topRowButtonXOffset += sensitivityButtonWidth - 2;
-		addButton(new GuiButton(428, topRowButtonXOffset, buttonYStart_top + buttonYOffset, sensitivityButtonWidth, 20,
-				">>"));
-		topRowButtonXOffset += sensitivityButtonWidth - 1;
-
-		int calibrateButtonWidth = controllerButtonWidth + buttonXStart_top - topRowButtonXOffset;
-
-		addButton(new GuiButton(500, topRowButtonXOffset, buttonYStart_top + buttonYOffset, controllerButtonWidth
-				+ buttonXStart_top - topRowButtonXOffset, 20, this.getFontRenderer().trimStringToWidth(
-				sGet("controlMenu.calibrate"), calibrateButtonWidth)));
+		int sensitivitySliderWidth = (controllerButtonWidth + buttonXStart_top - sensitivityXStart) / 2;
+		GuiSlider menuSensitivity = new GuiSlider(310, sensitivityXStart, sensitivityYStart, sensitivitySliderWidth,
+				20, "controlMenu.sensitivity.menu", (float) ControllerSettings.inMenuSensitivity / 100f);
+		menuSensitivity.updateText();
+		addButton(menuSensitivity);
+		GuiSlider guiSensitivity = new GuiSlider(320, sensitivityXStart + sensitivitySliderWidth + 1,
+				sensitivityYStart, sensitivitySliderWidth - 1, 20, "controlMenu.sensitivity.game",
+				(float) ControllerSettings.inGameSensitivity / 100f);
+		guiSensitivity.updateText();
+		addButton(guiSensitivity);
 
 		buttonYOffset += 20;
 		// the middle section will be populated with the controller settings so
@@ -234,7 +188,7 @@ public class JoypadConfigMenu extends GuiScreen
 		int buttonNum = 0;
 		int rightButtonWidth = controllerButtonWidth + buttonXStart_top - rightButtonsXStart;
 
-		addButton(new GuiButton(610, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+		addButton(new GuiButton(350, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
 				rightButtonWidth, 20, sGet("controlMenu.addKey")));
 
 		// add bottom buttons
@@ -243,9 +197,13 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(400, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controls.reset")));
 
-		addButton(new GuiButton(501, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(500, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("gui.done")));
-		addButton(new GuiButton(502, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+
+		addButton(new GuiButton(510, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+				bottomButtonWidth, 20, sGet("controlMenu.advanced")));
+
+		addButton(new GuiButton(520, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controlMenu.mouse") + " " + sGet("joy.menu")));
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
@@ -289,66 +247,7 @@ public class JoypadConfigMenu extends GuiScreen
 			currentJoyIndex = getJoypadIndex(1);
 			updateControllerButton();
 			break;
-		case 400: // Reset
-			if (currentJoyIndex != -1)
-			{
-				JoypadMod.controllerSettings.resetBindings(currentJoyIndex);
-			}
-			break;
-		case 401: // invert
-			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
-			toggleOnOffButton(ControllerSettings.getInvertYAxis(), ButtonsEnum.invert.ordinal());
-			break;
-		case 420:
-		case 421:
-		case 422:
-		case 423:
-		case 425:
-		case 426:
-		case 427:
-		case 428:
-			int bigChange = 5;
-			int smallChange = 1;
-			switch (getButtonId(guiButton))
-			{
-			case 420: // menu sensitivity down big
-				ControllerSettings.inMenuSensitivity -= bigChange;
-				break;
-			case 421: // menu sensitivity down small
-				ControllerSettings.inMenuSensitivity -= smallChange;
-				break;
-			case 422: // menu sensitivity up small
-				ControllerSettings.inMenuSensitivity += smallChange;
-				break;
-			case 423: // menu sensitivity up big
-				ControllerSettings.inMenuSensitivity += bigChange;
-				break;
-			case 425: // gui sensitivity down big
-				ControllerSettings.inGameSensitivity -= bigChange;
-				break;
-			case 426: // gui sensitivity down small
-				ControllerSettings.inGameSensitivity -= smallChange;
-				break;
-			case 427: // gui sensitivity up small
-				ControllerSettings.inGameSensitivity += smallChange;
-				break;
-			case 428: // gui sensitivity up big
-				ControllerSettings.inGameSensitivity += bigChange;
-				break;
-			}
-			break;
-		case 500: // Calibrate
-			int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
-			mc.displayGuiScreen(new JoypadCalibrationMenu(this, realJoyIndex));
-			break;
-		case 501: // Done
-			mc.displayGuiScreen(this.parentScr);
-			break;
-		case 502: // Mouse menu
-			GameRenderHandler.allowOrigControlsMenu = true;
-			mc.displayGuiScreen(new GuiControls(this, mc.gameSettings));
-			break;
-		case 503: // unhide controllers
+		case 200: // unhide controllers
 			JoypadMod.controllerSettings.setInputEnabled(-1, false);
 			if (guiButton.displayString.equals(sGet("controlMenu.otherControls")))
 			{
@@ -366,9 +265,35 @@ public class JoypadConfigMenu extends GuiScreen
 				updateControllerButton();
 			}
 			break;
-		case 610: // custom binding
+		case 300: // invert
+			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
+			toggleOnOffButton(ControllerSettings.getInvertYAxis(), ButtonsEnum.invert.ordinal());
+			break;
+		case 310: // menu/game sensitivity
+		case 320:
+			break;
+		case 350: // custom binding
 			customBindingKeyIndex = ButtonsEnum.addCustom.ordinal();
 			customBindingTickStart = Minecraft.getSystemTime();
+			break;
+		case 400: // Reset
+			if (currentJoyIndex != -1)
+			{
+				JoypadMod.controllerSettings.resetBindings(currentJoyIndex);
+			}
+			break;
+		case 500: // Done
+			mc.displayGuiScreen(this.parentScr);
+			break;
+		case 510: // advanced
+			mc.displayGuiScreen(new JoypadAdvancedMenu(this));
+
+			// int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
+			// mc.displayGuiScreen(new JoypadCalibrationMenu(this, realJoyIndex));
+			break;
+		case 520: // Mouse menu
+			GameRenderHandler.allowOrigControlsMenu = true;
+			mc.displayGuiScreen(new GuiControls(this, mc.gameSettings));
 			break;
 		}
 	}
@@ -424,6 +349,33 @@ public class JoypadConfigMenu extends GuiScreen
 			this.optionList.drawScreen(par1, par2, par3);
 		}
 
+		checkCustomBindTrigger();
+		checkSensitivitySliders();
+
+		String titleText = String.format("Joypad Mod %s - %s", sGet("controls.title"),
+				sGet("controlMenu.toggleInstructions"));
+		this.drawCenteredString(getFontRenderer(), titleText, width / 2, labelYStart, -1);
+
+		// output TEXT buttons Axis, POV count here
+		String joyStickInfoText = getJoystickInfo(currentJoyIndex, JoyInfoEnum.buttonAxisInfo);
+		this.drawCenteredString(getFontRenderer(), joyStickInfoText, width / 2, controllerStringY, 0xAAAAAA);
+
+		// CONTROLLER NAME BUTTON
+		// PREV NEXT OTHER
+
+		super.drawScreen(par1, par2, par3);
+	}
+
+	private void checkSensitivitySliders()
+	{
+		float f = ((GuiSlider) buttonList.get(ButtonsEnum.gameSensitivity.ordinal())).getValue();
+		ControllerSettings.inGameSensitivity = (int) (f * 100);
+		f = ((GuiSlider) buttonList.get(ButtonsEnum.menuSensitivity.ordinal())).getValue();
+		ControllerSettings.inMenuSensitivity = (int) (f * 100);
+	}
+
+	private void checkCustomBindTrigger()
+	{
 		if (customBindingTickStart > 0)
 		{
 			if (Minecraft.getSystemTime() - customBindingTickStart > 5000)
@@ -459,57 +411,6 @@ public class JoypadConfigMenu extends GuiScreen
 				customBindingKeyIndex = -1;
 			}
 		}
-
-		if (this.currentJoyIndex != lastJoyIndex)
-		{
-			lastJoyIndex = currentJoyIndex;
-			if (this.optionList != null)
-				this.optionList.updatejoyBindKeys();
-		}
-		String titleText = String.format("Joypad Mod %s - %s", sGet("controls.title"),
-				sGet("controlMenu.toggleInstructions"));
-		this.drawCenteredString(getFontRenderer(), titleText, width / 2, labelYStart, -1);
-
-		// output TEXT buttons Axis, POV count here
-		String joyStickInfoText = getJoystickInfo(currentJoyIndex, JoyInfoEnum.buttonAxisInfo);
-		this.drawCenteredString(getFontRenderer(), joyStickInfoText, width / 2, controllerStringY, 0xAAAAAA);
-
-		int sensitivityColor = 0xFFAA00;
-
-		this.drawString(getFontRenderer(), "Menu", menuSensitivityStringXStart, sensitivityYStart + 1, sensitivityColor);
-
-		this.drawString(getFontRenderer(), "Game", gameSensitivityStringXStart, sensitivityYStart + 1, sensitivityColor);
-
-		int heightOffset = getFontRenderer().FONT_HEIGHT + 1;
-
-		int menuSens = ControllerSettings.inMenuSensitivity;
-		int gameSens = ControllerSettings.inGameSensitivity;
-		int menuValueOffset = 5;
-		if (menuSens < -99)
-			menuValueOffset = 1;
-		else if (menuSens < -9 || menuSens > 99)
-			menuValueOffset = 3;
-		else if (menuSens >= 0 && menuSens <= 9)
-			menuValueOffset = 8;
-
-		int gameValueOffset = 5;
-		if (gameSens < -99)
-			gameValueOffset = 1;
-		else if (gameSens < -9 || gameSens > 99)
-			gameValueOffset = 3;
-		else if (gameSens >= 0 && gameSens <= 9)
-			gameValueOffset = 8;
-
-		this.drawString(getFontRenderer(), "" + menuSens, menuSensitivityStringXStart + menuValueOffset,
-				sensitivityYStart + heightOffset, sensitivityColor);
-		this.drawString(getFontRenderer(), "" + gameSens, gameSensitivityStringXStart + gameValueOffset,
-				sensitivityYStart + heightOffset, sensitivityColor);
-
-		// CONTROLLER NAME BUTTON
-		// PREV NEXT
-		// CALIBRATE
-
-		super.drawScreen(par1, par2, par3);
 	}
 
 	/**
@@ -610,7 +511,7 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonList.add(guiButton);
 	}
 
-	public int getButtonId(GuiButton guiButton)
+	private int getButtonId(GuiButton guiButton)
 	{
 		// return guiButton.field_146127_k;
 		return guiButton.id;

@@ -13,6 +13,8 @@ controlMenu.pressKey=Press key...
 controlMenu.toggleInstructions=Press space to toggle controller
 controlMenu.validControls=Valid controllers
 
+controlMenu.advanced=Advanced
+
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
 joy.shiftClick=Shift click
