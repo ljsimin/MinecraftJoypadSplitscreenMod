@@ -20,7 +20,7 @@ public class ConfigFile
 	public int preferedJoyNo;
 	public String preferedJoyName;
 
-	public boolean sharedProfile;
+	public boolean sharedProfile = false;
 
 	private Configuration config;
 	private File _configFile;
@@ -29,6 +29,8 @@ public class ConfigFile
 	private String userCategory;
 	private String bindingComment = "S:<actionID>=<Menu String>,{ <keycode> },<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>,<BINDING_OPTIONS1>,<BINDING_OPTIONS2>...";
 	private List<ControllerBinding> controlBindingsFromConfigFile = new ArrayList<ControllerBinding>();
+
+	private String globalCat = "-Global-";
 
 	private double lastConfigFileVersion;
 
@@ -51,8 +53,6 @@ public class ConfigFile
 	public void init()
 	{
 		config.load();
-
-		String globalCat = "-Global-";
 
 		ControllerSettings.grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
 		ControllerSettings.loggingLevel = config.get(globalCat, "LoggingLevel", 1).getInt();
@@ -106,6 +106,9 @@ public class ConfigFile
 	public void setSharedProfile(boolean shared)
 	{
 		LogHelper.Info("Setting shared profile to " + shared);
+
+		updateKey(globalCat, "SharedProfile", "" + shared, true);
+
 		sharedProfile = shared;
 		defaultCategory = "Joypad-" + (shared ? "-Shared-" : userName);
 		// individual or global
@@ -425,7 +428,7 @@ public class ConfigFile
 	private void addGlobalOptionsComment()
 	{
 		config.addCustomCategoryComment(
-				"-Global-",
+				globalCat,
 				"GrabMouse = will grab mouse when in game (generally not good for splitscreen)\r\n"
 						+ "LoggingLevel = 0-4 levels of logging ranging from next to none to very verbose. 1 recommended unless debugging.\r\n"
 						+ "SharedProfile = Will share joypad settings across all users except for invert");
