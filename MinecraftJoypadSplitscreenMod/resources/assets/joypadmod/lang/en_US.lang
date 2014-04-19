@@ -12,6 +12,7 @@ controlMenu.otherControls=Other controllers
 controlMenu.pressKey=Press key...
 controlMenu.toggleInstructions=Press space to toggle controller
 controlMenu.validControls=Valid controllers
+-Global-.SharedProfile=Share settings
 
 controlMenu.advanced=Advanced
 

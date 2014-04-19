@@ -41,17 +41,14 @@ public class JoypadConfigMenu extends GuiScreen
 	// Y end of the buttons at the top of the screen
 	private int buttonYEnd_top;
 	// X start of the buttons at the top of the screen
-	private int buttonXStart_top;
+	public int buttonXStart_top;
 
-	private int sensitivityXStart;
+	// private int sensitivityXStart;
 	private int sensitivityYStart;
 	private int controllerStringY;
 
 	// determined by size of screen
-	private int controllerButtonWidth;
-
-	// spacing between the buttons
-	private int buttonYSpacing = 21;
+	public int controllerButtonWidth;
 
 	// bottom button parameters
 	private int buttonYStart_bottom;
@@ -70,14 +67,12 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control,
-		prev,
-		next,
-		showInvalid,
-		invert,
+		control, prev, next,
+		// showInvalid,
+		// invert,
 		menuSensitivity,
 		gameSensitivity,
-		addCustom,
+		// addCustom,
 		reset,
 		done,
 		advanced,
@@ -123,8 +118,8 @@ public class JoypadConfigMenu extends GuiScreen
 	public void initGui()
 	{
 		controllerButtonWidth = width - width / 5;
-		if (controllerButtonWidth > 395)
-			controllerButtonWidth = 395;
+		if (controllerButtonWidth > 310)
+			controllerButtonWidth = 310;
 		buttonXStart_top = (width - controllerButtonWidth) / 2;
 		buttonYStart_bottom = height - 20;
 
@@ -138,36 +133,29 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonYOffset += 20;
 
 		// prev controller button
-		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYOffset, controllerButtonWidth / 3, 20,
+		addButton(new GuiButton(101, buttonXStart_top, buttonYStart_top + buttonYOffset, controllerButtonWidth / 2, 20,
 				"<<"));
 		// next controller button
-		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 3, buttonYStart_top + buttonYOffset,
-				controllerButtonWidth / 3, 20, ">>"));
+		addButton(new GuiButton(102, buttonXStart_top + controllerButtonWidth / 2, buttonYStart_top + buttonYOffset,
+				controllerButtonWidth / 2, 20, ">>"));
 
 		// other controllers
-		addButton(new GuiButton(200, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
-				+ buttonYOffset, controllerButtonWidth / 3 + 1, 20, sGet("controlMenu.otherControls")));
+		// addButton(new GuiButton(200, buttonXStart_top + (controllerButtonWidth / 3 * 2), buttonYStart_top
+		// + buttonYOffset, controllerButtonWidth / 3 + 1, 20, sGet("controlMenu.otherControls")));
 
 		buttonYOffset += 22;
 
-		int invertButtonWidth = 66;
-
-		// invert axis toggle
-		addButton(new GuiButton(300, buttonXStart_top, buttonYStart_top + buttonYOffset, invertButtonWidth, 20,
-				sGet("controlMenu.invert") + ": "
-						+ (ControllerSettings.getInvertYAxis() ? sGet("options.on") : sGet("options.off"))));
-
-		sensitivityXStart = buttonXStart_top + invertButtonWidth + 1;
+		// sensitivityXStart = buttonXStart_top + invertButtonWidth + 1;
 		sensitivityYStart = buttonYStart_top + buttonYOffset;
 		// int topRowButtonXOffset = sensitivityXStart;
 
-		int sensitivitySliderWidth = (controllerButtonWidth + buttonXStart_top - sensitivityXStart) / 2;
-		GuiSlider menuSensitivity = new GuiSlider(310, sensitivityXStart, sensitivityYStart, sensitivitySliderWidth,
+		// int sensitivitySliderWidth = (controllerButtonWidth + buttonXStart_top - sensitivityXStart) / 2;
+		GuiSlider menuSensitivity = new GuiSlider(310, buttonXStart_top, sensitivityYStart, controllerButtonWidth / 2,
 				20, "controlMenu.sensitivity.menu", (float) ControllerSettings.inMenuSensitivity / 100f);
 		menuSensitivity.updateText();
 		addButton(menuSensitivity);
-		GuiSlider guiSensitivity = new GuiSlider(320, sensitivityXStart + sensitivitySliderWidth + 1,
-				sensitivityYStart, sensitivitySliderWidth - 1, 20, "controlMenu.sensitivity.game",
+		GuiSlider guiSensitivity = new GuiSlider(320, buttonXStart_top + controllerButtonWidth / 2, sensitivityYStart,
+				controllerButtonWidth / 2, 20, "controlMenu.sensitivity.game",
 				(float) ControllerSettings.inGameSensitivity / 100f);
 		guiSensitivity.updateText();
 		addButton(guiSensitivity);
@@ -178,8 +166,8 @@ public class JoypadConfigMenu extends GuiScreen
 		buttonYEnd_top = buttonYStart_top + buttonYOffset;
 
 		controlListYStart = buttonYEnd_top + 2;
-		controlListXStart = buttonXStart_top;
-		controlListWidth = (int) (controllerButtonWidth / 1.3);
+		controlListXStart = 0;// buttonXStart_top;
+		controlListWidth = buttonXStart_top + controllerButtonWidth;
 		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
 
 		int rightButtonsXStart = controlListXStart + controlListWidth + 5;
@@ -188,22 +176,25 @@ public class JoypadConfigMenu extends GuiScreen
 		int buttonNum = 0;
 		int rightButtonWidth = controllerButtonWidth + buttonXStart_top - rightButtonsXStart;
 
-		addButton(new GuiButton(350, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
-				rightButtonWidth, 20, sGet("controlMenu.addKey")));
+		// addButton(new GuiButton(350, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+		// rightButtonWidth, 20, sGet("controlMenu.addKey")));
 
 		// add bottom buttons
 		buttonNum = 0;
+		int numBottomButtons = 4;
+		int bottomButtonStart = buttonXStart_top + controllerButtonWidth / 2 - (bottomButtonWidth / 2)
+				* numBottomButtons;
 
-		addButton(new GuiButton(400, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(400, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controls.reset")));
 
-		addButton(new GuiButton(500, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(500, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("gui.done")));
 
-		addButton(new GuiButton(510, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(510, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controlMenu.advanced")));
 
-		addButton(new GuiButton(520, controlListXStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(520, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controlMenu.mouse") + " " + sGet("joy.menu")));
 
 		this.optionList = new JoypadControlList(this, getFontRenderer());
@@ -265,15 +256,10 @@ public class JoypadConfigMenu extends GuiScreen
 				updateControllerButton();
 			}
 			break;
-		case 300: // invert
-			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
-			toggleOnOffButton(ControllerSettings.getInvertYAxis(), ButtonsEnum.invert.ordinal());
-			break;
 		case 310: // menu/game sensitivity
 		case 320:
 			break;
 		case 350: // custom binding
-			customBindingKeyIndex = ButtonsEnum.addCustom.ordinal();
 			customBindingTickStart = Minecraft.getSystemTime();
 			break;
 		case 400: // Reset
@@ -286,10 +272,8 @@ public class JoypadConfigMenu extends GuiScreen
 			mc.displayGuiScreen(this.parentScr);
 			break;
 		case 510: // advanced
-			mc.displayGuiScreen(new JoypadAdvancedMenu(this));
-
-			// int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
-			// mc.displayGuiScreen(new JoypadCalibrationMenu(this, realJoyIndex));
+			int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
+			mc.displayGuiScreen(new JoypadAdvancedMenu(this, realJoyIndex));
 			break;
 		case 520: // Mouse menu
 			GameRenderHandler.allowOrigControlsMenu = true;
@@ -462,15 +446,6 @@ public class JoypadConfigMenu extends GuiScreen
 	private void enableDisableButton(int buttonIndex, boolean enable)
 	{
 		((GuiButton) buttonList.get(buttonIndex)).enabled = enable;
-	}
-
-	private void toggleOnOffButton(boolean b, int index)
-	{
-		String s1 = b ? sGet("options.off") : sGet("options.on");
-		String s2 = b ? sGet("options.on") : sGet("options.off");
-		String newString = ((GuiButton) buttonList.get(index)).displayString.replace(s1, s2);
-
-		changeButtonText(index, newString);
 	}
 
 	private void toggleController()

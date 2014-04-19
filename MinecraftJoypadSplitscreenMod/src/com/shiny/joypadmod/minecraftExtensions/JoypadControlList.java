@@ -48,6 +48,8 @@ public class JoypadControlList extends GuiScrollingList
 	public int bindingIndexToUpdate = -1;
 	private JoypadConfigMenu parent;
 	private int lastListSize = 0;
+	private int descriptionStartX;
+	private int controlButtonCenterOffset = 20;
 
 	private static Minecraft mc = Minecraft.getMinecraft();
 
@@ -71,6 +73,7 @@ public class JoypadControlList extends GuiScrollingList
 		this.parent = parent;
 		this.fontRenderer = fontRenderer;
 		joyBindKeys = new ArrayList<String>();
+		descriptionStartX = parent.buttonXStart_top;
 		if (this.parent.currentJoyIndex != -1)
 		{
 			updatejoyBindKeys();
@@ -160,8 +163,22 @@ public class JoypadControlList extends GuiScrollingList
 			}
 		}
 		joyBindKeys.clear();
+		int longestWidthFound = 0;
 		for (int i = 0; i < list.length; i++)
+		{
 			joyBindKeys.add(list[i]);
+			int thisWidth = parent.getFontRenderer().getStringWidth(parent.sGet(list[i]));
+			if (thisWidth > longestWidthFound)
+				longestWidthFound = thisWidth;
+		}
+		if (longestWidthFound > parent.controllerButtonWidth / 2 - controlButtonCenterOffset - 3)
+		{
+			descriptionStartX = parent.buttonXStart_top - (parent.controllerButtonWidth / 2 - longestWidthFound)
+					- controlButtonCenterOffset - 5;
+			if (descriptionStartX < 0)
+				descriptionStartX = 0;
+		}
+
 	}
 
 	@Override
@@ -212,22 +229,26 @@ public class JoypadControlList extends GuiScrollingList
 			lastListSize = getSize();
 		}
 
+		int centerStart = parent.buttonXStart_top + parent.controllerButtonWidth / 2;
+
 		if (joyBindKeys.get(var1).contains("categories."))
 		{
 			// this is a new category
 			String category = parent.sGet(joyBindKeys.get(var1));
 
-			this.fontRenderer.drawString(category,
-					this.left + this.listWidth / 2 - this.fontRenderer.getStringWidth(category) / 2, var3 + 5, -1);
+			this.fontRenderer.drawString(category, centerStart - this.fontRenderer.getStringWidth(category) / 2,
+					var3 + 5, -1);
 			return;
 		}
 
 		String controlDescription = parent.sGet(joyBindKeys.get(var1));
+		boolean duplicate = ControllerSettings.checkIfDuplicateBinding(joyBindKeys.get(var1));
 
-		this.fontRenderer.drawString(this.fontRenderer.trimStringToWidth(controlDescription, 110), this.left + 3, var3
-				+ buttonHeight / 2 - this.fontRenderer.FONT_HEIGHT / 2, -1);
+		this.fontRenderer.drawString(controlDescription, descriptionStartX, var3 + buttonHeight / 2
+				- this.fontRenderer.FONT_HEIGHT / 2, duplicate ? 0xFF5555 : -1);
 
-		drawControlButtons(var1, this.left + 120, var3, joyBindKeys.get(var1), var1 == selectedIndex);
+		drawControlButtons(var1, centerStart - controlButtonCenterOffset, var3, joyBindKeys.get(var1),
+				var1 == selectedIndex);
 
 		if (bindingIndexToUpdate != -1)
 		{
@@ -239,7 +260,7 @@ public class JoypadControlList extends GuiScrollingList
 		}
 	}
 
-	private int controlButtonWidth = 60;
+	private int controlButtonWidth = 70;
 	private int smallButtonWidth = 15;
 
 	private void drawControlButtons(int id, int x, int y, String bindingKey, boolean slotSelected)

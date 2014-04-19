@@ -498,6 +498,8 @@ public class ControllerSettings
 		unpressAll();
 		if (!b)
 		{
+			JoypadMouse.AxisReader.setXY(0, 0);
+			VirtualMouse.setXY(0, 0);
 			inputEnabled = false;
 			config.updatePreferedJoy(-1, null);
 			return;
@@ -796,5 +798,39 @@ public class ControllerSettings
 				}
 			}
 		}
+	}
+
+	public static boolean checkIfDuplicateBinding(String bindingKey)
+	{
+		ControllerBinding b = get(bindingKey);
+		if (b == null || !b.inputEvent.isValid())
+			return false;
+
+		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
+		{
+			if (entry.getValue().inputEvent.isValid() && !entry.getKey().equals(bindingKey)
+					&& entry.getValue().inputEvent.equals(b.inputEvent))
+			{
+				if ((b.bindingOptions.contains(BindingOptions.GAME_BINDING) && entry.getValue().bindingOptions.contains(BindingOptions.GAME_BINDING))
+						|| (b.bindingOptions.contains(BindingOptions.MENU_BINDING) && entry.getValue().bindingOptions.contains(BindingOptions.MENU_BINDING)))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static void setSharedProfile(boolean shared)
+	{
+		config.setSharedProfile(shared);
+		if (currentDisplayedMap != -1)
+		{
+			saveCurrentJoyBindings(Controllers.getController(currentDisplayedMap).getName());
+		}
+	}
+
+	public static boolean isUsingSharedProfiles()
+	{
+		return config.sharedProfile;
 	}
 }

@@ -175,4 +175,23 @@ public abstract class ControllerInputEvent
 		String s = getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + "," + getDeadZone();
 		return s;
 	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == this)
+		{
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass())
+		{
+			return false;
+		}
+		ControllerInputEvent inputEvent = (ControllerInputEvent) obj;
+		if (inputEvent.type == this.type && inputEvent.buttonNumber == this.buttonNumber
+				&& inputEvent.threshold == this.threshold)
+			return true;
+
+		return false;
+	}
 }
