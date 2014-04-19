@@ -229,6 +229,17 @@ public class JoypadMouse
 			return true;
 		}
 
+		public static void setXY(int x, int y)
+		{
+			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth,
+					mc.displayHeight);
+
+			AxisReader.x = x;
+			AxisReader.y = y;
+			AxisReader.mcX = x * scaledResolution.getScaleFactor();
+			AxisReader.mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
+		}
+
 		private static float getReading(String bindKey)
 		{
 			boolean isButton = ControllerSettings.get(bindKey).inputEvent.getEventType() == EventType.BUTTON;

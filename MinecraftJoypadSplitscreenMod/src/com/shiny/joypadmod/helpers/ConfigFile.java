@@ -20,6 +20,8 @@ public class ConfigFile
 	public int preferedJoyNo;
 	public String preferedJoyName;
 
+	public boolean sharedProfile;
+
 	private Configuration config;
 	private File _configFile;
 	private String userName;
@@ -51,7 +53,6 @@ public class ConfigFile
 		config.load();
 
 		String globalCat = "-Global-";
-		boolean sharedProfile = config.get(globalCat, "SharedProfile", false).getBoolean(false);
 
 		ControllerSettings.grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
 		ControllerSettings.loggingLevel = config.get(globalCat, "LoggingLevel", 1).getInt();
@@ -63,7 +64,9 @@ public class ConfigFile
 			userName = Minecraft.getMinecraft().getSession().getUsername();
 		}
 
-		defaultCategory = "Joypad-" + (sharedProfile ? "-Shared-" : userName);
+		setSharedProfile(config.get(globalCat, "SharedProfile", false).getBoolean(false));
+
+		// defaultCategory = "Joypad-" + (sharedProfile ? "-Shared-" : userName);
 		userCategory = "Joypad-" + userName;
 
 		if (config.hasCategory(userCategory.toLowerCase()))
@@ -78,8 +81,8 @@ public class ConfigFile
 		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
 
 		// individual or global
-		ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
-		ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
+		// ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
+		// ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
 
 		if (lastConfigFileVersion < 0.0953)
@@ -98,6 +101,16 @@ public class ConfigFile
 		addGlobalOptionsComment();
 
 		updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
+	}
+
+	public void setSharedProfile(boolean shared)
+	{
+		LogHelper.Info("Setting shared profile to " + shared);
+		sharedProfile = shared;
+		defaultCategory = "Joypad-" + (shared ? "-Shared-" : userName);
+		// individual or global
+		ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
+		ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
 	}
 
 	public void addComment(String category, String comment)

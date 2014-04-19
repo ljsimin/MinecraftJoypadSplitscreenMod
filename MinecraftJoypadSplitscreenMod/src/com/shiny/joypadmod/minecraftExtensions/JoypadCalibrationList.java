@@ -136,8 +136,8 @@ public class JoypadCalibrationList extends GuiScrollingList
 		int controlButWidth = 32;
 		int directionButWidth = 15;
 
-		int maxSize = parent.parent.getFontRenderer().getStringWidth("X Axis:");
-		String title = parent.parent.getFontRenderer().trimStringToWidth(controller.getAxisName(axisNum), maxSize);
+		int maxSize = parent.fr.getStringWidth("X Axis:");
+		String title = parent.fr.trimStringToWidth(controller.getAxisName(axisNum), maxSize);
 
 		parent.drawBoxWithText(xStart, yPos, xStart + totalWidth, yPos + 25, title, 0xAA0000, 0x0000AA);
 		yPos += 10;
@@ -145,10 +145,10 @@ public class JoypadCalibrationList extends GuiScrollingList
 
 		String output = title + ": " + df.format(controller.getAxisValue(axisNum));
 		parent.write(xPos, yPos, output);
-		xPos += maxSize + parent.parent.getFontRenderer().getStringWidth(" -1.00") + 4;
+		xPos += maxSize + parent.fr.getStringWidth(" -1.00") + 4;
 		output = "Deadzone: " + df.format(controller.getDeadZone(axisNum));
 		parent.write(xPos, yPos, output);
-		xPos += parent.parent.getFontRenderer().getStringWidth(output) + 5;
+		xPos += parent.fr.getStringWidth(output) + 5;
 
 		int yOffset = -7;
 		int xOffset = -2;

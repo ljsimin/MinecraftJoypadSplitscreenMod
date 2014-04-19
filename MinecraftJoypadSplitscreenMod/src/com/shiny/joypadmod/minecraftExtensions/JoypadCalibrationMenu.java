@@ -1,6 +1,7 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -12,7 +13,7 @@ import com.shiny.joypadmod.helpers.LogHelper;
 
 public class JoypadCalibrationMenu extends GuiScreen
 {
-	public JoypadConfigMenu parent;
+	public GuiScreen parent;
 
 	// bottom button parameters
 	private int buttonYStart_bottom;
@@ -30,10 +31,12 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	private JoypadCalibrationList calibrationList = null;
 
+	FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+
 	String[] instructions = new String[] { "1. Press and wiggle all joystick controls",
 			"2. Press auto to find deadzone", "3. Save deadzones" };
 
-	public JoypadCalibrationMenu(JoypadConfigMenu parent, int joypadIndex)
+	public JoypadCalibrationMenu(GuiScreen parent, int joypadIndex)
 	{
 		super();
 		this.joypadIndex = joypadIndex;
@@ -52,8 +55,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 	public void initGui()
 	{
 
-		povBoxWidth = parent.getFontRenderer().getStringWidth("PovX: -10.00");
-		instructionBoxWidth = parent.getFontRenderer().getStringWidth(instructions[0]) + 10;
+		povBoxWidth = fr.getStringWidth("PovX: -10.00");
+		instructionBoxWidth = fr.getStringWidth(instructions[0]) + 10;
 
 		Math.max(5, width / 2 - ((axisBoxWidth + instructionBoxWidth + boxSpacing) / 2));
 
@@ -66,7 +69,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		// these buttons will be moved if we display axis values
 		if (joypadIndex != -1 && Controllers.getController(joypadIndex).getAxisCount() > 0)
 		{
-			int listStartY = (instructions.length + 3) * parent.getFontRenderer().FONT_HEIGHT + 20;
+			int listStartY = (instructions.length + 3) * fr.FONT_HEIGHT + 20;
 			int entryHeight = 32;
 
 			calibrationList = new JoypadCalibrationList(Minecraft.getMinecraft(), width, height, listStartY,
@@ -126,7 +129,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		if (calibrationList != null)
 			calibrationList.drawScreen(par1, par2, par3);
 
-		int ySpace = parent.getFontRenderer().FONT_HEIGHT;
+		int ySpace = fr.FONT_HEIGHT;
 		String title = "Calibration menu";
 		Controller controller = null;
 		if (joypadIndex != -1)
@@ -135,7 +138,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 			title += " - " + controller.getName();
 		}
 
-		write(yStart, parent.getFontRenderer().trimStringToWidth(title, width - 2));
+		write(yStart, fr.trimStringToWidth(title, width - 2));
 
 		if (joypadIndex == -1)
 		{
@@ -164,11 +167,11 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 		boxColor = -1; // can't seem to get any boxes other than white
 		textColor = 0xFFAA00;
-		int stringWidth = parent.getFontRenderer().getStringWidth(title);
+		int stringWidth = fr.getStringWidth(title);
 		int xPos = xStart + ((xEnd - xStart) / 2) - (stringWidth / 2);
 
 		this.drawHorizontalLine(xStart, xPos, yStart, boxColor);
-		this.write(xPos + 2, yStart - (parent.getFontRenderer().FONT_HEIGHT / 2) + 1, title, textColor);
+		this.write(xPos + 2, yStart - (fr.FONT_HEIGHT / 2) + 1, title, textColor);
 		xPos += stringWidth + 2;
 		this.drawHorizontalLine(xPos, xEnd, yStart, boxColor);
 		this.drawVerticalLine(xStart, yStart, yEnd, boxColor);
@@ -192,8 +195,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		for (int i = 0; i < numStrings; i++, yPos += ySpace)
 		{
-			int maxSize = parent.getFontRenderer().getStringWidth(title + " 10");
-			String stringOut = parent.getFontRenderer().trimStringToWidth(controller.getButtonName(i), maxSize);
+			int maxSize = fr.getStringWidth(title + " 10");
+			String stringOut = fr.trimStringToWidth(controller.getButtonName(i), maxSize);
 			String output = stringOut + ": " + (controller.isButtonPressed(i) ? "Pressed" : "Not pressed");
 			write(xStart, yPos, output);
 		}
@@ -235,7 +238,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		for (int i = 0; i < instructions.length; i++, yPos += ySpace)
 		{
-			int strWidth = parent.getFontRenderer().getStringWidth(instructions[i]);
+			int strWidth = fr.getStringWidth(instructions[i]);
 			write((totalWidth - 5) / 2 + xStart - strWidth / 2, yPos, instructions[i]);
 		}
 
@@ -249,7 +252,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	private void write(int yPos, String text, int fontColor)
 	{
-		this.drawCenteredString(parent.getFontRenderer(), text, width / 2, yPos, fontColor);
+		this.drawCenteredString(fr, text, width / 2, yPos, fontColor);
 	}
 
 	public void write(int xPos, int yPos, String text)
@@ -259,7 +262,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	public void write(int xPos, int yPos, String text, int fontColor)
 	{
-		this.drawString(parent.getFontRenderer(), text, xPos, yPos, fontColor);
+		this.drawString(fr, text, xPos, yPos, fontColor);
 	}
 
 	private void readLastControllerEvent()

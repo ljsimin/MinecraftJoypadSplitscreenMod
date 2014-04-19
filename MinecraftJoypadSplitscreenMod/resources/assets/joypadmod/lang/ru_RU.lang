@@ -1,3 +1,30 @@
+controlMenu.addKey=Добавить ключ
+controlMenu.axis=ось
+controlMenu.buttons=Кнопки
+controlMenu.calibrate=калибровать
+controlMenu.controller=контроллер
+controlMenu.invert=Отменить
+controlMenu.look=Посмотрите
+controlMenu.mouse=мышь
+controlMenu.scroll=Прокрутка
+controlMenu.noControllers=контроллеры не найдены!
+controlMenu.otherControls=Другие контроллеры
+controlMenu.pressKey=Нажмите кнопку ... 
+controlMenu.toggleInstructions=Нажмите пробел для переключения контроллера
+controlMenu.validControls=Допустимые контроллеры
+
+-Global-.SharedProfile=Share settings
+
+controlMenu.advanced=Advanced
+
+joy.guiRightClick=Щелкните правой кнопкой мыши
+joy.guiLeftClick=Щелкните левой кнопкой мыши
+joy.shiftClick=Shift кнопку
+joy.interact=взаимодействовать
+joy.menu=меню
+
+controls.reset=Сброс
+
 key.attack=Атаковать/Разрушить
 key.back=Назад
 key.categories.gameplay=Игровой процесс

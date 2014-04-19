@@ -1,6 +1,7 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.StatCollector;
 
@@ -12,14 +13,14 @@ import com.shiny.joypadmod.helpers.McObfuscationHelper;
 public class GuiSlider extends GuiButton
 {
 	/** The value of this slider control. */
-	private float sliderValue = 1.0F;
+	protected float sliderValue = 1.0F;
 	public float minValue = 0.01F;
 	public float maxValue = 1.0F;
 
 	/** Is this slider control being dragged. */
 	public boolean dragging;
 
-	private String baseDisplayString;
+	protected String baseDisplayString;
 
 	public GuiSlider(int id, int posX, int posY, int width, int height, String displayString, float value)
 	{
@@ -111,17 +112,22 @@ public class GuiSlider extends GuiButton
 
 	public void updateText()
 	{
+		String output = "";
 		if (this.baseDisplayString.equals("controlMenu.sensitivity.game"))
 		{
-			String s = String.format("%s %s: %s", McObfuscationHelper.lookupString("key.categories.gameplay"),
-					McObfuscationHelper.lookupString("options.sensitivity"), (int) (this.sliderValue * 100.0F));
-			this.displayString = s;
+			output = String.format("%s %s", McObfuscationHelper.lookupString("key.categories.gameplay"),
+					McObfuscationHelper.lookupString("options.sensitivity"));
 		}
 		else if (this.baseDisplayString.equals("controlMenu.sensitivity.menu"))
 		{
-			String s = String.format("%s %s: %s", McObfuscationHelper.lookupString("joy.menu"),
-					McObfuscationHelper.lookupString("options.sensitivity"), (int) (this.sliderValue * 100.0F));
-			this.displayString = s;
+			output = String.format("%s %s", McObfuscationHelper.lookupString("joy.menu"),
+					McObfuscationHelper.lookupString("options.sensitivity"));
+		}
+		if (output != "")
+		{
+			FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+			String value = ": " + (int) (this.sliderValue * 100.0F);
+			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}
 		else
 		{
