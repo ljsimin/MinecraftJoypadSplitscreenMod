@@ -2,7 +2,7 @@ package com.shiny.joypadmod.minecraftExtensions;
 
 import net.minecraft.util.MouseHelper;
 
-import com.shiny.joypadmod.JoypadMod;
+import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 // warning: small but non zero chance of this causing incompatibility with other mods
@@ -14,7 +14,8 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void grabMouseCursor()
 	{
-		if (JoypadMod.controllerSettings.isInputEnabled())
+		if (ControllerSettings.isInputEnabled()
+				&& ControllerSettings.getGameOption("-Global-.GrabMouse").equals("false"))
 			return;
 
 		super.grabMouseCursor();
@@ -26,7 +27,8 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void ungrabMouseCursor()
 	{
-		if (JoypadMod.controllerSettings.isInputEnabled())
+		if (ControllerSettings.isInputEnabled()
+				&& ControllerSettings.getGameOption("-Global-.GrabMouse").equals("false"))
 			return;
 
 		super.ungrabMouseCursor();

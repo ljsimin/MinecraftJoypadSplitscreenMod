@@ -73,7 +73,7 @@ public class JoypadControlList extends GuiScrollingList
 		this.fontRenderer = fontRenderer;
 		joyBindKeys = new ArrayList<String>();
 		descriptionStartX = parent.buttonXStart_top;
-		if (this.parent.currentJoyIndex != -1)
+		if (this.parent.getCurrentControllerId() != -1)
 		{
 			updatejoyBindKeys();
 		}
@@ -282,14 +282,14 @@ public class JoypadControlList extends GuiScrollingList
 		ControllerBinding binding = ControllerSettings.get(bindingKey);
 
 		String controlButtonStr = "NONE";
-		if (this.parent.currentJoyIndex != -1)
+		if (this.parent.getCurrentControllerId() != -1)
 		{
 			if (bindingIndexToUpdate == id)
 				controlButtonStr = "> ?? <";
 			else if (binding != null)
 			{
 				controlButtonStr = ControllerSettings.controllerUtils.getHumanReadableInputName(
-						Controllers.getController(this.parent.currentJoyIndex), binding.inputEvent);
+						Controllers.getController(this.parent.getCurrentControllerId()), binding.inputEvent);
 			}
 		}
 		if (controlButtonStr.equals("NONE"))
@@ -364,7 +364,7 @@ public class JoypadControlList extends GuiScrollingList
 		if (b != null)
 		{
 			return ControllerSettings.controllerUtils.getHumanReadableInputName(
-					Controllers.getController(this.parent.currentJoyIndex), b.inputEvent);
+					Controllers.getController(this.parent.getCurrentControllerId()), b.inputEvent);
 		}
 
 		return defaultStr;
@@ -419,7 +419,7 @@ public class JoypadControlList extends GuiScrollingList
 					if (binding.inputEvent.getEventType() != EventType.AXIS
 							&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
 					{
-						ControllerSettings.setToggle(parent.currentJoyIndex, binding.inputString,
+						ControllerSettings.setToggle(parent.getCurrentControllerId(), binding.inputString,
 								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
 					}
 				}
@@ -440,6 +440,9 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				else
 				{
+					if (Controllers.getEventSource() != Controllers.getController(parent.getCurrentControllerId()))
+						continue;
+
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
 							Controllers.getController(parent.getCurrentControllerId()),
 							Controllers.getEventControlIndex());

@@ -165,7 +165,7 @@ public class GameRenderHandler
 	private static void DrawRetical()
 	{
 
-		if (mc.currentScreen == null || !JoypadMod.controllerSettings.isInputEnabled())
+		if (mc.currentScreen == null || !ControllerSettings.isInputEnabled())
 			return;
 
 		JoypadMouse.updateXY();
@@ -358,7 +358,7 @@ public class GameRenderHandler
 
 	public static boolean CheckIfModEnabled()
 	{
-		if (mc == null || !JoypadMod.controllerSettings.isInputEnabled() || ControllerSettings.joyNo == -1)
+		if (mc == null || !ControllerSettings.isInputEnabled() || ControllerSettings.joyNo == -1)
 		{
 			return false;
 		}
