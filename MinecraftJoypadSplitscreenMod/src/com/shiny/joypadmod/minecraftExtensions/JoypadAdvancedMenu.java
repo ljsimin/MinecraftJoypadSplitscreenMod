@@ -20,6 +20,8 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private int joyIndex;
 	private JoypadConfigMenu parent;
 
+	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.GrabMouse" };
+
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
 	{
 		super();
@@ -36,9 +38,13 @@ public class JoypadAdvancedMenu extends GuiScreen
 
 		int buttonNum = 0;
 
-		addButton(buttonNum++, 300, "controlMenu.invert", true, ControllerSettings.getInvertYAxis());
-		addButton(buttonNum++, 310, "controlMenu.calibrate", false, false);
-		addButton(buttonNum++, 320, "-Global-.SharedProfile", true, ControllerSettings.isUsingSharedProfiles());
+		addButton(buttonNum++, 100, "controlMenu.calibrate", false);
+		addButton(buttonNum++, 200, "controlMenu.invert", true, ControllerSettings.getInvertYAxis());
+		
+		for (int i = 0; i < gameOptions.length; i++)
+		{
+			addButton(buttonNum++, 300 + i, gameOptions[i], true);
+		}
 
 		buttonList.add(new GuiButton(500, width / 2 - parent.bottomButtonWidth / 2, height - 20,
 				parent.bottomButtonWidth, 20, parent.sGet("gui.done")));
@@ -47,23 +53,27 @@ public class JoypadAdvancedMenu extends GuiScreen
 	@Override
 	protected void actionPerformed(GuiButton guiButton)
 	{
-		LogHelper.Info("Action performed on " + guiButton.id);
+		LogHelper.Info("Action performed on " + guiButton.displayString);
 		switch (guiButton.id)
 		{
-		case 300: // invert
-			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
-			toggleOnOffButton(ControllerSettings.getInvertYAxis(), guiButton);
-			break;
-		case 310: // calibrate
+		case 100: // calibrate
 			mc.displayGuiScreen(new JoypadCalibrationMenu(this, joyIndex));
 			break;
-		case 320: // shared profiles
-			ControllerSettings.setSharedProfile(!ControllerSettings.isUsingSharedProfiles());
-			toggleOnOffButton(ControllerSettings.isUsingSharedProfiles(), guiButton);
+		case 200: // invert
+			ControllerSettings.setInvertYAxis(!ControllerSettings.getInvertYAxis());
+			toggleOnOffButton(ControllerSettings.getInvertYAxis(), guiButton);
 			break;
 		case 500: // Done
 			mc.displayGuiScreen(this.parent);
 			break;
+		default:
+			int id = guiButton.id - 300;
+			if (id >= 0 && id < gameOptions.length)
+			{
+				boolean currentSetting = ControllerSettings.getGameOption(gameOptions[id]).equals("true");
+				ControllerSettings.setGameOption(gameOptions[id], "" + !currentSetting);
+				toggleOnOffButton(!currentSetting, guiButton);
+			}
 		}
 
 	}
@@ -79,6 +89,12 @@ public class JoypadAdvancedMenu extends GuiScreen
 		this.drawCenteredString(parent.getFontRenderer(), titleText, width / 2, labelYStart, -1);
 
 		super.drawScreen(par1, par2, par3);
+	}
+
+	private void addButton(int buttonNum, int id, String code, boolean isToggle)
+	{
+		boolean toggleValue = isToggle ? ControllerSettings.getGameOption(code).equals("true") : false;
+		addButton(buttonNum, id, code, isToggle, toggleValue);
 	}
 
 	@SuppressWarnings("unchecked")

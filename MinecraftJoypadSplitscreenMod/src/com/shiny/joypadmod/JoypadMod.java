@@ -31,7 +31,7 @@ public class JoypadMod
 	public static final float MINVERSION = 0.098f;
 	public static final String REVISION = "exp";
 
-	public static ControllerSettings controllerSettings;
+	private static ControllerSettings controllerSettings;
 
 	private ModVersionHelper modHelper;
 
@@ -46,21 +46,18 @@ public class JoypadMod
 	public void init(FMLInitializationEvent event)
 	{
 		LogHelper.Info("init");
-		if (!ControllerSettings.grabMouse)
+		try
 		{
-			try
+			if (!(Minecraft.getMinecraft().mouseHelper instanceof net.minecraft.util.MouseHelper))
 			{
-				if (!(Minecraft.getMinecraft().mouseHelper instanceof net.minecraft.util.MouseHelper))
-				{
-					LogHelper.Warn("Replacing Mousehelper that may have already been replaced by another mod!");
-				}
-				Minecraft.getMinecraft().mouseHelper = new JoypadMouseHelper();
-				LogHelper.Info("Replaced mousehelper in Minecraft with JoypadMouseHelper");
+				LogHelper.Warn("Replacing Mousehelper that may have already been replaced by another mod!");
 			}
-			catch (Exception ex)
-			{
-				LogHelper.Warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
-			}
+			Minecraft.getMinecraft().mouseHelper = new JoypadMouseHelper();
+			LogHelper.Info("Replaced mousehelper in Minecraft with JoypadMouseHelper");
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
 		}
 	}
 

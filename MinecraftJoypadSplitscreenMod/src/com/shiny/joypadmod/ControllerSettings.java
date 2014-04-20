@@ -48,7 +48,7 @@ public class ControllerSettings
 	public static boolean displayHints = false;
 	// public static Controller joystick;
 	public static int joyNo = -1;
-	public static boolean grabMouse = true;
+
 	public static int inGameSensitivity = 20;
 	public static int inMenuSensitivity = 20;
 	public static int scrollDelay = 50;
@@ -70,7 +70,7 @@ public class ControllerSettings
 
 	// inputEnabled will control whether the mod will continually poll the
 	// selected joystick for data
-	private boolean inputEnabled = false;
+	private static boolean inputEnabled = false;
 
 	// suspending the controller will tell the main controller loop to stop
 	// polling.
@@ -432,7 +432,7 @@ public class ControllerSettings
 		return validControllers.size();
 	}
 
-	public boolean setController(int controllerNo)
+	public static boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
 		try
@@ -472,7 +472,7 @@ public class ControllerSettings
 		return false;
 	}
 
-	public void resetBindings(int joyIndex)
+	public static void resetBindings(int joyIndex)
 	{
 		if (joyIndex >= 0 && joyIndex < Controllers.getControllerCount())
 		{
@@ -488,12 +488,12 @@ public class ControllerSettings
 		unpressAll();
 	}
 
-	public boolean isInputEnabled()
+	public static boolean isInputEnabled()
 	{
 		return inputEnabled;
 	}
 
-	public void setInputEnabled(int joyIndex, boolean b)
+	public static void setInputEnabled(int joyIndex, boolean b)
 	{
 		unpressAll();
 		if (!b)
@@ -608,7 +608,7 @@ public class ControllerSettings
 		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
 	}
 
-	public List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
+	public static List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
 	{
 		List<Integer> values = new ArrayList<Integer>();
 		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
@@ -726,19 +726,19 @@ public class ControllerSettings
 
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
-			config.updateConfigFileSettingEx("-Deadzones-." + controller.getName(), controller.getAxisName(i),
+			config.setConfigFileSetting("-Deadzones-." + controller.getName(), controller.getAxisName(i),
 					df.format(controller.getDeadZone(i)));
 		}
 		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
 		LogHelper.Info("Saved deadzones for " + controller.getName());
 	}
 
-	public static void saveCurrentJoyBindings(String joyName)
+	private static void saveCurrentJoyBindings()
 	{
+		String joyName = Controllers.getController(currentDisplayedMap).getName();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
-			if (entry.getValue().inputEvent.isValid())
-				config.saveControllerBinding(joyName, entry.getValue());
+			config.saveControllerBinding(joyName, entry.getValue());
 		}
 	}
 
@@ -820,17 +820,17 @@ public class ControllerSettings
 		return false;
 	}
 
-	public static void setSharedProfile(boolean shared)
+	public static String getGameOption(String optionKey)
 	{
-		config.setSharedProfile(shared);
-		if (currentDisplayedMap != -1)
-		{
-			saveCurrentJoyBindings(Controllers.getController(currentDisplayedMap).getName());
-		}
+		return config.getConfigFileSetting(optionKey);
 	}
 
-	public static boolean isUsingSharedProfiles()
+	public static void setGameOption(String optionKey, String value)
 	{
-		return config.sharedProfile;
+		config.setConfigFileSetting(optionKey, value);
+		if (optionKey.contains("SharedProfile") && currentDisplayedMap != -1)
+		{
+			saveCurrentJoyBindings();
+		}
 	}
 }

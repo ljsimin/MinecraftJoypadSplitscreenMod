@@ -15,7 +15,6 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
-import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
@@ -24,7 +23,7 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 
 public class JoypadConfigMenu extends GuiScreen
 {
-	public int currentJoyIndex = 0;
+	private int currentJoyIndex = 0;
 
 	// control list parameters
 	public int controlListYStart;
@@ -67,16 +66,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control, prev, next,
-		// showInvalid,
-		// invert,
-		menuSensitivity,
-		gameSensitivity,
-		// addCustom,
-		reset,
-		done,
-		advanced,
-		mouseMenu
+		control, prev, next, menuSensitivity, gameSensitivity, reset, done, advanced, mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent)
@@ -90,7 +80,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	public void getControllers(boolean valid)
 	{
-		controllers = JoypadMod.controllerSettings.flattenMap(valid ? ControllerSettings.validControllers
+		controllers = ControllerSettings.flattenMap(valid ? ControllerSettings.validControllers
 				: ControllerSettings.inValidControllers);
 
 		if (controllers.size() <= 0)
@@ -128,7 +118,7 @@ public class JoypadConfigMenu extends GuiScreen
 		int buttonYOffset = 10;
 		// controller button
 		addButton(new GuiButton(100, buttonXStart_top, buttonYStart_top + buttonYOffset, controllerButtonWidth, 20,
-				getJoystickInfo(currentJoyIndex, JoyInfoEnum.name)), controllers.size() > 0);
+				getJoystickInfo(JoyInfoEnum.name)), controllers.size() > 0);
 
 		buttonYOffset += 20;
 
@@ -228,18 +218,20 @@ public class JoypadConfigMenu extends GuiScreen
 			break;
 		case 101: // PREV
 			// disable for safety
-			JoypadMod.controllerSettings.setInputEnabled(-1, false);
+			ControllerSettings.setInputEnabled(-1, false);
 			currentJoyIndex = getJoypadIndex(-1);
 			updateControllerButton();
+			optionList.updatejoyBindKeys();
 			break;
 		case 102: // NEXT
 			// disable for safety
-			JoypadMod.controllerSettings.setInputEnabled(-1, false);
+			ControllerSettings.setInputEnabled(-1, false);
 			currentJoyIndex = getJoypadIndex(1);
 			updateControllerButton();
+			optionList.updatejoyBindKeys();
 			break;
 		case 200: // unhide controllers
-			JoypadMod.controllerSettings.setInputEnabled(-1, false);
+			ControllerSettings.setInputEnabled(-1, false);
 			if (guiButton.displayString.equals(sGet("controlMenu.otherControls")))
 			{
 				getControllers(false);
@@ -265,15 +257,14 @@ public class JoypadConfigMenu extends GuiScreen
 		case 400: // Reset
 			if (currentJoyIndex != -1)
 			{
-				JoypadMod.controllerSettings.resetBindings(currentJoyIndex);
+				ControllerSettings.resetBindings(getCurrentControllerId());
 			}
 			break;
 		case 500: // Done
 			mc.displayGuiScreen(this.parentScr);
 			break;
 		case 510: // advanced
-			int realJoyIndex = currentJoyIndex != -1 ? this.controllers.get(currentJoyIndex) : -1;
-			mc.displayGuiScreen(new JoypadAdvancedMenu(this, realJoyIndex));
+			mc.displayGuiScreen(new JoypadAdvancedMenu(this, getCurrentControllerId()));
 			break;
 		case 520: // Mouse menu
 			GameRenderHandler.allowOrigControlsMenu = true;
@@ -287,34 +278,29 @@ public class JoypadConfigMenu extends GuiScreen
 		name, buttonAxisInfo
 	};
 
-	private String getJoystickInfo(int joyIndex, JoyInfoEnum joyInfo)
+	private String getJoystickInfo(JoyInfoEnum joyInfo)
 	{
 		String ret = "";
 
-		if (controllers.size() == 0)
+		if (controllers.size() == 0 || this.getCurrentControllerId() == -1)
 			return sGet("controlMenu.noControllers");
 
 		try
 		{
-			if (joyIndex >= controllers.size())
-				ret = "Code Error: Invalid controller # selected";
-			else
+			Controller control = Controllers.getController(this.getCurrentControllerId());
+			if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 			{
-				int joyNo = controllers.get(joyIndex);
-				Controller control = Controllers.getController(joyNo);
-				if (joyInfo == JoyInfoEnum.buttonAxisInfo)
-				{
-					ret += String.format("%s %d/%d - ", sGet("controlMenu.controller"), joyIndex + 1,
-							controllers.size());
-					ret += String.format("%s: %d ", sGet("controlMenu.buttons"), control.getButtonCount());
-					ret += String.format("%s: %d", sGet("controlMenu.axis"), control.getAxisCount());
-				}
-				else if (joyInfo == JoyInfoEnum.name)
-				{
-					ret += control.getName() + ": ";
-					ret += JoypadMod.controllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off");
-				}
+				ret += String.format("%s %d/%d - ", sGet("controlMenu.controller"), currentJoyIndex + 1,
+						controllers.size());
+				ret += String.format("%s: %d ", sGet("controlMenu.buttons"), control.getButtonCount());
+				ret += String.format("%s: %d", sGet("controlMenu.axis"), control.getAxisCount());
 			}
+			else if (joyInfo == JoyInfoEnum.name)
+			{
+				ret += control.getName() + ": ";
+				ret += ControllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off");
+			}
+
 		}
 		catch (Exception ex)
 		{
@@ -341,7 +327,7 @@ public class JoypadConfigMenu extends GuiScreen
 		this.drawCenteredString(getFontRenderer(), titleText, width / 2, labelYStart, -1);
 
 		// output TEXT buttons Axis, POV count here
-		String joyStickInfoText = getJoystickInfo(currentJoyIndex, JoyInfoEnum.buttonAxisInfo);
+		String joyStickInfoText = getJoystickInfo(JoyInfoEnum.buttonAxisInfo);
 		this.drawCenteredString(getFontRenderer(), joyStickInfoText, width / 2, controllerStringY, 0xAAAAAA);
 
 		// CONTROLLER NAME BUTTON
@@ -451,20 +437,18 @@ public class JoypadConfigMenu extends GuiScreen
 	private void toggleController()
 	{
 		LogHelper.Info("Enable/disable input");
-		JoypadMod.controllerSettings.setInputEnabled(getCurrentControllerId(),
-				!JoypadMod.controllerSettings.isInputEnabled());
+		ControllerSettings.setInputEnabled(getCurrentControllerId(), !ControllerSettings.isInputEnabled());
 		updateControllerButton();
 	}
 
 	private void updateControllerButton()
 	{
-		if (JoypadMod.controllerSettings.isInputEnabled()
-				&& ControllerSettings.joyNo != controllers.get(currentJoyIndex))
+		if (ControllerSettings.isInputEnabled() && ControllerSettings.joyNo != getCurrentControllerId())
 		{
-			JoypadMod.controllerSettings.setController(controllers.get(currentJoyIndex));
+			ControllerSettings.setController(getCurrentControllerId());
 		}
 
-		changeButtonText(ButtonsEnum.control.ordinal(), getJoystickInfo(currentJoyIndex, JoyInfoEnum.name));
+		changeButtonText(ButtonsEnum.control.ordinal(), getJoystickInfo(JoyInfoEnum.name));
 	}
 
 	// Obfuscation & back porting helpers -- here and not in ObfuscationHelper
@@ -494,6 +478,8 @@ public class JoypadConfigMenu extends GuiScreen
 
 	public int getCurrentControllerId()
 	{
+		if (currentJoyIndex == -1)
+			return -1;
 		return controllers.get(currentJoyIndex);
 	}
 

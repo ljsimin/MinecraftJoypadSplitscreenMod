@@ -13,6 +13,7 @@ controlMenu.pressKey=Press key...
 controlMenu.toggleInstructions=Press space to toggle controller
 controlMenu.validControls=Valid controllers
 -Global-.SharedProfile=Share settings
+-Global-.GrabMouse=Mouse Grab
 
 controlMenu.advanced=Advanced
 

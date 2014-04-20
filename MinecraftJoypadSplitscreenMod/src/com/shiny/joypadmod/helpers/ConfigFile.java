@@ -20,12 +20,9 @@ public class ConfigFile
 	public int preferedJoyNo;
 	public String preferedJoyName;
 
-	public boolean sharedProfile = false;
-
 	private Configuration config;
 	private File _configFile;
 	private String userName;
-	private String defaultCategory;
 	private String userCategory;
 	private String bindingComment = "S:<actionID>=<Menu String>,{ <keycode> },<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>,<BINDING_OPTIONS1>,<BINDING_OPTIONS2>...";
 	private List<ControllerBinding> controlBindingsFromConfigFile = new ArrayList<ControllerBinding>();
@@ -54,7 +51,6 @@ public class ConfigFile
 	{
 		config.load();
 
-		ControllerSettings.grabMouse = config.get(globalCat, "GrabMouse", false).getBoolean(false);
 		ControllerSettings.loggingLevel = config.get(globalCat, "LoggingLevel", 1).getInt();
 
 		userName = "unknown";
@@ -66,7 +62,6 @@ public class ConfigFile
 
 		setSharedProfile(config.get(globalCat, "SharedProfile", false).getBoolean(false));
 
-		// defaultCategory = "Joypad-" + (sharedProfile ? "-Shared-" : userName);
 		userCategory = "Joypad-" + userName;
 
 		if (config.hasCategory(userCategory.toLowerCase()))
@@ -81,9 +76,7 @@ public class ConfigFile
 		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
 
 		// individual or global
-		// ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
-		// ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
-		lastConfigFileVersion = config.get(defaultCategory, "ConfigVersion", 0.07).getDouble(0.07);
+		lastConfigFileVersion = config.get(getDefaultCategory(), "ConfigVersion", 0.07).getDouble(0.07);
 
 		if (lastConfigFileVersion < 0.0953)
 		{
@@ -92,15 +85,25 @@ public class ConfigFile
 		}
 
 		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
-				+ sharedProfile + ". GrabMouse = " + ControllerSettings.grabMouse + ".  invertYAxis = "
-				+ ControllerSettings.invertYAxis + ". ConfigVersion " + lastConfigFileVersion
-				+ ". Game Sensitivity multiplier: " + ControllerSettings.inGameSensitivity
-				+ ". Menu Sensitivity multiplier: " + ControllerSettings.inMenuSensitivity);
+				+ getConfigFileSetting("-Global-.SharedProfile") + ". GrabMouse = "
+				+ getConfigFileSetting("-Global-.GrabMouse") + ".  invertYAxis = " + ControllerSettings.invertYAxis
+				+ ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: "
+				+ ControllerSettings.inGameSensitivity + ". Menu Sensitivity multiplier: "
+				+ ControllerSettings.inMenuSensitivity);
 
 		addBindingOptionsComment();
 		addGlobalOptionsComment();
 
-		updateKey(defaultCategory, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
+		updateKey(getDefaultCategory(), "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
+	}
+
+	public String getDefaultCategory()
+	{
+		if (config.get(globalCat, "SharedProfile", false).getString().equals("true"))
+		{
+			return "Joypad--Shared-";
+		}
+		return "Joypad-" + userName;
 	}
 
 	public void setSharedProfile(boolean shared)
@@ -108,12 +111,9 @@ public class ConfigFile
 		LogHelper.Info("Setting shared profile to " + shared);
 
 		updateKey(globalCat, "SharedProfile", "" + shared, true);
-
-		sharedProfile = shared;
-		defaultCategory = "Joypad-" + (shared ? "-Shared-" : userName);
 		// individual or global
-		ControllerSettings.inGameSensitivity = config.get(defaultCategory, "GameSensitivity", 40).getInt();
-		ControllerSettings.inMenuSensitivity = config.get(defaultCategory, "GuiSensitivity", 10).getInt();
+		ControllerSettings.inGameSensitivity = config.get(getDefaultCategory(), "GameSensitivity", 40).getInt();
+		ControllerSettings.inMenuSensitivity = config.get(getDefaultCategory(), "GuiSensitivity", 10).getInt();
 	}
 
 	public void addComment(String category, String comment)
@@ -131,7 +131,7 @@ public class ConfigFile
 
 	public void updateConfigFileSetting(UserJoypadSettings setting, String value)
 	{
-		String category = defaultCategory;
+		String category;
 		switch (setting)
 		{
 		case JoyNo:
@@ -140,14 +140,30 @@ public class ConfigFile
 			category = userCategory;
 			break;
 		default:
-			category = defaultCategory;
+			category = getDefaultCategory();
 			break;
 		}
 
 		updateKey(category, setting.toString(), value, true);
 	}
 
-	public void updateConfigFileSettingEx(String category, String key, String value)
+	public String getConfigFileSetting(String categoryKey)
+	{
+		int lastIndex = categoryKey.lastIndexOf('.');
+		String category = categoryKey.substring(0, lastIndex);
+		String key = categoryKey.substring(lastIndex + 1);
+		return config.get(category, key, false).getString();
+	}
+
+	public void setConfigFileSetting(String categoryKey, String value)
+	{
+		int lastIndex = categoryKey.lastIndexOf('.');
+		String category = categoryKey.substring(0, lastIndex);
+		String key = categoryKey.substring(lastIndex + 1);
+		setConfigFileSetting(category, key, value);
+	}
+
+	public void setConfigFileSetting(String category, String key, String value)
 	{
 		updateKey(category, key, value, true);
 	}
@@ -219,7 +235,7 @@ public class ConfigFile
 
 	public void getJoypadSavedBindings(int joyNo, String joyName)
 	{
-		String category = defaultCategory + "." + joyName;
+		String category = getDefaultCategory() + "." + joyName;
 
 		if (!config.hasCategory(category))
 			return;
@@ -271,7 +287,7 @@ public class ConfigFile
 
 		controlBindingsFromConfigFile.clear();
 
-		String category = defaultCategory + "." + joyName;
+		String category = getDefaultCategory() + "." + joyName;
 
 		processJoyCategory(config.getCategory(category), joyNo, lastJoyConfigVersion, cleanupCategories);
 
@@ -372,7 +388,7 @@ public class ConfigFile
 
 	private String createConfigSettingString(String joyName, String controlString)
 	{
-		return defaultCategory + "." + joyName + "." + controlString;
+		return getDefaultCategory() + "." + joyName + "." + controlString;
 	}
 
 	private boolean deleteKey(String category, String key)
