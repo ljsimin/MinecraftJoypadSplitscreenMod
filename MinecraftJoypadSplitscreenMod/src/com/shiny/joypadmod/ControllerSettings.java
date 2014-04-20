@@ -49,8 +49,8 @@ public class ControllerSettings
 	// public static Controller joystick;
 	public static int joyNo = -1;
 
-	public static int inGameSensitivity = 20;
-	public static int inMenuSensitivity = 20;
+	public static int inGameSensitivity = 25;
+	public static int inMenuSensitivity = 10;
 	public static int scrollDelay = 50;
 
 	public static int loggingLevel = 1;

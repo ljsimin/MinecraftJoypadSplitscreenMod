@@ -83,7 +83,7 @@ public class JoypadConfigMenu extends GuiScreen
 		controllers = ControllerSettings.flattenMap(valid ? ControllerSettings.validControllers
 				: ControllerSettings.inValidControllers);
 
-		if (controllers.size() <= 0)
+		if (!joyConfigMenuEnabled())
 		{
 			currentJoyIndex = -1;
 			return;
@@ -118,7 +118,7 @@ public class JoypadConfigMenu extends GuiScreen
 		int buttonYOffset = 10;
 		// controller button
 		addButton(new GuiButton(100, buttonXStart_top, buttonYStart_top + buttonYOffset, controllerButtonWidth, 20,
-				getJoystickInfo(JoyInfoEnum.name)), controllers.size() > 0);
+				getJoystickInfo(JoyInfoEnum.name)), controllers != null && controllers.size() > 0);
 
 		buttonYOffset += 20;
 
@@ -181,7 +181,7 @@ public class JoypadConfigMenu extends GuiScreen
 		addButton(new GuiButton(500, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("gui.done")));
 
-		addButton(new GuiButton(510, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
+		addButton(new GuiButton(420, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
 				bottomButtonWidth, 20, sGet("controlMenu.advanced")));
 
 		addButton(new GuiButton(520, bottomButtonStart + bottomButtonWidth * buttonNum++, buttonYStart_bottom,
@@ -208,7 +208,7 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		LogHelper.Info("Action performed on buttonID " + getButtonId(guiButton));
 
-		if (controllers.size() <= 0 && getButtonId(guiButton) <= 500)
+		if (!joyConfigMenuEnabled() && getButtonId(guiButton) < 500)
 			return;
 
 		switch (getButtonId(guiButton))
@@ -260,11 +260,11 @@ public class JoypadConfigMenu extends GuiScreen
 				ControllerSettings.resetBindings(getCurrentControllerId());
 			}
 			break;
+		case 420: // advanced
+			mc.displayGuiScreen(new JoypadAdvancedMenu(this, getCurrentControllerId()));
+			break;
 		case 500: // Done
 			mc.displayGuiScreen(this.parentScr);
-			break;
-		case 510: // advanced
-			mc.displayGuiScreen(new JoypadAdvancedMenu(this, getCurrentControllerId()));
 			break;
 		case 520: // Mouse menu
 			GameRenderHandler.allowOrigControlsMenu = true;
@@ -282,7 +282,7 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		String ret = "";
 
-		if (controllers.size() == 0 || this.getCurrentControllerId() == -1)
+		if (!joyConfigMenuEnabled() || this.getCurrentControllerId() == -1)
 			return sGet("controlMenu.noControllers");
 
 		try
@@ -553,5 +553,13 @@ public class JoypadConfigMenu extends GuiScreen
 			return '?';
 
 		}
+	}
+
+	private boolean joyConfigMenuEnabled()
+	{
+		if (controllers == null || controllers.size() <= 0)
+			return false;
+
+		return true;
 	}
 }
