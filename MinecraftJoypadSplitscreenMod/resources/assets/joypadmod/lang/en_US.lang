@@ -13,8 +13,9 @@ controlMenu.pressKey=Press key...
 controlMenu.toggleInstructions=Press space to toggle controller
 controlMenu.validControls=Valid controllers
 -Global-.SharedProfile=Share settings
--Global-.GrabMouse=Mouse Grab
+-Global-.GrabMouse=⚠ Mouse Grab
 -Global-.displayAllControls=Display all controllers
+-Global-.FlansMod=⚠ Flans mod movement
 
 controlMenu.advanced=Advanced
 
