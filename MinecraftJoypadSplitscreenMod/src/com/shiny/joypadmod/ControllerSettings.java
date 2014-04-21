@@ -673,35 +673,28 @@ public class ControllerSettings
 	private static Iterator<Entry<String, ControllerBinding>> menuBindIterator;
 
 	private static ControllerBinding getNextBinding(Iterator<Entry<String, ControllerBinding>> current,
-			EnumSet<BindingOptions> target)
+			BindingOptions target)
 	{
 		while (current.hasNext())
 		{
 			Map.Entry<String, ControllerBinding> entry = current.next();
-			if (entry.getValue().inputEvent.isValid())
+			if (entry.getValue().bindingOptions.contains(target) && entry.getValue().inputEvent.isValid())
 			{
-				for (BindingOptions b : target)
-				{
-					if (entry.getValue().bindingOptions.contains(b))
-						return entry.getValue();
-				}
+				return entry.getValue();
 			}
 		}
 
 		return null;
 	}
 
-	private static EnumSet<BindingOptions> gameBindingOptions = EnumSet.of(BindingOptions.GAME_BINDING);
-	private static EnumSet<BindingOptions> menuBindingOptions = EnumSet.of(BindingOptions.MENU_BINDING);
-
 	public static ControllerBinding getNextGameAutoBinding()
 	{
-		return getNextBinding(gameBindIterator, gameBindingOptions);
+		return getNextBinding(gameBindIterator, BindingOptions.GAME_BINDING);
 	}
 
 	public static ControllerBinding getNextMenuAutoBinding()
 	{
-		return getNextBinding(menuBindIterator, menuBindingOptions);
+		return getNextBinding(menuBindIterator, BindingOptions.MENU_BINDING);
 	}
 
 	public static ControllerBinding startGameBindIteration()
@@ -712,11 +705,6 @@ public class ControllerSettings
 
 	public static ControllerBinding startMenuBindIteration()
 	{
-		if (ControllerSettings.getGameOption("-Global-.FlansMod").equals("true"))
-			menuBindingOptions = EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.GAME_BINDING);
-		else
-			menuBindingOptions = EnumSet.of(BindingOptions.MENU_BINDING);
-
 		menuBindIterator = joyBindingsMap.entrySet().iterator();
 		return getNextMenuAutoBinding();
 	}

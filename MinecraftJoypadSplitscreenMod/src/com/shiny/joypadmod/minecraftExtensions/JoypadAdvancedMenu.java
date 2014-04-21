@@ -20,8 +20,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private int joyIndex;
 	private JoypadConfigMenu parent;
 
-	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse",
-			"-Global-.FlansMod" };
+	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse" };
 
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
 	{
