@@ -60,8 +60,8 @@ public class ControllerSettings
 	private static int requiredButtonCount = 12;
 	private static int requiredAxisCount = 4;
 
-	public static Map<String, List<Integer>> validControllers;
-	public static Map<String, List<Integer>> inValidControllers;
+	private static Map<String, List<Integer>> validControllers;
+	private static Map<String, List<Integer>> inValidControllers;
 	public static ControllerUtils controllerUtils;
 
 	// modDisabled will not set up the event handlers and will therefore render
@@ -608,7 +608,7 @@ public class ControllerSettings
 		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
 	}
 
-	public static List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
+	private static List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
 	{
 		List<Integer> values = new ArrayList<Integer>();
 		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
@@ -623,6 +623,16 @@ public class ControllerSettings
 		java.util.Collections.sort(values);
 
 		return values;
+	}
+
+	public static List<Integer> getJoypadList(boolean includeInvalid)
+	{
+		List<Integer> joypadList = ControllerSettings.flattenMap(ControllerSettings.validControllers);
+		if (includeInvalid)
+		{
+			joypadList.addAll(ControllerSettings.flattenMap(ControllerSettings.inValidControllers));
+		}
+		return joypadList;
 	}
 
 	public static boolean getInvertYAxis()
