@@ -66,22 +66,21 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private enum ButtonsEnum
 	{
-		control, prev, next, menuSensitivity, gameSensitivity, reset, done, advanced, mouseMenu
+		control, prev, next, menuSensitivity, gameSensitivity, addKey, reset, done, advanced, mouseMenu
 	}
 
 	public JoypadConfigMenu(GuiScreen parent)
 	{
 		super();
 		parentScr = parent;
-		getControllers(true);
 		sensitivity_menuStart = ControllerSettings.inMenuSensitivity;
 		sensitivity_gameStart = ControllerSettings.inGameSensitivity;
 	}
 
-	public void getControllers(boolean valid)
+	public void getControllers()
 	{
-		controllers = ControllerSettings.flattenMap(valid ? ControllerSettings.validControllers
-				: ControllerSettings.inValidControllers);
+		controllers = ControllerSettings.getJoypadList(ControllerSettings.getGameOption("-Global-.displayAllControls").equals(
+				"true"));
 
 		if (!joyConfigMenuEnabled())
 		{
@@ -107,6 +106,7 @@ public class JoypadConfigMenu extends GuiScreen
 	@Override
 	public void initGui()
 	{
+		getControllers();
 		controllerButtonWidth = width - width / 5;
 		if (controllerButtonWidth > 310)
 			controllerButtonWidth = 310;
@@ -160,14 +160,16 @@ public class JoypadConfigMenu extends GuiScreen
 		controlListWidth = buttonXStart_top + controllerButtonWidth;
 		controlListHeight = buttonYStart_bottom - buttonYEnd_top - 2;
 
-		int rightButtonsXStart = controlListXStart + controlListWidth + 5;
+		int rightButtonsXStart = controlListXStart + controlListWidth + 2;
 
 		// add buttons to right of control list box
 		int buttonNum = 0;
-		int rightButtonWidth = controllerButtonWidth + buttonXStart_top - rightButtonsXStart;
+		int rightButtonWidth = Math.max(getFontRenderer().getStringWidth(sGet("controlMenu.addKey")),
+				getFontRenderer().getStringWidth(sGet("controlMenu.pressKey"))) + 10;
+		int buttonYSpacing = 20;
 
-		// addButton(new GuiButton(350, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
-		// rightButtonWidth, 20, sGet("controlMenu.addKey")));
+		addButton(new GuiButton(350, rightButtonsXStart, controlListYStart + (buttonYSpacing * buttonNum++),
+				rightButtonWidth, 20, sGet("controlMenu.addKey")));
 
 		// add bottom buttons
 		buttonNum = 0;
@@ -230,28 +232,16 @@ public class JoypadConfigMenu extends GuiScreen
 			updateControllerButton();
 			optionList.updatejoyBindKeys();
 			break;
-		case 200: // unhide controllers
-			ControllerSettings.setInputEnabled(-1, false);
-			if (guiButton.displayString.equals(sGet("controlMenu.otherControls")))
-			{
-				getControllers(false);
-				guiButton.displayString = sGet("controlMenu.validControls");
-			}
-			else
-			{
-				getControllers(true);
-				guiButton.displayString = sGet("controlMenu.otherControls");
-			}
-			enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0);
-			if (controllers.size() > 0)
-			{
-				updateControllerButton();
-			}
-			break;
+		/*
+		 * case 200: // unhide controllers ControllerSettings.setInputEnabled(-1, false); if (guiButton.displayString.equals(sGet("controlMenu.otherControls"))) { getControllers(false);
+		 * guiButton.displayString = sGet("controlMenu.validControls"); } else { getControllers(true); guiButton.displayString = sGet("controlMenu.otherControls"); }
+		 * enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0); if (controllers.size() > 0) { updateControllerButton(); } break;
+		 */
 		case 310: // menu/game sensitivity
 		case 320:
 			break;
 		case 350: // custom binding
+			customBindingKeyIndex = ButtonsEnum.addKey.ordinal();
 			customBindingTickStart = Minecraft.getSystemTime();
 			break;
 		case 400: // Reset
@@ -429,10 +419,9 @@ public class JoypadConfigMenu extends GuiScreen
 		((GuiButton) buttonList.get(buttonIndex)).displayString = text;
 	}
 
-	private void enableDisableButton(int buttonIndex, boolean enable)
-	{
-		((GuiButton) buttonList.get(buttonIndex)).enabled = enable;
-	}
+	/*
+	 * private void enableDisableButton(int buttonIndex, boolean enable) { ((GuiButton) buttonList.get(buttonIndex)).enabled = enable; }
+	 */
 
 	private void toggleController()
 	{

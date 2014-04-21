@@ -20,7 +20,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private int joyIndex;
 	private JoypadConfigMenu parent;
 
-	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.GrabMouse" };
+	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.GrabMouse", "-Global-.displayAllControls" };
 
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
 	{
@@ -40,7 +40,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 
 		addButton(buttonNum++, 100, "controlMenu.calibrate", false);
 		addButton(buttonNum++, 200, "controlMenu.invert", true, ControllerSettings.getInvertYAxis());
-		
+
 		for (int i = 0; i < gameOptions.length; i++)
 		{
 			addButton(buttonNum++, 300 + i, gameOptions[i], true);
