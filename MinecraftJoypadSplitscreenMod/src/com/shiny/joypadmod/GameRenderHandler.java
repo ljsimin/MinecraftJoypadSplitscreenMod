@@ -144,16 +144,16 @@ public class GameRenderHandler
 		if (ControllerSettings.isSuspended())
 			return;
 
-		if (InGameCheckNeeded())
-		{
-			HandleJoystickInGame();
-			lastInGameTick = Minecraft.getSystemTime();
-		}
-
 		if (InGuiCheckNeeded())
 		{
 			HandleJoystickInGui();
 			lastInGuiTick = Minecraft.getSystemTime();
+		}
+
+		if (InGameCheckNeeded())
+		{
+			HandleJoystickInGame();
+			lastInGameTick = Minecraft.getSystemTime();
 		}
 	}
 
@@ -178,11 +178,13 @@ public class GameRenderHandler
 
 	private static void UpdateInGameCamera()
 	{
-		if (JoypadMouse.AxisReader.pollNeeded(false))
+		if (JoypadMouse.AxisReader.pollNeeded(false) && mc.thePlayer != null)
 		{
-			JoypadMouse.updateXY();
-			mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX,
-					JoypadMouse.AxisReader.deltaY * (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
+			if (JoypadMouse.pollAxis(false))
+			{
+				mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX, JoypadMouse.AxisReader.deltaY
+						* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
+			}
 		}
 	}
 

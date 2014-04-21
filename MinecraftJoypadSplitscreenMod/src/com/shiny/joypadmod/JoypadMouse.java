@@ -34,6 +34,14 @@ public class JoypadMouse
 		AxisReader.pollAxis();
 	}
 
+	public static boolean pollAxis(boolean inGui)
+	{
+		AxisReader.pollAxis(inGui);
+		if (AxisReader.deltaX == 0 && AxisReader.deltaY == 0)
+			return false;
+		return true;
+	}
+
 	public static void updateXY()
 	{
 		AxisReader.updateXY();
@@ -113,6 +121,11 @@ public class JoypadMouse
 		private static long gamePollTimeout = 10;
 		private static long last0Reading = 0;
 
+		public static void pollAxis()
+		{
+			pollAxis(mc.currentScreen != null);
+		}
+
 		// pollAxis()
 		// this is the equivalent of moving the mouse around on your joypad
 		// the current algorithm as of 4/6/2014
@@ -124,10 +137,8 @@ public class JoypadMouse
 		// 6) if axisReading < axisThreshold, delta = axisReading * sensitivityValue * 0.5
 		// a second modifier will apply if the axisReading > axisThreshold and is currently within the first 500ms of being pressed
 		// this will start by halving the sensitivityValue and over the course of 500ms add an additional 10% until it is sending the full sensitivity value
-		public static void pollAxis()
+		public static void pollAxis(boolean inGui)
 		{
-			boolean inGui = mc.currentScreen != null;
-
 			if (!pollNeeded(inGui))
 				return;
 
@@ -206,6 +217,8 @@ public class JoypadMouse
 
 				mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
 				mcX = x * scaledResolution.getScaleFactor();
+				deltaX = 0;
+				deltaY = 0;
 			}
 		}
 
