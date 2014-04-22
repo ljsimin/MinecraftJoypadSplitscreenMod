@@ -1,3 +1,34 @@
+calibrationMenu.save=Annehmen
+calibrationMenu.instructionsTitle=Anleitungen
+calibrationMenu.instructions1=Press and wiggle all joystick controls
+calibrationMenu.instructions2=Press auto to find deadzone
+
+controlMenu.addKey=Neu Taste
+controlMenu.advanced=Erweiterte
+controlMenu.axis=Achse
+controlMenu.buttons=Button
+controlMenu.calibrate=Kalibrieren
+controlMenu.controller=Controller
+controlMenu.invert=Invert
+controlMenu.look=Schauen
+controlMenu.mouse=Mauszeiger
+controlMenu.scroll=Blättern
+controlMenu.noControllers=No controllers found!
+controlMenu.pressKey=Taste ... drücken
+controlMenu.toggleInstructions=Press space to toggle controller
+
+-Global-.SharedProfile=Gemeinsamen Einstellungen
+-Global-.GrabMouse=⚠ Maus Greifen
+-Global-.displayAllControls=Einblenden Controller
+
+joy.guiRightClick=Rechte Maustaste
+joy.guiLeftClick=Linke Maustaste
+joy.shiftClick=Shift klicken
+joy.interact=Interagieren
+joy.menu=Menu
+
+controls.reset=Standard
+
 key.attack=Angreifen/Abbauen
 key.back=Rückwärts gehen
 key.categories.gameplay=Spielmechanik
