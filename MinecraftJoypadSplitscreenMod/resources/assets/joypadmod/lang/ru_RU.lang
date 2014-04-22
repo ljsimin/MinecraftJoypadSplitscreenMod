@@ -1,4 +1,5 @@
 controlMenu.addKey=Добавить ключ
+controlMenu.advanced=Advanced
 controlMenu.axis=ось
 controlMenu.buttons=Кнопки
 controlMenu.calibrate=калибровать
@@ -8,14 +9,12 @@ controlMenu.look=Посмотрите
 controlMenu.mouse=мышь
 controlMenu.scroll=Прокрутка
 controlMenu.noControllers=контроллеры не найдены!
-controlMenu.otherControls=Другие контроллеры
 controlMenu.pressKey=Нажмите кнопку ... 
 controlMenu.toggleInstructions=Нажмите пробел для переключения контроллера
-controlMenu.validControls=Допустимые контроллеры
 
 -Global-.SharedProfile=Share settings
-
-controlMenu.advanced=Advanced
+-Global-.GrabMouse=⚠ Mouse Grab
+-Global-.displayAllControls=Display all controllers
 
 joy.guiRightClick=Щелкните правой кнопкой мыши
 joy.guiLeftClick=Щелкните левой кнопкой мыши
