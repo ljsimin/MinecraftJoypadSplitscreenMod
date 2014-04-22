@@ -1,4 +1,5 @@
 controlMenu.addKey=快捷鍵
+controlMenu.advanced=Advanced
 controlMenu.axis=Axis
 controlMenu.buttons=鍵
 controlMenu.calibrate=校正
@@ -8,10 +9,12 @@ controlMenu.look=覽
 controlMenu.mouse=鼠標
 controlMenu.scroll=滚动条
 controlMenu.noControllers=全無遊戲設備!
-controlMenu.otherControls=其他遊戲設備
 controlMenu.pressKey=按鍵...
 controlMenu.toggleInstructions=Press space to toggle controller
-controlMenu.validControls=有效遊戲設備
+
+-Global-.SharedProfile=Share settings
+-Global-.GrabMouse=⚠ Mouse Grab
+-Global-.displayAllControls=Display all controllers
 
 joy.guiRightClick=右擊
 joy.guiLeftClick=左擊

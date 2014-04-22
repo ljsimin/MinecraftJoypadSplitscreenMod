@@ -10,6 +10,7 @@ import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 
 public class JoypadCalibrationMenu extends GuiScreen
 {
@@ -33,8 +34,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
-	String[] instructions = new String[] { "1. Press and wiggle all joystick controls",
-			"2. Press auto to find deadzone", "3. Save deadzones" };
+	String[] instructions = new String[] { "calibrationMenu.instructions1", "calibrationMenu.instructions2",
+			"calibrationMenu.save" };
 
 	public JoypadCalibrationMenu(GuiScreen parent, int joypadIndex)
 	{
@@ -56,7 +57,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 
 		povBoxWidth = fr.getStringWidth("PovX: -10.00");
-		instructionBoxWidth = fr.getStringWidth(instructions[0]) + 10;
+		instructionBoxWidth = fr.getStringWidth("1: " + McObfuscationHelper.lookupString(instructions[0])) + 10;
 
 		Math.max(5, width / 2 - ((axisBoxWidth + instructionBoxWidth + boxSpacing) / 2));
 
@@ -64,7 +65,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		int xPos = width / 2 - bottomButtonWidth / 2;
 
-		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "Exit");
+		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "gui.done");
 
 		// these buttons will be moved if we display axis values
 		if (joypadIndex != -1 && Controllers.getController(joypadIndex).getAxisCount() > 0)
@@ -76,10 +77,11 @@ public class JoypadCalibrationMenu extends GuiScreen
 					height - 25, 0, entryHeight, joypadIndex, this);
 
 			xPos -= bottomButtonWidth / 2;
-			buttonList.add(new GuiButton(400, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "Save"));
+			buttonList.add(new GuiButton(400, xPos, buttonYStart_bottom, bottomButtonWidth, 20,
+					McObfuscationHelper.lookupString("calibrationMenu.save")));
 			xPos += bottomButtonWidth;
 			doneButton.xPosition += bottomButtonWidth / 2;
-			doneButton.displayString = "Cancel";
+			doneButton.displayString = McObfuscationHelper.lookupString("gui.cancel");
 		}
 
 		buttonList.add(doneButton);
@@ -113,7 +115,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		{
 		case 400: // Save
 			ControllerSettings.saveDeadZones(joypadIndex);
-			((GuiButton) buttonList.get(1)).displayString = "Done";
+			((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
 			break;
 		case 500: // Done
 			mc.displayGuiScreen(this.parent);
@@ -130,7 +132,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 			calibrationList.drawScreen(par1, par2, par3);
 
 		int ySpace = fr.FONT_HEIGHT;
-		String title = "Calibration menu";
+		String title = String.format("%s %s", McObfuscationHelper.lookupString("controlMenu.calibrate"),
+				McObfuscationHelper.lookupString("joy.menu"));
 		Controller controller = null;
 		if (joypadIndex != -1)
 		{
@@ -142,11 +145,11 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		if (joypadIndex == -1)
 		{
-			write(yStart + ySpace * 2, "Please go back to previous menu and select a controller.");
+			write(yStart + ySpace * 2, McObfuscationHelper.lookupString("controlMenu.noControllers"));
 		}
 		else if (Controllers.getController(joypadIndex).getAxisCount() <= 0)
 		{
-			write(yStart + ySpace * 2, "This controller has no axes to configure.");
+			write(yStart + ySpace * 2, McObfuscationHelper.lookupString("controlMenu.axis") + "# 0!");
 		}
 		else
 		{
@@ -171,12 +174,99 @@ public class JoypadCalibrationMenu extends GuiScreen
 		int xPos = xStart + ((xEnd - xStart) / 2) - (stringWidth / 2);
 
 		this.drawHorizontalLine(xStart, xPos, yStart, boxColor);
-		this.write(xPos + 2, yStart - (fr.FONT_HEIGHT / 2) + 1, title, textColor);
+		int yTitleOffset = (fr.FONT_HEIGHT / 2) + (fr.getUnicodeFlag() ? 1 : -1);
+		this.write(xPos + 2, yStart - yTitleOffset, title, textColor);
 		xPos += stringWidth + 2;
 		this.drawHorizontalLine(xPos, xEnd, yStart, boxColor);
 		this.drawVerticalLine(xStart, yStart, yEnd, boxColor);
 		this.drawHorizontalLine(xStart, xEnd, yEnd, boxColor);
 		this.drawVerticalLine(xEnd, yStart, yEnd, boxColor);
+	}
+
+	private int[] drawInstructions(int xStart, int yStart, int ySpace, int totalWidth)
+	{
+		int yPos = yStart;
+
+		String title = McObfuscationHelper.lookupString("calibrationMenu.instructionsTitle");
+		int yEnd = yStart + ((instructions.length + 1) * ySpace);
+		drawBoxWithText(xStart, yStart, xStart + totalWidth, yEnd, title, 0xAA0000, 0x0000AA);
+
+		yPos += 7;
+		xStart += 5;
+
+		for (int i = 0; i < instructions.length; i++, yPos += ySpace)
+		{
+			String text = String.format("%s: %s", i + 1, McObfuscationHelper.lookupString(instructions[i]));
+			int strWidth = fr.getStringWidth(text);
+			write((totalWidth - 5) / 2 + xStart - strWidth / 2, yPos, text);
+		}
+
+		return new int[] { xStart + totalWidth, yEnd };
+	}
+
+	private void write(int yPos, String text)
+	{
+		write(yPos, text, -1);
+	}
+
+	private void write(int yPos, String text, int fontColor)
+	{
+		this.drawCenteredString(fr, text, width / 2, yPos, fontColor);
+	}
+
+	public void write(int xPos, int yPos, String text)
+	{
+		write(xPos, yPos, text, -1);
+	}
+
+	public void write(int xPos, int yPos, String text, int fontColor)
+	{
+		this.drawString(fr, text, xPos, yPos, fontColor);
+	}
+
+	public void drawHorizontalLine(int par1, int par2, int par3, int par4)
+	{
+		super.drawHorizontalLine(par1, par2, par3, par4);
+	}
+
+	public void drawVerticalLine(int par1, int par2, int par3, int par4)
+	{
+		super.drawVerticalLine(par1, par2, par3, par4);
+	}
+
+	private void readLastControllerEvent()
+	{
+		try
+		{
+			Controller controller = Controllers.getController(this.joypadIndex);
+			while (Controllers.next() && Controllers.getEventSource() == controller)
+			{
+				if (Controllers.isEventAxis())
+				{
+					lastControllerEvent = controller.getAxisName(Controllers.getEventControlIndex());
+				}
+				else if (Controllers.isEventButton())
+				{
+					lastControllerEvent = controller.getButtonName(Controllers.getEventControlIndex());
+				}
+				else if (Controllers.isEventPovX())
+				{
+					lastControllerEvent = "PovX";
+				}
+				else if (Controllers.isEventPovY())
+				{
+					lastControllerEvent = "PovY";
+				}
+				else
+				{
+					lastControllerEvent = "Unknown controller event with index: " + Controllers.getEventControlIndex();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			lastControllerEvent = ex.toString();
+		}
 	}
 
 	private int[] drawButtons(int xStart, int yStart, int ySpace)
@@ -223,90 +313,5 @@ public class JoypadCalibrationMenu extends GuiScreen
 		}
 
 		return new int[] { xStart + butWidth, yEnd };
-	}
-
-	private int[] drawInstructions(int xStart, int yStart, int ySpace, int totalWidth)
-	{
-		int yPos = yStart;
-
-		String title = "Calibration Instructions";
-		int yEnd = yStart + ((instructions.length + 1) * ySpace);
-		drawBoxWithText(xStart, yStart, xStart + totalWidth, yEnd, title, 0xAA0000, 0x0000AA);
-
-		yPos += 7;
-		xStart += 5;
-
-		for (int i = 0; i < instructions.length; i++, yPos += ySpace)
-		{
-			int strWidth = fr.getStringWidth(instructions[i]);
-			write((totalWidth - 5) / 2 + xStart - strWidth / 2, yPos, instructions[i]);
-		}
-
-		return new int[] { xStart + totalWidth, yEnd };
-	}
-
-	private void write(int yPos, String text)
-	{
-		write(yPos, text, -1);
-	}
-
-	private void write(int yPos, String text, int fontColor)
-	{
-		this.drawCenteredString(fr, text, width / 2, yPos, fontColor);
-	}
-
-	public void write(int xPos, int yPos, String text)
-	{
-		write(xPos, yPos, text, -1);
-	}
-
-	public void write(int xPos, int yPos, String text, int fontColor)
-	{
-		this.drawString(fr, text, xPos, yPos, fontColor);
-	}
-
-	private void readLastControllerEvent()
-	{
-		try
-		{
-			Controller controller = Controllers.getController(this.joypadIndex);
-			while (Controllers.next() && Controllers.getEventSource() == controller)
-			{
-				if (Controllers.isEventAxis())
-				{
-					lastControllerEvent = controller.getAxisName(Controllers.getEventControlIndex());
-				}
-				else if (Controllers.isEventButton())
-				{
-					lastControllerEvent = controller.getButtonName(Controllers.getEventControlIndex());
-				}
-				else if (Controllers.isEventPovX())
-				{
-					lastControllerEvent = "PovX";
-				}
-				else if (Controllers.isEventPovY())
-				{
-					lastControllerEvent = "PovY";
-				}
-				else
-				{
-					lastControllerEvent = "Unknown controller event with index: " + Controllers.getEventControlIndex();
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			lastControllerEvent = ex.toString();
-		}
-	}
-
-	public void drawHorizontalLine(int par1, int par2, int par3, int par4)
-	{
-		super.drawHorizontalLine(par1, par2, par3, par4);
-	}
-
-	public void drawVerticalLine(int par1, int par2, int par3, int par4)
-	{
-		super.drawVerticalLine(par1, par2, par3, par4);
 	}
 }
