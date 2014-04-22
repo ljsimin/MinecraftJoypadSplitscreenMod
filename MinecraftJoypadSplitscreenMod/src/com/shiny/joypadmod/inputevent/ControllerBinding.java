@@ -45,7 +45,7 @@ public class ControllerBinding
 	public int[] keyCodes;
 	public boolean toggleState = false;
 	public long delay;
-	private long lastTick = 0;
+	public long lastTick = 0;
 
 	public EnumSet<BindingOptions> bindingOptions;
 
