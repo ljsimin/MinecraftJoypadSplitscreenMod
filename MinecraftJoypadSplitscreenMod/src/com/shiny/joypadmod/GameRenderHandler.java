@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 
 import org.lwjgl.input.Controllers;
 
@@ -196,6 +197,13 @@ public class GameRenderHandler
 			// VirtualMouse.moveMouse(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 			McGuiHelper.guiMouseDrag(JoypadMouse.getX(), JoypadMouse.getY());
 			VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
+		}
+
+		if (mc.currentScreen != null && mc.currentScreen instanceof GuiContainer)
+		{
+			if (Minecraft.getSystemTime() - ControllerSettings.get("joy.scrollDown").lastTick < 100
+					|| Minecraft.getSystemTime() - ControllerSettings.get("joy.scrollUp").lastTick < 100)
+				return;
 		}
 
 		ControllerSettings.get("joy.scrollDown").isPressed();
