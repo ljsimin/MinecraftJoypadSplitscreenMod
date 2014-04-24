@@ -79,6 +79,7 @@ public class ControllerSettings
 	private static boolean suspendControllerInput = false;
 
 	public static boolean invertYAxis = false;
+	public static boolean grabMouse = false;
 
 	private static ConfigFile config = null;
 
@@ -91,6 +92,7 @@ public class ControllerSettings
 		inValidControllers = new HashMap<String, List<Integer>>();
 		joyBindingsMap = new HashMap<String, ControllerBinding>();
 		userDefinedBindings = new ArrayList<ControllerBinding>();
+		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
 		try
 		{
 			Controllers.create();
@@ -843,6 +845,10 @@ public class ControllerSettings
 		if (optionKey.contains("SharedProfile") && currentDisplayedMap != -1)
 		{
 			saveCurrentJoyBindings();
+		}
+		else if (optionKey.contains("GrabMouse"))
+		{
+			grabMouse = Boolean.parseBoolean(value);
 		}
 	}
 }

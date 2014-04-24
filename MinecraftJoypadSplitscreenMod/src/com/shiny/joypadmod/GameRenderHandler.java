@@ -32,7 +32,7 @@ public class GameRenderHandler
 	public static boolean allowOrigControlsMenu = false;
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
-	static long lastScrollTick = 0;
+	private static boolean lastFlansModCheckValue = false;
 
 	public static List<String> preRenderGuiBucket = new ArrayList<String>();
 	public static List<String> preRenderGameBucket = new ArrayList<String>();
@@ -141,9 +141,11 @@ public class GameRenderHandler
 
 	public static void HandleClientStartTick()
 	{
-
 		if (ControllerSettings.isSuspended())
 			return;
+
+		// lastFlansModCheckValue = mc.currentScreen != null
+		// && mc.currentScreen.getClass().toString().contains("GuiDriveableController");
 
 		if (InGuiCheckNeeded())
 		{
@@ -179,9 +181,24 @@ public class GameRenderHandler
 
 	private static void UpdateInGameCamera()
 	{
-		if (JoypadMouse.AxisReader.pollNeeded(false) && mc.thePlayer != null)
+		if (mc.thePlayer != null)
 		{
-			if (JoypadMouse.pollAxis(false))
+			if (lastFlansModCheckValue)
+			{
+				if (JoypadMouse.pollAxis(false))
+				{
+					float multiplier = 4f * mc.gameSettings.mouseSensitivity;
+					VirtualMouse.moveMouse(
+							(int) (JoypadMouse.AxisReader.deltaX * multiplier),
+							(int) (JoypadMouse.AxisReader.deltaY * multiplier * (ControllerSettings.getInvertYAxis() ? 1.0f
+									: -1.0f)));
+				}
+				else
+				{
+					VirtualMouse.moveMouse(0, 0);
+				}
+			}
+			else if (JoypadMouse.pollAxis(false))
 			{
 				mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX, JoypadMouse.AxisReader.deltaY
 						* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
@@ -271,7 +288,7 @@ public class GameRenderHandler
 			binding.isPressed();
 		}
 
-		while (Controllers.next() && mc.currentScreen == null)
+		while (Controllers.next() && (mc.currentScreen == null || lastFlansModCheckValue))
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
@@ -348,7 +365,7 @@ public class GameRenderHandler
 
 	public static boolean InGameCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.currentScreen != null || mc.thePlayer == null)
+		if (!CheckIfModEnabled() || mc.thePlayer == null || (mc.currentScreen != null && !lastFlansModCheckValue))
 		{
 			return false;
 		}
@@ -358,7 +375,7 @@ public class GameRenderHandler
 
 	public static boolean InGuiCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.currentScreen == null)
+		if (!CheckIfModEnabled() || mc.currentScreen == null || lastFlansModCheckValue)
 		{
 			return false;
 		}
