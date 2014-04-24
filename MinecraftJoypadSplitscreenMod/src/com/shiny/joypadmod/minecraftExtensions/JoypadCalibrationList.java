@@ -14,6 +14,7 @@ import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 
 import cpw.mods.fml.client.GuiScrollingList;
@@ -146,7 +147,8 @@ public class JoypadCalibrationList extends GuiScrollingList
 		String output = title + ": " + df.format(controller.getAxisValue(axisNum));
 		parent.write(xPos, yPos, output);
 		xPos += maxSize + parent.fr.getStringWidth(" -1.00") + 4;
-		output = "Deadzone: " + df.format(controller.getDeadZone(axisNum));
+		output = McObfuscationHelper.lookupString("calibrationMenu.deadzone") + ": "
+				+ df.format(controller.getDeadZone(axisNum));
 		parent.write(xPos, yPos, output);
 		xPos += parent.fr.getStringWidth(output) + 5;
 
@@ -154,11 +156,12 @@ public class JoypadCalibrationList extends GuiScrollingList
 		int xOffset = -2;
 		if (this.buttonList.size() <= 4 * axisNum)
 		{
-			buttonList.add(new GuiButton(axisNum, xPos, yPos + yOffset, controlButWidth, 20, "Auto"));
+			buttonList.add(new GuiButton(axisNum, xPos, yPos + yOffset, controlButWidth, 20,
+					McObfuscationHelper.lookupString("calibrationMenu.auto")));
 			buttonList.add(new GuiButton(axisNum + 100, xPos + controlButWidth + xOffset, yPos + yOffset,
 					directionButWidth, 20, "<"));
 			buttonList.add(new GuiButton(axisNum + 200, xPos + controlButWidth + directionButWidth + xOffset * 2, yPos
-					+ yOffset, controlButWidth, 20, "Clear"));
+					+ yOffset, controlButWidth, 20, McObfuscationHelper.lookupString("controls.reset")));
 			buttonList.add(new GuiButton(axisNum + 300, xPos + controlButWidth * 2 + directionButWidth + xOffset * 3,
 					yPos + yOffset, directionButWidth, 20, ">"));
 		}

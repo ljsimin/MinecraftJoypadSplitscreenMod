@@ -312,7 +312,7 @@ public class JoypadConfigMenu extends GuiScreen
 		checkCustomBindTrigger();
 		checkSensitivitySliders();
 
-		String titleText = String.format("Joypad Mod %s - %s", sGet("controls.title"),
+		String titleText = String.format("Joypad Mod - %s - %s", sGet("controls.title"),
 				sGet("controlMenu.toggleInstructions"));
 		this.drawCenteredString(getFontRenderer(), titleText, width / 2, labelYStart, -1);
 
