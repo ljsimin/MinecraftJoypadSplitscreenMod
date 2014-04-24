@@ -14,9 +14,11 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void grabMouseCursor()
 	{
-		if (ControllerSettings.isInputEnabled()
-				&& ControllerSettings.getGameOption("-Global-.GrabMouse").equals("false"))
+		if (ControllerSettings.isInputEnabled() && !ControllerSettings.grabMouse)
+		{
+			// VirtualMouse.setGrabbed(true);
 			return;
+		}
 
 		super.grabMouseCursor();
 	}
@@ -27,9 +29,11 @@ public class JoypadMouseHelper extends MouseHelper
 	@Override
 	public void ungrabMouseCursor()
 	{
-		if (ControllerSettings.isInputEnabled()
-				&& ControllerSettings.getGameOption("-Global-.GrabMouse").equals("false"))
+		if (ControllerSettings.isInputEnabled() && !ControllerSettings.grabMouse)
+		{
+			// VirtualMouse.setGrabbed(false);
 			return;
+		}
 
 		super.ungrabMouseCursor();
 	}

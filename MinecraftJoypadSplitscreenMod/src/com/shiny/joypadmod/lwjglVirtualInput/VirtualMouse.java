@@ -19,6 +19,7 @@ public class VirtualMouse
 	// private static Field eventYField;
 	private static Field buttonField;
 	private static Field mouseReadBuffer;
+	private static Field isGrabbedField;
 	private static int[] buttonsDown = { 0, 0, 0 };
 	private static final int buttonsSupported = 3;
 
@@ -44,8 +45,16 @@ public class VirtualMouse
 		// eventYField = getSetField("event_y");
 		buttonField = getSetField("buttons");
 		mouseReadBuffer = getSetField("readBuffer");
+		isGrabbedField = getSetField("isGrabbed");
 
 		created = true;
+	}
+
+	private static Field getSetField(String fieldName) throws NoSuchFieldException, SecurityException
+	{
+		Field f = Mouse.class.getDeclaredField(fieldName);
+		f.setAccessible(true);
+		return f;
 	}
 
 	public static boolean isCreated()
@@ -181,13 +190,6 @@ public class VirtualMouse
 		return true;
 	}
 
-	private static Field getSetField(String fieldName) throws NoSuchFieldException, SecurityException
-	{
-		Field f = Mouse.class.getDeclaredField(fieldName);
-		f.setAccessible(true);
-		return f;
-	}
-
 	private static boolean addMouseEvent(byte eventButton, byte eventState, int event_dx, int event_dy,
 			int event_dwheel, long event_nanos)
 	{
@@ -216,6 +218,20 @@ public class VirtualMouse
 		}
 
 		return true;
+	}
+
+	public static void setGrabbed(boolean grabbed)
+	{
+		if (ControllerSettings.loggingLevel > 3)
+			LogHelper.Info("Setting Mouse.isGrabbed to return: " + grabbed);
+		try
+		{
+			isGrabbedField.setBoolean(null, grabbed);
+		}
+		catch (Exception ex)
+		{
+			LogHelper.Error("Failed trying to set Mouse.isGrabbed. " + ex.toString());
+		}
 	}
 
 	private static boolean checkButtonSupported(int button)
