@@ -1,7 +1,9 @@
-calibrationMenu.save=Save
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=Deadzone
 calibrationMenu.instructionsTitle=Instructions
 calibrationMenu.instructions1=Press and wiggle all joystick controls
 calibrationMenu.instructions2=Press auto to find deadzone
+calibrationMenu.save=Save
 
 controlMenu.addKey=Add Key
 controlMenu.advanced=Advanced

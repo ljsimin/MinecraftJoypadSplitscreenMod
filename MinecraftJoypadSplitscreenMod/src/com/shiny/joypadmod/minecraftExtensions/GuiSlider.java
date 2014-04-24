@@ -115,12 +115,12 @@ public class GuiSlider extends GuiButton
 		String output = "";
 		if (this.baseDisplayString.equals("controlMenu.sensitivity.game"))
 		{
-			output = String.format("%s %s", McObfuscationHelper.lookupString("key.categories.gameplay"),
+			output = String.format("(%s) %s", McObfuscationHelper.lookupString("key.categories.gameplay"),
 					McObfuscationHelper.lookupString("options.sensitivity"));
 		}
 		else if (this.baseDisplayString.equals("controlMenu.sensitivity.menu"))
 		{
-			output = String.format("%s %s", McObfuscationHelper.lookupString("joy.menu"),
+			output = String.format("(%s) %s", McObfuscationHelper.lookupString("joy.menu"),
 					McObfuscationHelper.lookupString("options.sensitivity"));
 		}
 		if (output != "")

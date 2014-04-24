@@ -85,7 +85,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 
 		int labelYStart = 5;
 
-		String titleText = String.format("Joypad Mod %s", parent.sGet("controlMenu.advanced"));
+		String titleText = String.format("Joypad Mod - %s", parent.sGet("controlMenu.advanced"));
 		this.drawCenteredString(parent.getFontRenderer(), titleText, width / 2, labelYStart, -1);
 
 		super.drawScreen(par1, par2, par3);

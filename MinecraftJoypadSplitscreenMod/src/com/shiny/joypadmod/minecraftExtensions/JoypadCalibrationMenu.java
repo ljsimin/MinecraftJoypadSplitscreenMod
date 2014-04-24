@@ -57,7 +57,14 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 
 		povBoxWidth = fr.getStringWidth("PovX: -10.00");
-		instructionBoxWidth = fr.getStringWidth("1: " + McObfuscationHelper.lookupString(instructions[0])) + 10;
+		instructionBoxWidth = 0;
+		for (int i = 0; i < instructions.length; i++)
+		{
+			int newWidth = fr.getStringWidth(McObfuscationHelper.lookupString(instructions[i]));
+			if (newWidth > instructionBoxWidth)
+				instructionBoxWidth = newWidth;
+		}
+		instructionBoxWidth += fr.getStringWidth("1: ") + 10;
 
 		Math.max(5, width / 2 - ((axisBoxWidth + instructionBoxWidth + boxSpacing) / 2));
 
@@ -132,8 +139,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 			calibrationList.drawScreen(par1, par2, par3);
 
 		int ySpace = fr.FONT_HEIGHT;
-		String title = String.format("%s %s", McObfuscationHelper.lookupString("controlMenu.calibrate"),
-				McObfuscationHelper.lookupString("joy.menu"));
+		String title = McObfuscationHelper.lookupString("controlMenu.calibrate");
 		Controller controller = null;
 		if (joypadIndex != -1)
 		{

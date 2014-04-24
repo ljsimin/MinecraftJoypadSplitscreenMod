@@ -1,3 +1,36 @@
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=Deadzone
+calibrationMenu.instructionsTitle=Instrukcje
+calibrationMenu.instructions1=Press and wiggle all joystick controls
+calibrationMenu.instructions2=Press auto to find deadzone
+calibrationMenu.save=Zapisz
+
+controlMenu.addKey=Nowy klawisz
+controlMenu.advanced=Zaawansowane
+controlMenu.axis=Ośi
+controlMenu.buttons=Przycisków
+controlMenu.calibrate=Kalibracija
+controlMenu.controller=Gamepad
+controlMenu.invert=Invertuj
+controlMenu.look=Kamera
+controlMenu.mouse=Myszka
+controlMenu.scroll=Scroll myszki
+controlMenu.noControllers=Nie znaleziono gamepada
+controlMenu.pressKey=Press key...
+controlMenu.toggleInstructions=Press space to toggle controller
+
+-Global-.SharedProfile=Share settings
+-Global-.GrabMouse=⚠ Mouse Grab
+-Global-.displayAllControls=Display all controllers
+
+joy.guiRightClick=Right Click
+joy.guiLeftClick=Left Click
+joy.shiftClick=Shift click
+joy.interact=Interact
+joy.menu=Menu
+
+controls.reset=Resetuj
+
 key.attack=Atakuj/niszcz
 key.back=Idź do tyłu
 key.categories.gameplay=Rozgrywka
