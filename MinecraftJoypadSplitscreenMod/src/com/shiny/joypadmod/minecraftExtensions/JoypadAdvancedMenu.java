@@ -20,6 +20,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private int joyIndex;
 	private JoypadConfigMenu parent;
 
+	private String[] otherButtons = { "controlMenu.calibrate", "controlMenu.invert" };
 	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse" };
 
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
@@ -33,6 +34,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	@Override
 	public void initGui()
 	{
+		buttonWidth = findMaxButtonWidth() + 10;
 		buttonXStart_top = (this.width - buttonWidth * buttonsPerRow - buttonXSpacing * buttonsPerRow) / 2;
 		buttonYStart_top = 50;
 
@@ -48,6 +50,27 @@ public class JoypadAdvancedMenu extends GuiScreen
 
 		buttonList.add(new GuiButton(500, width / 2 - parent.bottomButtonWidth / 2, height - 20,
 				parent.bottomButtonWidth, 20, parent.sGet("gui.done")));
+	}
+
+	private int findMaxButtonWidth()
+	{
+		int maxWidth = 0;
+
+		for (int i = 0; i < otherButtons.length; i++)
+		{
+			String buttonString = createToggleString(otherButtons[i], true);
+			int width = mc.fontRenderer.getStringWidth(buttonString);
+			maxWidth = width > maxWidth ? width : maxWidth;
+		}
+
+		for (int i = 0; i < gameOptions.length; i++)
+		{
+			String buttonString = createToggleString(gameOptions[i], true);
+			int width = mc.fontRenderer.getStringWidth(buttonString);
+			maxWidth = width > maxWidth ? width : maxWidth;
+		}
+
+		return maxWidth;
 	}
 
 	@Override

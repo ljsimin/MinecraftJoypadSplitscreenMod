@@ -1,3 +1,34 @@
+calibrationMenu.auto=Autó
+calibrationMenu.deadzone=Holt zóna
+calibrationMenu.instructionsTitle=Utasítások
+calibrationMenu.instructions1=Nyomkodd és moygasd az összes joystick kontrollokat
+calibrationMenu.instructions2=Nyomd meg az auto-t hogy megtaláld a holt zónákat
+calibrationMenu.save=Mentsd el
+
+controlMenu.addKey=Új billentyű
+controlMenu.advanced=Fejlett
+controlMenu.axis=Tengely
+controlMenu.buttons=Gombok
+controlMenu.calibrate=Kalibráció
+controlMenu.controller=Játékvezérlő
+controlMenu.invert=Megfordít
+controlMenu.look=Néz/kinéz
+controlMenu.mouse=Egér
+controlMenu.scroll=Scroll
+controlMenu.noControllers=Egyetlen játékvezérlő sincs találva
+controlMenu.pressKey=Nyomd meg...
+controlMenu.toggleInstructions=A space kapcsolja ki/be a játékvezérlőt
+
+-Global-.SharedProfile=Oszd meg a beállításokat
+-Global-.GrabMouse=⚠ Fogd meg az egérrel
+-Global-.displayAllControls=Mútasd meg az összes játékvezérlőt
+
+joy.guiRightClick=Bal kattintás
+joy.guiLeftClick=Jobb kattintás
+joy.shiftClick=Váltás kattintás
+joy.interact=Egymásra hatás
+joy.menu=Menü
+
 key.attack=Támadás/Blokktörés
 key.back=Hátrálás
 key.categories.gameplay=Játékmenet

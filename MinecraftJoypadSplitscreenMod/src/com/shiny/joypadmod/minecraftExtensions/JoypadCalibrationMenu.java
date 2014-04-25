@@ -23,7 +23,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	private int joypadIndex;
 	private int yStart = 5;
 	private int buttonBoxWidth = 132;
-	public int axisBoxWidth = 240;
+	public int axisBoxWidth = 275;
 	private int povBoxWidth;
 	private int instructionBoxWidth;
 
