@@ -1,5 +1,5 @@
-calibrationMenu.auto=Auto
-calibrationMenu.deadzone=Deadzone
+calibrationMenu.auto=Ауто
+calibrationMenu.deadzone=Мртва зона
 calibrationMenu.instructionsTitle=Упутства
 calibrationMenu.instructions1=Притискајте све дугмиће и палице
 calibrationMenu.instructions2=Притисните 'ауто' да се пронађу мртве зоне
@@ -17,7 +17,7 @@ controlMenu.mouse=Миш
 controlMenu.scroll=Точкић
 controlMenu.noControllers=Није пронађен ниједан гејмпед
 controlMenu.pressKey=Притисните тастер...
-controlMenu.toggleInstructions=Притисните размак за паљење/гашење гејмпеда
+controlMenu.toggleInstructions=Размак пали/гаси тренутни гејмпед
 
 -Global-.SharedProfile=Дељење подешавања
 -Global-.GrabMouse=⚠ Закључавање миша

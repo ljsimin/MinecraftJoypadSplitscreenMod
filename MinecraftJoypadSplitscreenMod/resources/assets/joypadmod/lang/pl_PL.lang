@@ -1,8 +1,8 @@
 calibrationMenu.auto=Auto
-calibrationMenu.deadzone=Deadzone
+calibrationMenu.deadzone=Martwa strefa
 calibrationMenu.instructionsTitle=Instrukcje
-calibrationMenu.instructions1=Press and wiggle all joystick controls
-calibrationMenu.instructions2=Press auto to find deadzone
+calibrationMenu.instructions1=Przycisnij wszystkie guziki i ruszaj gałkami
+calibrationMenu.instructions2=Guzik 'auto' znajduje martwe strefy
 calibrationMenu.save=Zapisz
 
 controlMenu.addKey=Nowy klawisz
@@ -16,18 +16,19 @@ controlMenu.look=Kamera
 controlMenu.mouse=Myszka
 controlMenu.scroll=Scroll myszki
 controlMenu.noControllers=Nie znaleziono gamepada
-controlMenu.pressKey=Press key...
-controlMenu.toggleInstructions=Press space to toggle controller
+controlMenu.pressKey=Wciśnij dowolny klawisz...
+controlMenu.toggleInstructions=Spacja wł/wył gamepad
 
--Global-.SharedProfile=Share settings
--Global-.GrabMouse=⚠ Mouse Grab
--Global-.displayAllControls=Display all controllers
+-Global-.SharedProfile=Wspólne ustawienia
+-Global-.GrabMouse=⚠ Przechwycenie myszki
+-Global-.displayAllControls=Pokaż wszystkie gamepad-y
 
-joy.guiRightClick=Right Click
-joy.guiLeftClick=Left Click
-joy.shiftClick=Shift click
-joy.interact=Interact
+joy.guiRightClick=Lewy klik
+joy.guiLeftClick=Prawy klik
+joy.shiftClick=Shift-klik
+joy.interact=Interakcja
 joy.menu=Menu
+
 
 controls.reset=Resetuj
 
