@@ -119,7 +119,8 @@ public class JoypadMouse
 		private static long lastAxisReading = 0;
 		private static long guiPollTimeout = 30;
 		private static long gamePollTimeout = 10;
-		private static long last0Reading = 0;
+		public static long last0Reading = 0;
+		public static long lastNon0Reading = 0;
 
 		public static void pollAxis()
 		{
@@ -180,6 +181,7 @@ public class JoypadMouse
 				last0Reading = Minecraft.getSystemTime();
 				return;
 			}
+			lastNon0Reading = Minecraft.getSystemTime();
 
 			deltaX = calculateFinalDelta(inGui, deltaX, horizontalThreshold);
 			deltaY = calculateFinalDelta(inGui, deltaY, verticalThreshold);
