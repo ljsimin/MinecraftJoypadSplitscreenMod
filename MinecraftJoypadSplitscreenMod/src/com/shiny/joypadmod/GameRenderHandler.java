@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 
 import org.lwjgl.input.Controllers;
+import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
@@ -37,6 +38,8 @@ public class GameRenderHandler
 	public static List<String> preRenderGuiBucket = new ArrayList<String>();
 	public static List<String> preRenderGameBucket = new ArrayList<String>();
 
+	public static boolean mouseDetected = false;
+
 	public static void HandlePreRender()
 	{
 		try
@@ -57,9 +60,20 @@ public class GameRenderHandler
 
 				if (InGuiCheckNeeded())
 				{
+					if (Mouse.isInsideWindow()
+							&& Minecraft.getSystemTime() - JoypadMouse.AxisReader.lastNon0Reading > 1000)
+					{
+						if (Mouse.getDX() != 0 || Mouse.getDY() != 0)
+							mouseDetected = true;
+					}
+					else
+					{
+						mouseDetected = false;
+					}
 					// This call here re-points the mouse position that Minecraft picks
 					// up to determine if it should do the Hover over button effect.
-					VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
+					if (!mouseDetected)
+						VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 					if (preRenderGuiBucket.size() > 0)
 					{
 						for (String mapKey : preRenderGuiBucket)
@@ -231,7 +245,8 @@ public class GameRenderHandler
 	{
 		// update mouse coordinates
 		// JoypadMouse.updateXY();
-		VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
+		if (!mouseDetected)
+			VirtualMouse.setXY(JoypadMouse.getmcX(), JoypadMouse.getmcY());
 
 		for (ControllerBinding binding = ControllerSettings.startMenuBindIteration(); binding != null; binding = ControllerSettings.getNextMenuAutoBinding())
 		{
