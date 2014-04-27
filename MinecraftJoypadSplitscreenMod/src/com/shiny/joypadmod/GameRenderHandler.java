@@ -64,7 +64,13 @@ public class GameRenderHandler
 							&& Minecraft.getSystemTime() - JoypadMouse.AxisReader.lastNon0Reading > 1000)
 					{
 						if (Mouse.getDX() != 0 || Mouse.getDY() != 0)
+						{
+							if (ControllerSettings.loggingLevel > 2)
+							{
+								LogHelper.Info("Mouse sharing of screen detected");
+							}
 							mouseDetected = true;
+						}
 					}
 					else
 					{
