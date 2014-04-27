@@ -196,4 +196,28 @@ public class ControllerUtils
 		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
 	}
 
+	public static int findYAxisIndex(int joyId)
+	{
+		Controller controller = Controllers.getController(joyId);
+		for (int i = 0; i < controller.getAxisCount(); i++)
+		{
+			if (controller.getAxisName(i).contains("Y Axis"))
+				return i;
+		}
+
+		return 0;
+	}
+
+	public static int findXAxisIndex(int joyId)
+	{
+		Controller controller = Controllers.getController(joyId);
+		for (int i = 0; i < controller.getAxisCount(); i++)
+		{
+			if (controller.getAxisName(i).contains("X Axis"))
+				return i;
+		}
+
+		return 0;
+	}
+
 }

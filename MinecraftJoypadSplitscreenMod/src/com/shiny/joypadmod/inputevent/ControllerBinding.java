@@ -11,6 +11,7 @@ import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+import com.shiny.joypadmod.minecraftExtensions.JoypadCalibrationMenu;
 
 public class ControllerBinding
 {
@@ -248,6 +249,10 @@ public class ControllerBinding
 						continue;
 					}
 
+					// ignore escape key bindings from calibration menu
+					if (i == Keyboard.KEY_ESCAPE && Minecraft.getMinecraft().currentScreen != null
+							&& Minecraft.getMinecraft().currentScreen instanceof JoypadCalibrationMenu)
+						continue;
 					if (sendPressKey)
 					{
 						VirtualKeyboard.pressKey(i);
