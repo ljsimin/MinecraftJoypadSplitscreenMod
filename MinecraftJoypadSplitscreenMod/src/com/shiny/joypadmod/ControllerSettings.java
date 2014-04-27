@@ -247,7 +247,7 @@ public class ControllerSettings
 
 		joyBindingsMap.put(
 				"joy.back",
-				new ControllerBinding("joy.back", "Move backward", new AxisInputEvent(joyIndex, 0,
+				new ControllerBinding("joy.back", "Move backward", new AxisInputEvent(joyIndex, yAxisIndex,
 						defaultAxisThreshhold, defaultAxisDeadZone),
 						new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, yAxisIndex, EnumSet.of(
 								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
