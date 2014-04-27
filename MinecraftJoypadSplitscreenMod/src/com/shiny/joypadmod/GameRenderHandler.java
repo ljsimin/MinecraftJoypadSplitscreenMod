@@ -159,13 +159,19 @@ public class GameRenderHandler
 
 	}
 
+	private static long lastFlansModCheckTick = 0;
+
 	public static void HandleClientStartTick()
 	{
 		if (ControllerSettings.isSuspended())
 			return;
 
-		// lastFlansModCheckValue = mc.currentScreen != null
-		// && mc.currentScreen.getClass().toString().contains("GuiDriveableController");
+		if (Minecraft.getSystemTime() - lastFlansModCheckTick > 750)
+		{
+			lastFlansModCheckValue = mc.currentScreen != null
+					&& mc.currentScreen.getClass().toString().contains("GuiDriveableController");
+			lastFlansModCheckTick = Minecraft.getSystemTime();
+		}
 
 		if (InGuiCheckNeeded())
 		{
