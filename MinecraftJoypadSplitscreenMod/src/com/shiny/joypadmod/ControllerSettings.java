@@ -357,7 +357,7 @@ public class ControllerSettings
 
 		if (config.preferedJoyName == "disabled")
 		{
-			LogHelper.Warn("Controller input disabled due to joypad value set to preferedJoyName set to disabled");
+			LogHelper.Warn("Controller input disabled due to joypad value 'preferedJoyName' set to disabled");
 			inputEnabled = false;
 			ControllerSettings.modDisabled = true;
 			return;
@@ -394,7 +394,7 @@ public class ControllerSettings
 		}
 	}
 
-	public int detectControllers()
+	private int detectControllers()
 	{
 		validControllers.clear();
 		inValidControllers.clear();

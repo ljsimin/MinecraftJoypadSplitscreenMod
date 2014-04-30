@@ -1,5 +1,12 @@
+calibrationMenu.auto=自动的
+calibrationMenu.deadzone=盲区
+calibrationMenu.instructionsTitle=说明
+calibrationMenu.instructions1=移动摇杆
+calibrationMenu.instructions2=按下自动找盲区
+calibrationMenu.save=保存
+
 controlMenu.addKey=快捷键
-controlMenu.advanced=Advanced
+controlMenu.advanced=先进
 controlMenu.axis=Axis
 controlMenu.buttons=键
 controlMenu.calibrate=校正
@@ -10,11 +17,11 @@ controlMenu.mouse=鼠标
 controlMenu.scroll=滚动条
 controlMenu.noControllers=全无游戏设备!
 controlMenu.pressKey=按键...
-controlMenu.toggleInstructions=按空格键 to toggle 游戏设备
+controlMenu.toggleInstructions=按空格键切换游戏设备
 
--Global-.SharedProfile=Share settings
--Global-.GrabMouse=⚠ Mouse Grab
--Global-.displayAllControls=Display all controllers
+-Global-.SharedProfile=共享设置
+-Global-.GrabMouse=⚠ 鼠标抢
+-Global-.displayAllControls=显示所有控制器
 
 joy.guiRightClick=右键
 joy.guiLeftClick=左键

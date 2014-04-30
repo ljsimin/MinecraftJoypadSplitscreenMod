@@ -1,5 +1,12 @@
+calibrationMenu.auto=オート
+calibrationMenu.deadzone=デッドゾーン
+calibrationMenu.instructionsTitle=説明書
+calibrationMenu.instructions1=ジョイスティックを動かす
+calibrationMenu.instructions2=デッドゾーンを見つけるために、オートを押す
+calibrationMenu.save=保存
+
 controlMenu.addKey=新しいキーの追加
-controlMenu.advanced=Advanced
+controlMenu.advanced=アドバンスド
 controlMenu.axis=Axis
 controlMenu.buttons=ボタン
 controlMenu.calibrate=調整する
@@ -12,9 +19,9 @@ controlMenu.noControllers=コントローラー　未発見！
 controlMenu.pressKey=キーを押す...
 controlMenu.toggleInstructions=スペースキーでコントローラーの切り替え（オン・オフ）
 
--Global-.SharedProfile=Share settings
--Global-.GrabMouse=⚠ Mouse Grab
--Global-.displayAllControls=Display all controllers
+-Global-.SharedProfile=共有設定
+-Global-.GrabMouse=⚠ マウスのグラブ
+-Global-.displayAllControls=すべてのコントローラを表示する
 
 joy.guiRightClick=マウス右ボタン
 joy.guiLeftClick=マウス左ボタン
