@@ -1,7 +1,9 @@
-calibrationMenu.save=Annehmen
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=Deadzone
 calibrationMenu.instructionsTitle=Anleitungen
-calibrationMenu.instructions1=Press and wiggle all joystick controls
-calibrationMenu.instructions2=Press auto to find deadzone
+calibrationMenu.instructions1=Bewegen Sie Joystick
+calibrationMenu.instructions2=Drücken Sie Auto-Deadzone zu finden
+calibrationMenu.save=Annehmen
 
 controlMenu.addKey=Neu Taste
 controlMenu.advanced=Erweiterte
@@ -13,13 +15,13 @@ controlMenu.invert=Invert
 controlMenu.look=Schauen
 controlMenu.mouse=Mauszeiger
 controlMenu.scroll=Blättern
-controlMenu.noControllers=No controllers found!
+controlMenu.noControllers=Keine Controller gefunden!
 controlMenu.pressKey=Taste ... drücken
-controlMenu.toggleInstructions=Press space to toggle controller
+controlMenu.toggleInstructions=Drücken Sie die Leertaste, um Controller wechseln
 
 -Global-.SharedProfile=Gemeinsamen Einstellungen
 -Global-.GrabMouse=⚠ Maus Greifen
--Global-.displayAllControls=Einblenden Controller
+-Global-.displayAllControls=Alle Controller anzeigen
 
 joy.guiRightClick=Rechte Maustaste
 joy.guiLeftClick=Linke Maustaste

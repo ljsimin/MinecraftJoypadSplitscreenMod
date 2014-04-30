@@ -1,5 +1,12 @@
+calibrationMenu.auto=авто
+calibrationMenu.deadzone=Мертвая зона
+calibrationMenu.instructionsTitle=команда
+calibrationMenu.instructions1=Переместите джойстик
+calibrationMenu.instructions2=Пресс авто найти мертвую зону
+calibrationMenu.save=сохранять
+
 controlMenu.addKey=Добавить ключ
-controlMenu.advanced=Advanced
+controlMenu.advanced=дополнительные параметры
 controlMenu.axis=ось
 controlMenu.buttons=Кнопки
 controlMenu.calibrate=калибровать
@@ -12,9 +19,9 @@ controlMenu.noControllers=контроллеры не найдены!
 controlMenu.pressKey=Нажмите кнопку ... 
 controlMenu.toggleInstructions=Нажмите пробел для переключения контроллера
 
--Global-.SharedProfile=Share settings
--Global-.GrabMouse=⚠ Mouse Grab
--Global-.displayAllControls=Display all controllers
+-Global-.SharedProfile=совместно использовать Установки
+-Global-.GrabMouse=⚠ извлекать мышь
+-Global-.displayAllControls=Показать все контроллеры
 
 joy.guiRightClick=Щелкните правой кнопкой мыши
 joy.guiLeftClick=Щелкните левой кнопкой мыши

@@ -1,5 +1,12 @@
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=盲區
+calibrationMenu.instructionsTitle=說明
+calibrationMenu.instructions1=移動搖桿
+calibrationMenu.instructions2=按Auto找盲區
+calibrationMenu.save=保存
+
 controlMenu.addKey=快捷鍵
-controlMenu.advanced=Advanced
+controlMenu.advanced=先進
 controlMenu.axis=Axis
 controlMenu.buttons=鍵
 controlMenu.calibrate=校正
@@ -10,11 +17,11 @@ controlMenu.mouse=鼠標
 controlMenu.scroll=滚动条
 controlMenu.noControllers=全無遊戲設備!
 controlMenu.pressKey=按鍵...
-controlMenu.toggleInstructions=Press space to toggle controller
+controlMenu.toggleInstructions=按空格鍵切換控制器
 
--Global-.SharedProfile=Share settings
--Global-.GrabMouse=⚠ Mouse Grab
--Global-.displayAllControls=Display all controllers
+-Global-.SharedProfile=共享设置
+-Global-.GrabMouse=⚠ 鼠标抢
+-Global-.displayAllControls=显示所有控制器
 
 joy.guiRightClick=右擊
 joy.guiLeftClick=左擊
