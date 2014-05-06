@@ -20,7 +20,7 @@ controlMenu.pressKey=キーを押す...
 controlMenu.toggleInstructions=スペースキーでコントローラーの切り替え（オン・オフ）
 
 -Global-.SharedProfile=共有設定
--Global-.GrabMouse=⚠ マウスのグラブ
+-Global-.GrabMouse=マウスのグラブ
 -Global-.displayAllControls=すべてのコントローラを表示する
 
 joy.guiRightClick=マウス右ボタン

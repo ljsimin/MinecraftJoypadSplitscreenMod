@@ -22,6 +22,7 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper.JSyms;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -29,7 +30,6 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
-import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu.JSyms;
 
 import cpw.mods.fml.client.GuiScrollingList;
 
@@ -316,13 +316,13 @@ public class JoypadControlList extends GuiScrollingList
 
 		// - or x
 		// draw a minus if the button is currently valid
-		char optionRemove = parent.symGet(JSyms.unbind);
+		char optionRemove = McObfuscationHelper.symGet(JSyms.unbind);
 		boolean enable = true;
 		if (!binding.inputEvent.isValid())
 		{
 			// else draw an X if the button is currently invalid and its a user binding
 			if (binding.inputString.contains("user."))
-				optionRemove = parent.symGet(JSyms.remove);
+				optionRemove = McObfuscationHelper.symGet(JSyms.remove);
 			else
 				// disable the button if the input is currently invalid
 				enable = false;
@@ -338,9 +338,9 @@ public class JoypadControlList extends GuiScrollingList
 			if (binding.inputEvent.getEventType() != EventType.AXIS
 					&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
 			{
-				char toggle = parent.symGet(JSyms.eCircle);
+				char toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.eCircle);
 				if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-					toggle = parent.symGet(JSyms.fCircle);
+					toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
 				b = new GuiButton(10003, x + controlButtonWidth + smallButtonWidth, y, smallButtonWidth, buttonHeight,
 						"" + toggle);
 				b.drawButton(mc, k, i1);

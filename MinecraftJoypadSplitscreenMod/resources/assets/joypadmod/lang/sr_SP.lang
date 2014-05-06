@@ -20,7 +20,7 @@ controlMenu.pressKey=Притисните тастер...
 controlMenu.toggleInstructions=Размак пали/гаси тренутни гејмпед
 
 -Global-.SharedProfile=Дељење подешавања
--Global-.GrabMouse=⚠ Закључавање миша
+-Global-.GrabMouse=Закључавање миша
 -Global-.displayAllControls=Прикажи све гејмпаде
 
 joy.guiRightClick=Десни клик

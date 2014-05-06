@@ -20,7 +20,7 @@ controlMenu.pressKey=按键...
 controlMenu.toggleInstructions=按空格键切换游戏设备
 
 -Global-.SharedProfile=共享设置
--Global-.GrabMouse=⚠ 鼠标抢
+-Global-.GrabMouse=鼠标抢
 -Global-.displayAllControls=显示所有控制器
 
 joy.guiRightClick=右键

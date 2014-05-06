@@ -20,7 +20,7 @@ controlMenu.pressKey=Wciśnij dowolny klawisz...
 controlMenu.toggleInstructions=Spacja wł/wył gamepad
 
 -Global-.SharedProfile=Wspólne ustawienia
--Global-.GrabMouse=⚠ Przechwycenie myszki
+-Global-.GrabMouse=Przechwycenie myszki
 -Global-.displayAllControls=Pokaż wszystkie gamepad-y
 
 joy.guiRightClick=Lewy klik

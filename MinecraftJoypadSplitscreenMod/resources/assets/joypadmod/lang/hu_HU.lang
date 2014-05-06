@@ -20,7 +20,7 @@ controlMenu.pressKey=Nyomd meg...
 controlMenu.toggleInstructions=A space kapcsolja ki/be a játékvezérlőt
 
 -Global-.SharedProfile=Oszd meg a beállításokat
--Global-.GrabMouse=⚠ Fogd meg az egérrel
+-Global-.GrabMouse=Fogd meg az egérrel
 -Global-.displayAllControls=Mútasd meg az összes játékvezérlőt
 
 joy.guiRightClick=Bal kattintás
