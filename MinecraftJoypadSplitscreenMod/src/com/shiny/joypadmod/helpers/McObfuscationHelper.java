@@ -84,6 +84,78 @@ public class McObfuscationHelper
 
 	public static String lookupString(String input)
 	{
+		String ret = "";
+		if (input.contains("joy."))
+		{
+			if (input.contains("X-") || input.contains("prev"))
+				ret += symGet(JSyms.lArrow);
+			else if (input.contains("X+") || input.contains("next"))
+				ret += symGet(JSyms.rArrow);
+			else if (input.contains("Y-") || input.contains("Up"))
+				ret += symGet(JSyms.uArrow);
+			else if (input.contains("Y+") || input.contains("Down"))
+				ret += symGet(JSyms.dArrow);
+			if (input.equals("joy.closeInventory"))
+				return doTranslate("key.inventory") + " " + symGet(JSyms.remove);
+
+			if (ret != "")
+			{
+				if (input.contains("camera"))
+					ret = doTranslate("controlMenu.look") + " " + ret;
+				else if (input.contains("gui"))
+					ret = doTranslate("controlMenu.mouse") + " " + ret;
+				else if (input.contains("scroll"))
+					ret = doTranslate("controlMenu.scroll") + " " + ret;
+				else if (input.contains("Item") || (input.contains("Item")))
+					ret = doTranslate("key.inventory") + " " + ret;
+
+				return ret;
+			}
+		}
+
+		if (input.contains("-Global-.GrabMouse"))
+		{
+			return symGet(JSyms.warning) + " " + doTranslate(input);
+		}
+
+		return doTranslate(input);
+	}
+
+	public enum JSyms
+	{
+		lArrow, rArrow, uArrow, dArrow, eCircle, fCircle, unbind, remove, warning
+	};
+
+	public static char symGet(JSyms sym)
+	{
+		switch (sym)
+		{
+		case lArrow:
+			return 0x2B05;
+		case rArrow:
+			return 0x27A1;
+		case uArrow:
+			return 0x2B06;
+		case dArrow:
+			return 0x2B07;
+		case unbind:
+			return '-';
+		case eCircle:
+			return 9675;
+		case fCircle:
+			return 9679;
+		case remove:
+			return 0x2716;
+		case warning:
+			return 0x26A0;
+		default:
+			return '?';
+
+		}
+	}
+
+	private static String doTranslate(String input)
+	{
 		String translation = I18n.format(input, new Object[0]);
 		if (translation.compareTo(input) == 0)
 		{
@@ -93,6 +165,7 @@ public class McObfuscationHelper
 			if (translation.compareTo(keyString) == 0)
 				return input;
 		}
+
 		return translation;
 	}
 

@@ -20,7 +20,7 @@ controlMenu.pressKey=Taste ... drücken
 controlMenu.toggleInstructions=Drücken Sie die Leertaste, um Controller wechseln
 
 -Global-.SharedProfile=Gemeinsamen Einstellungen
--Global-.GrabMouse=⚠ Maus Greifen
+-Global-.GrabMouse=Maus Greifen
 -Global-.displayAllControls=Alle Controller anzeigen
 
 joy.guiRightClick=Rechte Maustaste

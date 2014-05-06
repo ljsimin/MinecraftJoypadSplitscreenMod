@@ -20,7 +20,7 @@ controlMenu.pressKey=Нажмите кнопку ...
 controlMenu.toggleInstructions=Нажмите пробел для переключения контроллера
 
 -Global-.SharedProfile=совместно использовать Установки
--Global-.GrabMouse=⚠ извлекать мышь
+-Global-.GrabMouse=извлекать мышь
 -Global-.displayAllControls=Показать все контроллеры
 
 joy.guiRightClick=Щелкните правой кнопкой мыши
