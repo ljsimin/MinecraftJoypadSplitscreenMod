@@ -232,11 +232,11 @@ public class JoypadConfigMenu extends GuiScreen
 			updateControllerButton();
 			optionList.updatejoyBindKeys();
 			break;
-		/*
-		 * case 200: // unhide controllers ControllerSettings.setInputEnabled(-1, false); if (guiButton.displayString.equals(sGet("controlMenu.otherControls"))) { getControllers(false);
-		 * guiButton.displayString = sGet("controlMenu.validControls"); } else { getControllers(true); guiButton.displayString = sGet("controlMenu.otherControls"); }
-		 * enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0); if (controllers.size() > 0) { updateControllerButton(); } break;
-		 */
+			/*
+			 * case 200: // unhide controllers ControllerSettings.setInputEnabled(-1, false); if (guiButton.displayString.equals(sGet("controlMenu.otherControls"))) { getControllers(false);
+			 * guiButton.displayString = sGet("controlMenu.validControls"); } else { getControllers(true); guiButton.displayString = sGet("controlMenu.otherControls"); }
+			 * enableDisableButton(ButtonsEnum.control.ordinal(), controllers.size() > 0); if (controllers.size() > 0) { updateControllerButton(); } break;
+			 */
 		case 310: // menu/game sensitivity
 		case 320:
 			break;
@@ -384,7 +384,9 @@ public class JoypadConfigMenu extends GuiScreen
 		}
 		else
 		{
-			super.keyTyped(c, code);
+			try{
+				super.keyTyped(c, code);}
+			catch(java.io.IOException e){}
 		}
 	}
 
@@ -396,7 +398,9 @@ public class JoypadConfigMenu extends GuiScreen
 			JoypadControlList.lastXClick = par1;
 			JoypadControlList.lastYClick = par2;
 		}
-		super.mouseClicked(par1, par2, par3);
+		try{
+			super.mouseClicked(par1, par2, par3);
+		}catch(java.io.IOException e){}
 	}
 
 	private int getJoypadIndex(int offset)
@@ -442,7 +446,6 @@ public class JoypadConfigMenu extends GuiScreen
 
 	// Obfuscation & back porting helpers -- here and not in ObfuscationHelper
 	// because accessing protected methods
-	// TODO think about extending the GuiButton class for this functionality
 
 	@SuppressWarnings("unchecked")
 	private void addButton(GuiButton guiButton, boolean enabled)

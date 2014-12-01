@@ -52,5 +52,5 @@ processResources
 }
  
 archivesBaseName = "JoypadMod"
-version = "1.7.10-0.1"
-minecraft.version = "1.7.10-10.13.0.1159"
+version = "1.8-0.1"
+minecraft.version = "1.8-11.14.0.1247-1.8"

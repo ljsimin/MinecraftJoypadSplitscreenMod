@@ -5,6 +5,11 @@ package com.shiny.joypadmod;
  */
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
@@ -13,11 +18,6 @@ import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
 		+ JoypadMod.REVISION)

@@ -1,14 +1,15 @@
 package com.shiny.joypadmod.helpers;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
+
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 
 public class ModVersionHelper
 {
@@ -39,11 +40,11 @@ public class ModVersionHelper
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void tickRender(RenderTickEvent event)
 	{
-		if (event.phase == TickEvent.Phase.START)
+		if (event.phase == Phase.START)
 		{
 			GameRenderHandler.HandlePreRender();
 		}
-		else if (event.phase == TickEvent.Phase.END)
+		else if (event.phase == Phase.END)
 		{
 			GameRenderHandler.HandlePostRender();
 		}
@@ -52,11 +53,11 @@ public class ModVersionHelper
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void tickRenderClient(ClientTickEvent event)
 	{
-		if (event.phase == TickEvent.Phase.START)
+		if (event.phase == Phase.START)
 		{
 			GameRenderHandler.HandleClientStartTick();
 		}
-		else if (event.phase == TickEvent.Phase.END)
+		else if (event.phase == Phase.END)
 		{
 			GameRenderHandler.HandleClientEndTick();
 		}
