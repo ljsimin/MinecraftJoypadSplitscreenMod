@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraftforge.fml.client.GuiScrollingList;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -17,7 +18,6 @@ import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 
-import cpw.mods.fml.client.GuiScrollingList;
 
 public class JoypadCalibrationList extends GuiScrollingList
 {
@@ -134,8 +134,8 @@ public class JoypadCalibrationList extends GuiScrollingList
 		Controller controller = Controllers.getController(joypadIndex);
 		int yPos = yStart;
 		DecimalFormat df = new DecimalFormat("#0.00");
-		int autoButtonWidth = mc.fontRenderer.getStringWidth(McObfuscationHelper.lookupString("calibrationMenu.auto")) + 10;
-		int resetButtonWidth = mc.fontRenderer.getStringWidth(McObfuscationHelper.lookupString("controls.reset")) + 10;
+		int autoButtonWidth = mc.fontRendererObj.getStringWidth(McObfuscationHelper.lookupString("calibrationMenu.auto")) + 10;
+		int resetButtonWidth = mc.fontRendererObj.getStringWidth(McObfuscationHelper.lookupString("controls.reset")) + 10;
 		int directionButWidth = 15;
 
 		int maxSize = parent.fr.getStringWidth("X Axis:");

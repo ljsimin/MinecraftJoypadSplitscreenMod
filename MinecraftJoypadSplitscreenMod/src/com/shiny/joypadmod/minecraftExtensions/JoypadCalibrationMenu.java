@@ -32,7 +32,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	private JoypadCalibrationList calibrationList = null;
 
-	FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+	FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
 	String[] instructions = new String[] { "calibrationMenu.instructions1", "calibrationMenu.instructions2",
 			"calibrationMenu.save" };
@@ -98,8 +98,10 @@ public class JoypadCalibrationMenu extends GuiScreen
 	@Override
 	protected void mouseClicked(int par1, int par2, int par3)
 	{
+		try{
 		super.mouseClicked(par1, par2, par3);
-
+		}
+		catch(java.io.IOException e){}
 		if (calibrationList == null)
 			return;
 

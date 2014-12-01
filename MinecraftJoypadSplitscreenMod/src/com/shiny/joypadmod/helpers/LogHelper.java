@@ -1,10 +1,11 @@
 package com.shiny.joypadmod.helpers;
 
+import net.minecraftforge.fml.common.FMLLog;
+
 import org.apache.logging.log4j.Level;
 
 import com.shiny.joypadmod.ControllerSettings;
 
-import cpw.mods.fml.common.FMLLog;
 
 public class LogHelper
 {

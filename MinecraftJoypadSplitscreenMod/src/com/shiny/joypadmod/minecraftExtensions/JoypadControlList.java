@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.client.GuiScrollingList;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Controllers;
@@ -31,7 +32,7 @@ import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
-import cpw.mods.fml.client.GuiScrollingList;
+
 
 public class JoypadControlList extends GuiScrollingList
 {
