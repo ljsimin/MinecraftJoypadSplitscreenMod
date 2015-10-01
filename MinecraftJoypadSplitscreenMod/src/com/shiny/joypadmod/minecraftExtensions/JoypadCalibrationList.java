@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shiny.joypadmod.ControllerSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -99,6 +100,18 @@ public class JoypadCalibrationList extends GuiScrollingList
 			axisId -= 300;
 			controller.setDeadZone(axisId, controller.getDeadZone(axisId) + 0.01f);
 		}
+		else if (guiButton.id >= 400 && guiButton.id < 500)
+		{
+			// toggle the single direction property of the axis
+			axisId -= 400;
+			ControllerSettings.toggleSingleDirectionAxis(joypadIndex, axisId);
+			char toggleSign = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.eCircle);
+			if (ControllerSettings.isSingleDirectionAxis(joypadIndex, axisId))
+			{
+				toggleSign = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
+			}
+			guiButton.displayString = "" + toggleSign;
+		}
 	}
 
 	public List<GuiButton> buttonList = new ArrayList<GuiButton>();
@@ -118,7 +131,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 			int totalWidth = parent.axisBoxWidth;
 			drawAxis(var1, this.width / 2 - totalWidth / 2, var3 + 2, 21, k, i1, totalWidth);
 
-			for (int i = 4 * var1; i < 4 * var1 + 4; i++)
+			for (int i = 5 * var1; i < 5 * var1 + 4; i++)
 			{
 				if (buttonList.size() > i)
 				{
@@ -157,8 +170,17 @@ public class JoypadCalibrationList extends GuiScrollingList
 
 		int yOffset = -7;
 		int xOffset = 2;
-		if (this.buttonList.size() <= 4 * axisNum)
+		if (this.buttonList.size() <= 5 * axisNum)
 		{
+			// Single direction axis toggle button
+			char toggleSign = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.eCircle);
+			if (ControllerSettings.isSingleDirectionAxis(joypadIndex, axisNum))
+			{
+				toggleSign = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
+			}
+			buttonList.add(new GuiButton(axisNum + 400, xPos2, yPos + yOffset, directionButWidth, 20, "" + toggleSign));
+			xPos2 -= directionButWidth - xOffset;
+
 			buttonList.add(new GuiButton(axisNum + 300, xPos2, yPos + yOffset, directionButWidth, 20, ">"));
 			xPos2 -= resetButtonWidth - xOffset;
 			buttonList.add(new GuiButton(axisNum + 200, xPos2, yPos + yOffset, resetButtonWidth, 20,

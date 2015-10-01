@@ -1,5 +1,6 @@
 package com.shiny.joypadmod.inputevent;
 
+import com.shiny.joypadmod.ControllerSettings;
 import org.lwjgl.input.Controllers;
 
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -48,7 +49,12 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return 0;
-		return Controllers.getController(controllerNumber).getAxisValue(axisNumber);
+		float rawValue = Controllers.getController(controllerNumber).getAxisValue(axisNumber);
+		if (ControllerSettings.isSingleDirectionAxis(controllerNumber, axisNumber))
+		{
+			return (rawValue + 1f) / 2f;
+		}
+		return rawValue;
 	}
 
 	@Override
