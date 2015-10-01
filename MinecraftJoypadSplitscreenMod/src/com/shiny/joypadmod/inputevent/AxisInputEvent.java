@@ -49,12 +49,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return 0;
-		float rawValue = Controllers.getController(controllerNumber).getAxisValue(axisNumber);
-		if (ControllerSettings.isSingleDirectionAxis(controllerNumber, axisNumber))
-		{
-			return (rawValue + 1f) / 2f;
-		}
-		return rawValue;
+		return ControllerUtils.getAxisValue(Controllers.getController(controllerNumber), axisNumber);
 	}
 
 	@Override

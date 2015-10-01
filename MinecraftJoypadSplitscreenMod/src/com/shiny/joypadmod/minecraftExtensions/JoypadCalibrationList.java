@@ -131,7 +131,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 			int totalWidth = parent.axisBoxWidth;
 			drawAxis(var1, this.width / 2 - totalWidth / 2, var3 + 2, 21, k, i1, totalWidth);
 
-			for (int i = 5 * var1; i < 5 * var1 + 4; i++)
+			for (int i = 5 * var1; i < 5 * var1 + 5; i++)
 			{
 				if (buttonList.size() > i)
 				{
@@ -158,7 +158,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 		yPos += 10;
 		int xPos = xStart + 5;
 
-		String output = title + ": " + df.format(controller.getAxisValue(axisNum));
+		String output = title + ": " + df.format(ControllerUtils.getAxisValue(controller, axisNum));
 		parent.write(xPos, yPos, output);
 		xPos += maxSize + parent.fr.getStringWidth(" -1.00") + 4;
 		output = McObfuscationHelper.lookupString("calibrationMenu.deadzone") + ": "
