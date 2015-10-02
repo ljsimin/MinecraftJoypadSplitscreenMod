@@ -62,6 +62,7 @@ public class ControllerSettings
 
 	private static Map<String, List<Integer>> validControllers;
 	private static Map<String, List<Integer>> inValidControllers;
+	private static Map<Integer, List<Integer>> singleDirectionAxis;
 	public static ControllerUtils controllerUtils;
 
 	// modDisabled will not set up the event handlers and will therefore render
@@ -90,6 +91,7 @@ public class ControllerSettings
 		controllerUtils = new ControllerUtils();
 		validControllers = new HashMap<String, List<Integer>>();
 		inValidControllers = new HashMap<String, List<Integer>>();
+		singleDirectionAxis = new HashMap<Integer, List<Integer>>();
 		joyBindingsMap = new HashMap<String, ControllerBinding>();
 		userDefinedBindings = new ArrayList<ControllerBinding>();
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
@@ -438,6 +440,49 @@ public class ControllerSettings
 		return validControllers.size();
 	}
 
+	/**
+	 *
+	 * @param controllerNo The index of the controller
+	 * @param axisNo The index of the axis
+	 * @return true if the axis is single-directed, and false instead
+	 */
+	public static boolean isSingleDirectionAxis(int controllerNo, int axisNo)
+	{
+		List<Integer> axis = singleDirectionAxis.getOrDefault(controllerNo, new ArrayList<Integer>());
+		return axis.contains(axisNo);
+	}
+
+	/**
+	 *
+	 * @param controllerNo The index of the controller
+	 */
+	private static void addSingleDirectionAxis(int controllerNo)
+	{
+		if (!singleDirectionAxis.containsKey(controllerNo))
+		{
+			singleDirectionAxis.put(controllerNo, new ArrayList<Integer>());
+		}
+	}
+
+	/**
+	 *
+	 * @param controllerNo The index of the controller
+	 * @param axisNo The index of the axis
+	 */
+	public static void toggleSingleDirectionAxis(int controllerNo, int axisNo)
+	{
+		addSingleDirectionAxis(controllerNo);
+		List<Integer> axis = singleDirectionAxis.get(controllerNo);
+		if (axis.contains(axisNo))
+		{
+			axis.remove(Integer.valueOf(axisNo));
+		}
+		else
+		{
+			axis.add(axisNo);
+		}
+	}
+
 	public static boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
@@ -455,14 +500,17 @@ public class ControllerSettings
 				return false;
 			}
 
+			addSingleDirectionAxis(controllerNo);
+
+			Controller controller = Controllers.getController(controllerNo);
 			ControllerSettings.setDefaultJoyBindingMap(controllerNo, true);
 			joyNo = controllerNo;
-			controllerUtils.printDeadZones(Controllers.getController(controllerNo));
+			controllerUtils.printDeadZones(controller);
 			inputEnabled = true;
 
 			applySavedDeadZones(joyNo);
 
-			config.updatePreferedJoy(controllerNo, Controllers.getController(controllerNo).getName());
+			config.updatePreferedJoy(controllerNo, controller.getName());
 
 			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
 			JoypadMouse.AxisReader.centerCrosshairs();

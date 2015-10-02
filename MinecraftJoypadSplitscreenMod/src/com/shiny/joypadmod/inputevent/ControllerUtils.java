@@ -3,6 +3,7 @@ package com.shiny.joypadmod.inputevent;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.shiny.joypadmod.ControllerSettings;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
@@ -112,9 +113,9 @@ public class ControllerUtils
 	{
 		if (Controllers.isEventAxis())
 		{
-			if (Math.abs(controller.getAxisValue(eventIndex)) > 0.75f)
+			if (Math.abs(ControllerUtils.getAxisValue(controller, eventIndex)) > 0.75f)
 			{
-				return new AxisInputEvent(controller.getIndex(), eventIndex, controller.getAxisValue(eventIndex),
+				return new AxisInputEvent(controller.getIndex(), eventIndex, ControllerUtils.getAxisValue(controller, eventIndex),
 						controller.getDeadZone(eventIndex));
 			}
 		}
@@ -177,7 +178,7 @@ public class ControllerUtils
 		}
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
-			if (controller.getAxisValue(i) == -1)
+			if (ControllerUtils.getAxisValue(controller, i) == -1)
 			{
 				numberOfNegativeAxes++;
 			}
@@ -189,11 +190,21 @@ public class ControllerUtils
 	{
 		Controller controller = Controllers.getController(joyId);
 		controller.setDeadZone(axisId, 0);
-		float currentValue = Math.abs(controller.getAxisValue(axisId));
+		float currentValue = Math.abs(getAxisValue(controller, axisId));
 		LogHelper.Info("Axis: " + axisId + " currently has a value of: " + currentValue);
 		float newValue = currentValue + 0.15f;
 		controller.setDeadZone(axisId, newValue);
 		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
+	}
+
+	public static float getAxisValue(Controller controller, int axisNum)
+	{
+		float rawValue = controller.getAxisValue(axisNum);
+		if (ControllerSettings.isSingleDirectionAxis(controller.getIndex(), axisNum))
+		{
+			return (rawValue + 1f) / 2f;
+		}
+		return rawValue;
 	}
 
 	public static int findYAxisIndex(int joyId)
