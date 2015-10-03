@@ -448,8 +448,10 @@ public class ControllerSettings
 	 */
 	public static boolean isSingleDirectionAxis(int controllerNo, int axisNo)
 	{
-		List<Integer> axis = singleDirectionAxis.getOrDefault(controllerNo, new ArrayList<Integer>());
-		return axis.contains(axisNo);
+		List<Integer> axis = singleDirectionAxis.get(controllerNo);
+		if (axis != null)
+			return axis.contains(axisNo);
+		return false;
 	}
 
 	/**
@@ -481,6 +483,18 @@ public class ControllerSettings
 		{
 			axis.add(axisNo);
 		}
+	}
+	
+	/**
+	 *
+	 * @param controllerNo The index of the controller
+	 * @return List of single direction axis
+	 */
+	public static List<Integer> getSingleDirectionAxis(int controllerNo)
+	{
+		if (singleDirectionAxis.containsKey(controllerNo))
+			return singleDirectionAxis.get(controllerNo);
+		return new ArrayList<Integer>(); //return empty list
 	}
 
 	public static boolean setController(int controllerNo)

@@ -5,6 +5,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
@@ -31,6 +34,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	private String lastControllerEvent = "";
 
 	private JoypadCalibrationList calibrationList = null;
+	private List<Integer> singleDirectionAxisSaved = null;
 
 	FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
@@ -42,6 +46,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 		super();
 		this.joypadIndex = joypadIndex;
 		this.parent = parent;
+		// create a copy of the currently saved SDA to compare when exiting
+		singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
 	}
 
 	@Override
@@ -72,7 +78,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		int xPos = width / 2 - bottomButtonWidth / 2;
 
-		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, "gui.done");
+		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, McObfuscationHelper.lookupString("gui.cancel"));
 
 		// these buttons will be moved if we display axis values
 		if (joypadIndex != -1 && Controllers.getController(joypadIndex).getAxisCount() > 0)
@@ -123,10 +129,19 @@ public class JoypadCalibrationMenu extends GuiScreen
 		switch (guiButton.id)
 		{
 		case 400: // Save
+			singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
 			ControllerSettings.saveDeadZones(joypadIndex);
 			((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
 			break;
 		case 500: // Done
+			List<Integer> singleDirectionAxisExit = ControllerSettings.getSingleDirectionAxis(joypadIndex);
+			// revert singleDirectionAxis toggles if it wasn't saved
+			for (int i = 0; i < Controllers.getController(joypadIndex).getAxisCount(); i++)
+			{
+				if (singleDirectionAxisSaved.contains(i) != singleDirectionAxisExit.contains(i))
+					ControllerSettings.toggleSingleDirectionAxis(joypadIndex, i);
+			}
+			
 			mc.displayGuiScreen(this.parent);
 			break;
 		}
