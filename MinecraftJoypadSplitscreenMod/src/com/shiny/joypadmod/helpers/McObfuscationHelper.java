@@ -68,7 +68,7 @@ public class McObfuscationHelper
 		case 172:
 			return new String[] { fieldOrFunctionName, candidates[1] };
 		default:
-			return new String[] { fieldOrFunctionName, "unknown" };
+			return new String[] { fieldOrFunctionName, candidates[1] };
 		}
 	}
 
