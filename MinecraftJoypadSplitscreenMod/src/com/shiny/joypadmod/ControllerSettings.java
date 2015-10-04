@@ -64,6 +64,8 @@ public class ControllerSettings
 	private static Map<String, List<Integer>> inValidControllers;
 	private static Map<Integer, List<Integer>> singleDirectionAxis;
 	public static ControllerUtils controllerUtils;
+	
+	public static List<Integer> xbox6Axis = new ArrayList<Integer>();
 
 	// modDisabled will not set up the event handlers and will therefore render
 	// the mod inoperable
@@ -124,6 +126,15 @@ public class ControllerSettings
 
 		int yAxisIndex = ControllerUtils.findYAxisIndex(joyIndex);
 		int xAxisIndex = ControllerUtils.findXAxisIndex(joyIndex);
+		
+		// check for new Xbox one case 
+		Controller controller = Controllers.getController(joyIndex);
+		if (controller.getName().toLowerCase().contains("xbox one") && controller.getAxisCount() == 6)
+		{
+			LogHelper.Info("XBox One 6 axis joypad detected.");
+			if (!xbox6Axis.contains(joyIndex))
+				xbox6Axis.add(joyIndex);			
+		}
 
 		joyBindingsMap.put(
 				"joy.jump",
@@ -151,11 +162,14 @@ public class ControllerSettings
 						new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) }, 0, EnumSet.of(
 								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
+		
+		int axisIndexToUse = xbox6Axis.contains(joyIndex) ? 5 : 4;
+		float thresholdToUse = xbox6Axis.contains(joyIndex) ? defaultAxisThreshhold : defaultAxisThreshhold * -1;
 
 		joyBindingsMap.put(
 				"joy.attack",
-				new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyIndex, 4, defaultAxisThreshhold
-						* -1, defaultAxisDeadZone), new int[] { -100 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
+				new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyIndex, axisIndexToUse, thresholdToUse, 
+						defaultAxisDeadZone), new int[] { -100 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
 						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
 
 		joyBindingsMap.put(
@@ -305,8 +319,15 @@ public class ControllerSettings
 						new int[] { -199 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
 								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
+		if (xbox6Axis.contains(joyIndex))
+		{
+			if (!isSingleDirectionAxis(joyIndex, 4))
+				toggleSingleDirectionAxis(joyIndex,4);
+			if (!isSingleDirectionAxis(joyIndex, 5))
+				toggleSingleDirectionAxis(joyIndex,5);
+		}
 		if (updateWithConfigFile)
-			config.getJoypadSavedBindings(joyIndex, Controllers.getController(joyIndex).getName());
+			config.getJoypadSavedBindings(joyIndex, controller.getName());
 
 		List<ControllerBinding> userBindings = config.getUserDefinedBindings(joyIndex);
 

@@ -150,17 +150,23 @@ public class ControllerUtils
 		{
 			return "NONE";
 		}
+		String result = null;
+		
 		if (controller.getName().toLowerCase().contains("xinput")
 				|| controller.getName().toLowerCase().contains("xusb")
 				|| controller.getName().toLowerCase().contains("xbox"))
-		{
-			String result = xinputNamesMap.get(inputEvent.getDescription());
-			if (result != null)
+		{			
+			if (ControllerSettings.xbox6Axis.contains(controller.getIndex()))
 			{
-				return result;
+				if (inputEvent.getDescription().contains("Z Axis"))
+					result = "LT";
+				else if (inputEvent.getDescription().contains("Z Rotation"))
+					result = "RT";
 			}
+			if (result == null)
+				result = xinputNamesMap.get(inputEvent.getDescription());			
 		}
-		return inputEvent.getDescription();
+		return result == null ? inputEvent.getDescription() : result;
 	}
 
 	/**
