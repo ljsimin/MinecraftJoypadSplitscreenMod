@@ -152,7 +152,7 @@ public class ConfigFile
 		int lastIndex = categoryKey.lastIndexOf('.');
 		String category = categoryKey.substring(0, lastIndex);
 		String key = categoryKey.substring(lastIndex + 1);
-		return config.get(category, key, false).getString();
+		return config.get(category, key, "false").getString();
 	}
 
 	public void setConfigFileSetting(String categoryKey, String value)

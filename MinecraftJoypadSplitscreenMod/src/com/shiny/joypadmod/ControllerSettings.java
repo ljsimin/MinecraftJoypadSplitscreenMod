@@ -442,6 +442,12 @@ public class ControllerSettings
 						LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
 								+ ") meets the input requirements");
 						addControllerToList(validControllers, thisController.getName(), joyIndex);
+						String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+thisController.getName());
+						if (axisStr != null && !axisStr.equals("") && !axisStr.equals("false"))
+						{
+							setSingleDirectionAxis(joyIndex, stringToAxisList(axisStr));
+							LogHelper.Info("Retrieved informations about single-direction axis");
+						}
 					}
 					else
 					{
@@ -459,6 +465,34 @@ public class ControllerSettings
 
 		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
 		return validControllers.size();
+	}
+
+	private static String axisListToString(List<Integer> axisList)
+	{
+		StringBuilder sb = new StringBuilder();
+		for(Integer axis: axisList)
+		{
+			sb.append(axis);
+			sb.append(',');
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		return sb.toString();
+	}
+
+	private static List<Integer> stringToAxisList(String axisStr)
+	{
+		List<Integer> ret = new ArrayList<Integer>();
+		for (String axis : axisStr.split(","))
+		{
+			try
+			{
+				ret.add(Integer.parseInt(axis));
+			}
+			catch (NumberFormatException e)
+			{
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -487,6 +521,11 @@ public class ControllerSettings
 		}
 	}
 
+	private static void setSingleDirectionAxis(int controllerNo, List<Integer> axisList)
+	{
+		singleDirectionAxis.put(controllerNo, axisList);
+	}
+
 	/**
 	 *
 	 * @param controllerNo The index of the controller
@@ -505,7 +544,7 @@ public class ControllerSettings
 			axis.add(axisNo);
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param controllerNo The index of the controller
@@ -820,9 +859,8 @@ public class ControllerSettings
 				+ ControllerSettings.inMenuSensitivity);
 	}
 
-	public static void saveDeadZones(int joyId)
+	public static void saveDeadZones(Controller controller)
 	{
-		Controller controller = Controllers.getController(joyId);
 		DecimalFormat df = new DecimalFormat("#0.00");
 
 		for (int i = 0; i < controller.getAxisCount(); i++)
@@ -832,6 +870,14 @@ public class ControllerSettings
 		}
 		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
 		LogHelper.Info("Saved deadzones for " + controller.getName());
+	}
+
+	public static void saveSingleDirectionAxis(Controller controller)
+	{
+		List<Integer> axis = getSingleDirectionAxis(controller.getIndex());
+		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisListToString(axis));
+		config.addComment("-SingleDirectionAxis-", "Set single-direction axis for this controller");
+		LogHelper.Info("Saved single-direction axis for " + controller.getName());
 	}
 
 	private static void saveCurrentJoyBindings()

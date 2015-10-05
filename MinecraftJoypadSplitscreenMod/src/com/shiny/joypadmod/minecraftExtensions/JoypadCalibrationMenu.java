@@ -130,7 +130,9 @@ public class JoypadCalibrationMenu extends GuiScreen
 		{
 		case 400: // Save
 			singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
-			ControllerSettings.saveDeadZones(joypadIndex);
+			Controller controller = Controllers.getController(joypadIndex);
+			ControllerSettings.saveDeadZones(controller);
+			ControllerSettings.saveSingleDirectionAxis(controller);
 			((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
 			break;
 		case 500: // Done
