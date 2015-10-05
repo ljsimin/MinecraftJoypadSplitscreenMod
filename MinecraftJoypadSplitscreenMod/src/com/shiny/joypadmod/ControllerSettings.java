@@ -5,6 +5,7 @@ package com.shiny.joypadmod;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -319,13 +320,6 @@ public class ControllerSettings
 						new int[] { -199 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
 								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
-		if (xbox6Axis.contains(joyIndex))
-		{
-			if (!isSingleDirectionAxis(joyIndex, 4))
-				toggleSingleDirectionAxis(joyIndex,4);
-			if (!isSingleDirectionAxis(joyIndex, 5))
-				toggleSingleDirectionAxis(joyIndex,5);
-		}
 		if (updateWithConfigFile)
 			config.getJoypadSavedBindings(joyIndex, controller.getName());
 
@@ -442,12 +436,6 @@ public class ControllerSettings
 						LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
 								+ ") meets the input requirements");
 						addControllerToList(validControllers, thisController.getName(), joyIndex);
-						String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+thisController.getName());
-						if (axisStr != null && !axisStr.equals("") && !axisStr.equals("false"))
-						{
-							setSingleDirectionAxis(joyIndex, stringToAxisList(axisStr));
-							LogHelper.Info("Retrieved informations about single-direction axis");
-						}
 					}
 					else
 					{
@@ -467,29 +455,33 @@ public class ControllerSettings
 		return validControllers.size();
 	}
 
-	private static String axisListToString(List<Integer> axisList)
+	private static String intListToString(List<Integer> intList)
 	{
 		StringBuilder sb = new StringBuilder();
-		for(Integer axis: axisList)
+		if (intList.size() > 0)
 		{
-			sb.append(axis);
-			sb.append(',');
+			for(Integer theInt: intList)
+			{
+				sb.append(theInt);
+				sb.append(',');
+			}
+			sb.deleteCharAt(sb.length() - 1);
 		}
-		sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
 	}
 
-	private static List<Integer> stringToAxisList(String axisStr)
+	private static List<Integer> stringToIntList(String intStr)
 	{
 		List<Integer> ret = new ArrayList<Integer>();
-		for (String axis : axisStr.split(","))
+		for (String theInt : intStr.split(","))
 		{
 			try
 			{
-				ret.add(Integer.parseInt(axis));
+				ret.add(Integer.parseInt(theInt));
 			}
 			catch (NumberFormatException e)
 			{
+				LogHelper.Info("[stringToIntList] Invalid Integer in list." + e.toString());
 			}
 		}
 		return ret;
@@ -523,7 +515,24 @@ public class ControllerSettings
 
 	private static void setSingleDirectionAxis(int controllerNo, List<Integer> axisList)
 	{
-		singleDirectionAxis.put(controllerNo, axisList);
+		List<Integer> finalAxisList = new ArrayList<Integer>();
+		Controller c = Controllers.getController(controllerNo);
+		StringBuilder sbSDAMessage = new StringBuilder();
+		sbSDAMessage.append("Setting the following as Single Direction Axes on " + c.getName());
+		for (Integer i : axisList)
+		{
+			if (i >= 0 && i < c.getAxisCount())
+			{
+				sbSDAMessage.append(" " + c.getAxisName(i));
+				finalAxisList.add(i);
+			}
+			else
+			{
+				LogHelper.Info("Rejecting invalid axis in Single Direction Axis list: " + i);
+			}
+		}
+		LogHelper.Info(sbSDAMessage.toString());
+		singleDirectionAxis.put(controllerNo, finalAxisList);
 	}
 
 	/**
@@ -583,6 +592,26 @@ public class ControllerSettings
 			inputEnabled = true;
 
 			applySavedDeadZones(joyNo);
+			
+			String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+controller.getName());
+			if (axisStr != null) // should never be null (default to "false") but just in case
+			{
+				// handle the case where a 6 axis xbox controller is detected 
+				// and they haven't manually applied any SDA settings
+				if (axisStr.equals("false"))
+				{		
+					if (xbox6Axis.contains(joyNo))
+					{
+						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4,5)));
+						LogHelper.Info("Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
+					}
+				}
+				else if (!axisStr.equals(""))
+				{
+					setSingleDirectionAxis(joyNo, stringToIntList(axisStr));
+					LogHelper.Info("Retrieved informations about single-direction axis");
+				}
+			}
 
 			config.updatePreferedJoy(controllerNo, controller.getName());
 
@@ -874,10 +903,11 @@ public class ControllerSettings
 
 	public static void saveSingleDirectionAxis(Controller controller)
 	{
-		List<Integer> axis = getSingleDirectionAxis(controller.getIndex());
-		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisListToString(axis));
+		String axisList = intListToString(getSingleDirectionAxis(controller.getIndex()));
+		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisList);
 		config.addComment("-SingleDirectionAxis-", "Set single-direction axis for this controller");
-		LogHelper.Info("Saved single-direction axis for " + controller.getName());
+		LogHelper.Info("Saved single-direction axis for " + controller.getName() 
+			+ " values: '" + axisList + "'");
 	}
 
 	private static void saveCurrentJoyBindings()
