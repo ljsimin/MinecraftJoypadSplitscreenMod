@@ -194,6 +194,9 @@ public class JoypadMouse
 		{
 			if (!pollNeeded(mc.currentScreen != null))
 				return;
+			
+			int lastReportedX = x;
+			int lastReportedY = y;
 
 			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth,
 					mc.displayHeight);
@@ -214,7 +217,8 @@ public class JoypadMouse
 				if (y > scaledResolution.getScaledHeight())
 					y = scaledResolution.getScaledHeight() - 5;
 
-				if (ControllerSettings.loggingLevel > 2)
+				if (ControllerSettings.loggingLevel > 2 && 
+						(lastReportedX != x || lastReportedY != y))
 					LogHelper.Debug("Virtual Mouse x: " + x + " y: " + y);
 
 				mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
@@ -270,6 +274,7 @@ public class JoypadMouse
 			return 0;
 		}
 
+		private static float lastReportedMultiplier = 0;
 		private static float getModifiedMultiplier(float currentMultiplier)
 		{
 			long elapsed = Minecraft.getSystemTime() - last0Reading;
@@ -279,8 +284,12 @@ public class JoypadMouse
 
 				// increase the multiplier by 10% every 100 ms
 				currentMultiplier = base + (base * elapsed) / 500;
-				if (ControllerSettings.loggingLevel > 2)
+				if (ControllerSettings.loggingLevel > 2 && 
+						lastReportedMultiplier != currentMultiplier)
+				{
 					LogHelper.Info("CameraMultiplier " + currentMultiplier);
+					lastReportedMultiplier = currentMultiplier;
+				}
 			}
 
 			return currentMultiplier;

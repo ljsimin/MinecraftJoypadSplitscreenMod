@@ -153,7 +153,7 @@ public class VirtualMouse
 		if (!checkCreated())
 			return false;
 
-		if (ControllerSettings.loggingLevel > 3)
+		if (ControllerSettings.loggingLevel > 3 && ( lastX != x || lastY != y))
 			LogHelper.Info("Setting mouse position to x:" + x + " y:" + y);
 
 		try

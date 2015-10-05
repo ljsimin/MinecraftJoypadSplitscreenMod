@@ -66,7 +66,7 @@ public class GameRenderHandler
 					{
 						if (Mouse.getDX() != 0 || Mouse.getDY() != 0)
 						{
-							if (ControllerSettings.loggingLevel > 2)
+							if (ControllerSettings.loggingLevel > 2 && !mouseDetected)
 							{
 								LogHelper.Info("Mouse sharing of screen detected");
 							}
