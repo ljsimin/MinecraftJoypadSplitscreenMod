@@ -218,7 +218,8 @@ public class ControllerUtils
 		Controller controller = Controllers.getController(joyId);
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
-			if (controller.getAxisName(i).contains("Y Axis"))
+			String axisName = controller.getAxisName(i);
+			if (axisName.equals("y") || axisName.contains("Y Axis"))
 				return i;
 		}
 
@@ -230,7 +231,8 @@ public class ControllerUtils
 		Controller controller = Controllers.getController(joyId);
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
-			if (controller.getAxisName(i).contains("X Axis"))
+			String axisName = controller.getAxisName(i);
+			if (axisName.equals("x") || axisName.contains("X Axis"))
 				return i;
 		}
 
