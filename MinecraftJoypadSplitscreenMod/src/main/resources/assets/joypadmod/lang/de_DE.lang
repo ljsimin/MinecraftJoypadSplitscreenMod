@@ -1,0 +1,67 @@
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=Deadzone
+calibrationMenu.instructionsTitle=Anleitungen
+calibrationMenu.instructions1=Bewegen Sie Joystick
+calibrationMenu.instructions2=Drücken Sie Auto-Deadzone zu finden
+calibrationMenu.save=Annehmen
+
+controlMenu.addKey=Neu Taste
+controlMenu.advanced=Erweiterte
+controlMenu.axis=Achse
+controlMenu.buttons=Button
+controlMenu.calibrate=Kalibrieren
+controlMenu.controller=Controller
+controlMenu.invert=Invert
+controlMenu.look=Schauen
+controlMenu.mouse=Mauszeiger
+controlMenu.scroll=Blättern
+controlMenu.noControllers=Keine Controller gefunden!
+controlMenu.pressKey=Taste ... drücken
+controlMenu.toggleInstructions=Drücken Sie die Leertaste, um Controller wechseln
+
+-Global-.SharedProfile=Gemeinsamen Einstellungen
+-Global-.GrabMouse=Maus Greifen
+-Global-.displayAllControls=Alle Controller anzeigen
+
+joy.guiRightClick=Rechte Maustaste
+joy.guiLeftClick=Linke Maustaste
+joy.shiftClick=Shift klicken
+joy.interact=Interagieren
+joy.menu=Menu
+
+controls.reset=Standard
+
+key.attack=Angreifen/Abbauen
+key.back=Rückwärts gehen
+key.categories.gameplay=Spielmechanik
+key.categories.inventory=Inventar
+key.categories.misc=Verschiedenes
+key.categories.movement=Bewegung
+key.categories.multiplayer=Mehrspieler
+key.categories.ui=Spielsteuerung
+key.chat=Chat
+key.command=Befehl
+key.drop=Gegenstand fallenlassen
+key.forward=Vorwärts gehen
+key.hotbar.1=Schnellzugriff 1
+key.hotbar.2=Schnellzugriff 2
+key.hotbar.3=Schnellzugriff 3
+key.hotbar.4=Schnellzugriff 4
+key.hotbar.5=Schnellzugriff 5
+key.hotbar.6=Schnellzugriff 6
+key.hotbar.7=Schnellzugriff 7
+key.hotbar.8=Schnellzugriff 8
+key.hotbar.9=Schnellzugriff 9
+key.inventory=Inventar
+key.jump=Springen
+key.left=Links
+key.mouseButton=Maustaste %1$s
+key.pickItem=Block auswählen
+key.playerlist=Spieler auflisten
+key.right=Rechts
+key.screenshot=Screenshot
+key.smoothCamera=Kameraverhalten wechseln
+key.sneak=Schleichen
+key.sprint=Sprinten
+key.togglePerspective=Perspektive umschalten
+key.use=Benutzen/Platzieren

@@ -1,0 +1,67 @@
+calibrationMenu.auto=Ауто
+calibrationMenu.deadzone=Мртва зона
+calibrationMenu.instructionsTitle=Упутства
+calibrationMenu.instructions1=Притискајте све дугмиће и палице
+calibrationMenu.instructions2=Притисните 'ауто' да се пронађу мртве зоне
+calibrationMenu.save=Сачувај
+
+controlMenu.addKey=Нови тастер
+controlMenu.advanced=Напредно
+controlMenu.axis=Оса
+controlMenu.buttons=Дугмића
+controlMenu.calibrate=Калибрација
+controlMenu.controller=Гејмпед
+controlMenu.invert=Инверзија
+controlMenu.look=Поглед
+controlMenu.mouse=Миш
+controlMenu.scroll=Точкић
+controlMenu.noControllers=Није пронађен ниједан гејмпед
+controlMenu.pressKey=Притисните тастер...
+controlMenu.toggleInstructions=Размак пали/гаси тренутни гејмпед
+
+-Global-.SharedProfile=Дељење подешавања
+-Global-.GrabMouse=Закључавање миша
+-Global-.displayAllControls=Прикажи све гејмпаде
+
+joy.guiRightClick=Десни клик
+joy.guiLeftClick=Леви клик
+joy.shiftClick=Шифт клик
+joy.interact=Интеракција
+joy.menu=Мени
+
+controls.reset=Ресетовање
+
+key.attack=Нападни/Уништи
+key.back=Ходај уназад
+key.categories.gameplay=Гејмплеј
+key.categories.inventory=Инвентар
+key.categories.misc=Остало
+key.categories.movement=Кретање
+key.categories.multiplayer=Онлине игра
+key.categories.ui=Интерфејс игре
+key.chat=Отвори ћаскање
+key.command=Отвори команде
+key.drop=Испусти предмет
+key.forward=Ходај напред
+key.hotbar.1=Хотбар место 1
+key.hotbar.2=Хотбар место 2
+key.hotbar.3=Хотбар место 3
+key.hotbar.4=Хотбар место 4
+key.hotbar.5=Хотбар место 5
+key.hotbar.6=Хотбар место 6
+key.hotbar.7=Хотбар место 7
+key.hotbar.8=Хотбар место 8
+key.hotbar.9=Хотбар место 9
+key.inventory=Инвентар
+key.jump=Скок
+key.left=Ходај лево
+key.mouseButton=Тастер %1$s
+key.pickItem=Изабери блок
+key.playerlist=Списак играча
+key.right=Ходај десно
+key.screenshot=Сликај
+key.smoothCamera=Пали/гаси синематичну камеру
+key.sneak=Шуњање
+key.sprint=Спринт
+key.togglePerspective=Промени перспективу
+key.use=Користи предмет/Постави блок

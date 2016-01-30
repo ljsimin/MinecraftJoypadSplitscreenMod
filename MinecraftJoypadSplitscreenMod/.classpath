@@ -2,7 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/forge-1.8-11.14.0.1247-1.8-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Andy/.gradle/caches/minecraft/net/minecraftforge/forge/1.8-11.14.3.1518/snapshot/20141130/forgeSrc-1.8-11.14.3.1518.jar" sourcepath="C:/Users/Andy/.gradle/caches/minecraft/net/minecraftforge/forge/1.8-11.14.3.1518/snapshot/20141130/forgeSrc-1.8-11.14.3.1518-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.3.2/90a3822c38ec8c996e84c16a3477ef632cbc87a3/commons-lang3-3.3.2.jar" sourcepath="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.3.2/d2a489573c0ed2c4942b3660decad5d65087b406/commons-lang3-3.3.2-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.1/f58c5aabcef0e41718a564be9f8e412fff8db847/lwjgl-2.9.1.jar" sourcepath="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.1/ccedb5b6f96913c6f78bc10249e747ded90baa51/lwjgl-2.9.1-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.0-beta9/1dd66e68cccd907880229f9e2de1314bd13ff785/log4j-api-2.0-beta9.jar" sourcepath="C:/Users/Andy/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.0-beta9/c6682b8a47ddd9f29108838aed0dc8e0ffdedf68/log4j-api-2.0-beta9-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

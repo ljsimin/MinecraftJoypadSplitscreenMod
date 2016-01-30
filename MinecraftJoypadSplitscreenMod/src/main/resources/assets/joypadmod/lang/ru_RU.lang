@@ -1,0 +1,67 @@
+calibrationMenu.auto=авто
+calibrationMenu.deadzone=Мертвая зона
+calibrationMenu.instructionsTitle=команда
+calibrationMenu.instructions1=Переместите джойстик
+calibrationMenu.instructions2=Пресс авто найти мертвую зону
+calibrationMenu.save=сохранять
+
+controlMenu.addKey=Добавить ключ
+controlMenu.advanced=дополнительные параметры
+controlMenu.axis=ось
+controlMenu.buttons=Кнопки
+controlMenu.calibrate=калибровать
+controlMenu.controller=контроллер
+controlMenu.invert=Отменить
+controlMenu.look=Посмотрите
+controlMenu.mouse=мышь
+controlMenu.scroll=Прокрутка
+controlMenu.noControllers=контроллеры не найдены!
+controlMenu.pressKey=Нажмите кнопку ... 
+controlMenu.toggleInstructions=Нажмите пробел для переключения контроллера
+
+-Global-.SharedProfile=совместно использовать Установки
+-Global-.GrabMouse=извлекать мышь
+-Global-.displayAllControls=Показать все контроллеры
+
+joy.guiRightClick=Щелкните правой кнопкой мыши
+joy.guiLeftClick=Щелкните левой кнопкой мыши
+joy.shiftClick=Shift кнопку
+joy.interact=взаимодействовать
+joy.menu=меню
+
+controls.reset=Сброс
+
+key.attack=Атаковать/Разрушить
+key.back=Назад
+key.categories.gameplay=Игровой процесс
+key.categories.inventory=Инвентарь
+key.categories.misc=Разное
+key.categories.movement=Движение
+key.categories.multiplayer=Сетевая игра
+key.categories.ui=Интерфейс игры
+key.chat=Открыть чат
+key.command=Ввод команды
+key.drop=Выбросить предмет
+key.forward=Вперед
+key.hotbar.1=Слот 1
+key.hotbar.2=Слот 2
+key.hotbar.3=Слот 3
+key.hotbar.4=Слот 4
+key.hotbar.5=Слот 5
+key.hotbar.6=Слот 6
+key.hotbar.7=Слот 7
+key.hotbar.8=Слот 8
+key.hotbar.9=Слот 9
+key.inventory=Инвентарь
+key.jump=Прыжок
+key.left=Влево
+key.mouseButton=Кнопка %1$s
+key.pickItem=Выбор блока
+key.playerlist=Список игроков
+key.right=Вправо
+key.screenshot=Сделать снимок экрана
+key.smoothCamera=Переключить камеру
+key.sneak=Красться
+key.sprint=Бег
+key.togglePerspective=Переключить перспективу
+key.use=Использовать предмет/Поставить блок

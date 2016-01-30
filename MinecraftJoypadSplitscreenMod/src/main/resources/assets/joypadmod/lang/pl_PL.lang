@@ -1,0 +1,68 @@
+calibrationMenu.auto=Auto
+calibrationMenu.deadzone=Martwa strefa
+calibrationMenu.instructionsTitle=Instrukcje
+calibrationMenu.instructions1=Przycisnij wszystkie guziki i ruszaj gałkami
+calibrationMenu.instructions2=Guzik 'auto' znajduje martwe strefy
+calibrationMenu.save=Zapisz
+
+controlMenu.addKey=Nowy klawisz
+controlMenu.advanced=Zaawansowane
+controlMenu.axis=Ośi
+controlMenu.buttons=Przycisków
+controlMenu.calibrate=Kalibracija
+controlMenu.controller=Gamepad
+controlMenu.invert=Invertuj
+controlMenu.look=Kamera
+controlMenu.mouse=Myszka
+controlMenu.scroll=Scroll myszki
+controlMenu.noControllers=Nie znaleziono gamepada
+controlMenu.pressKey=Wciśnij dowolny klawisz...
+controlMenu.toggleInstructions=Spacja wł/wył gamepad
+
+-Global-.SharedProfile=Wspólne ustawienia
+-Global-.GrabMouse=Przechwycenie myszki
+-Global-.displayAllControls=Pokaż wszystkie gamepad-y
+
+joy.guiRightClick=Lewy klik
+joy.guiLeftClick=Prawy klik
+joy.shiftClick=Shift-klik
+joy.interact=Interakcja
+joy.menu=Menu
+
+
+controls.reset=Resetuj
+
+key.attack=Atakuj/niszcz
+key.back=Idź do tyłu
+key.categories.gameplay=Rozgrywka
+key.categories.inventory=Ekwipunek
+key.categories.misc=Różne
+key.categories.movement=Ruch
+key.categories.multiplayer=Gra wieloosobowa
+key.categories.ui=Interfejs gry
+key.chat=Otwórz czat
+key.command=Wpisywanie komendy
+key.drop=Upuść przedmiot
+key.forward=Idź do przodu
+key.hotbar.1=Slot 1 paska szybkiego wyboru
+key.hotbar.2=Slot 2 paska szybkiego wyboru
+key.hotbar.3=Slot 3 paska szybkiego wyboru
+key.hotbar.4=Slot 4 paska szybkiego wyboru
+key.hotbar.5=Slot 5 paska szybkiego wyboru
+key.hotbar.6=Slot 6 paska szybkiego wyboru
+key.hotbar.7=Slot 7 paska szybkiego wyboru
+key.hotbar.8=Slot 8 paska szybkiego wyboru
+key.hotbar.9=Slot 9 paska szybkiego wyboru
+key.inventory=Ekwipunek
+key.jump=Skok
+key.left=Idź w lewo
+key.mouseButton=Przycisk %1$s
+key.pickItem=Wybierz blok
+key.playerlist=Lista graczy
+key.right=Idź w prawo
+key.screenshot=Zrób zrzut ekranu
+key.smoothCamera=Przełącz tryb kamery filmowej
+key.sneak=Skradanie
+key.sprint=Sprint
+key.togglePerspective=Przełącz perspektywę
+key.use=Użyj przedmiotu/umieść blok
