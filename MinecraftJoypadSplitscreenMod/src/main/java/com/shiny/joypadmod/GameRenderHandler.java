@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Mouse;

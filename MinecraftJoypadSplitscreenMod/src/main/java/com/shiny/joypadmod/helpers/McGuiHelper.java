@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 public class McGuiHelper
 {

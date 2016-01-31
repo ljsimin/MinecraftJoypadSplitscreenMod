@@ -125,7 +125,7 @@ public class GuiSlider extends GuiButton
 		}
 		if (output != "")
 		{
-			FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+			FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 			String value = ": " + (int) (this.sliderValue * 100.0F);
 			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}

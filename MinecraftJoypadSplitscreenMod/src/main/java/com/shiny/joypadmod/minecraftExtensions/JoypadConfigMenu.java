@@ -384,9 +384,7 @@ public class JoypadConfigMenu extends GuiScreen
 		}
 		else
 		{
-			try{
-				super.keyTyped(c, code);}
-			catch(java.io.IOException e){}
+			super.keyTyped(c, code);
 		}
 	}
 
@@ -398,9 +396,7 @@ public class JoypadConfigMenu extends GuiScreen
 			JoypadControlList.lastXClick = par1;
 			JoypadControlList.lastYClick = par2;
 		}
-		try{
-			super.mouseClicked(par1, par2, par3);
-		}catch(java.io.IOException e){}
+		super.mouseClicked(par1, par2, par3);
 	}
 
 	private int getJoypadIndex(int offset)
