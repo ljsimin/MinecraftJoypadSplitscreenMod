@@ -267,7 +267,7 @@ public class JoypadControlList extends GuiScrollingList
 			return;
 
 		Minecraft mc = Minecraft.getMinecraft();
-		final ScaledResolution scaledResolution = new ScaledResolution(mc);
+		final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
 
 		final int k = Mouse.getX() * scaledResolution.getScaledWidth() / mc.displayWidth;
 		final int i1 = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight()
