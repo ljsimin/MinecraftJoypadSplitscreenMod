@@ -20,14 +20,14 @@ import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
-		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.8.8,)")
+		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.8,1.8.6]")
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final float MINVERSION = 0.16f;
+	public static final float MINVERSION = 0.15f;
 	public static final String REVISION = "";
 
 	private static ControllerSettings controllerSettings;

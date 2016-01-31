@@ -1,3 +1,5 @@
+/*
+// For those who want the bleeding edge
 buildscript {
     repositories {
         jcenter()
@@ -7,32 +9,31 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'        
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
     }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
+*/
 
-apply plugin: "net.minecraftforge.gradle.forge"
-
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
+// for people who want stable
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
-*/
 
-version = "1.8.9-11.15.1.1722"
+
+version = "1.8-11.14.4.1563"
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
 
 minecraft {
-    version = "1.8.9-11.15.1.1722"
+    version = "1.8-11.14.4.1563"
     runDir = "run"
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not allways work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "stable_20"
+    mappings = "snapshot_20141130"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
