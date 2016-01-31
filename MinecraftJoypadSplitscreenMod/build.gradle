@@ -18,12 +18,12 @@ buildscript {
 apply plugin: 'forge'
 
 
-version = "1.7.10-10.13.4.1558-1.7.10"
+version = "1.7.2-10.12.2.1121"
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
 
 minecraft {
-    version = "1.7.10-10.13.4.1558-1.7.10"
+    version = "1.7.2-10.12.2.1121"
     runDir = "run"
 }
 
