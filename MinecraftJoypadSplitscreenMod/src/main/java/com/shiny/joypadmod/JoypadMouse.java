@@ -198,7 +198,7 @@ public class JoypadMouse
 			int lastReportedX = x;
 			int lastReportedY = y;
 
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 
 			pollAxis();
 
@@ -229,7 +229,7 @@ public class JoypadMouse
 
 		public static void centerCrosshairs()
 		{
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 
 			x = scaledResolution.getScaledWidth() / 2;
 			y = scaledResolution.getScaledHeight() / 2;
@@ -248,7 +248,7 @@ public class JoypadMouse
 
 		public static void setXY(int x, int y)
 		{
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 
 			AxisReader.x = x;
 			AxisReader.y = y;
