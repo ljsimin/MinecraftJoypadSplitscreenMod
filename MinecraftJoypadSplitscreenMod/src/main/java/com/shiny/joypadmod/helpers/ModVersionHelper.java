@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 public class ModVersionHelper
 {
@@ -61,5 +63,16 @@ public class ModVersionHelper
 		{
 			GameRenderHandler.HandleClientEndTick();
 		}
+	}
+	
+	public ScaledResolution GetScaledResolution()
+	{
+		Minecraft mc = Minecraft.getMinecraft();
+		// 1.8.8
+		return new ScaledResolution(mc);
+		// 1.7.10 - 1.8.2 
+		//return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		// 1.7.2
+		//return new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 	}
 }
