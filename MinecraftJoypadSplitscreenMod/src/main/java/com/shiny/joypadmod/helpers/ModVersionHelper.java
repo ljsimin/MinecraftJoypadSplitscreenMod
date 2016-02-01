@@ -71,8 +71,8 @@ public class ModVersionHelper
 		// 1.8.8
 		//return new ScaledResolution(mc);
 		// 1.7.10 - 1.8.2 
-		return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		//return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		// 1.7.2
-		//return new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		return new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 	}
 }
