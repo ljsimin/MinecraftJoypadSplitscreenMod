@@ -20,7 +20,8 @@ import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
-		+ JoypadMod.REVISION, acceptedMinecraftVersions = "[1.7,1.7.10]")
+		+ JoypadMod.REVISION, acceptedMinecraftVersions = "[1.7.10]")
+
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
