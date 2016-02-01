@@ -18,9 +18,9 @@ import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
 
-
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
 		+ JoypadMod.REVISION, acceptedMinecraftVersions = "[1.7.2,1.7.9]")
+
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
