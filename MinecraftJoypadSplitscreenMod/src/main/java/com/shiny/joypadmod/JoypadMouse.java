@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
@@ -198,7 +199,7 @@ public class JoypadMouse
 			int lastReportedX = x;
 			int lastReportedY = y;
 
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
 
 			pollAxis();
 
@@ -229,7 +230,7 @@ public class JoypadMouse
 
 		public static void centerCrosshairs()
 		{
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
 
 			x = scaledResolution.getScaledWidth() / 2;
 			y = scaledResolution.getScaledHeight() / 2;
@@ -248,7 +249,7 @@ public class JoypadMouse
 
 		public static void setXY(int x, int y)
 		{
-			final ScaledResolution scaledResolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+			final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
 
 			AxisReader.x = x;
 			AxisReader.y = y;
