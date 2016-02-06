@@ -299,7 +299,7 @@ public class JoypadControlList extends GuiScrollingList
 				if (binding.keyCodes != null && binding.keyCodes.length == 1 && binding.bindingOptions != null
 						&& binding.bindingOptions.contains(BindingOptions.GAME_BINDING))
 				{
-					controlButtonStr = this.checkKeyCodeBound(binding.keyCodes[0], controlButtonStr);
+					controlButtonStr = ControllerSettings.checkKeyCodeBound(this.parent.getCurrentControllerId(), binding.keyCodes[0], controlButtonStr);
 				}
 			}
 			else
@@ -357,19 +357,6 @@ public class JoypadControlList extends GuiScrollingList
 		}
 	}
 
-	private String checkKeyCodeBound(int keyCode, String defaultStr)
-	{
-		ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode, BindingOptions.GAME_BINDING);
-
-		if (b != null)
-		{
-			return ControllerSettings.controllerUtils.getHumanReadableInputName(
-					Controllers.getController(this.parent.getCurrentControllerId()), b.inputEvent);
-		}
-
-		return defaultStr;
-	}
-
 	private String checkKeyCodeBound(String bindingKey, String defaultStr)
 	{
 		KeyBinding kb = McKeyBindHelper.getMinecraftKeyBind(bindingKey);
@@ -378,7 +365,7 @@ public class JoypadControlList extends GuiScrollingList
 			int keyCode = McObfuscationHelper.keyCode(kb);
 			if (keyCode != Keyboard.KEY_NONE)
 			{
-				return checkKeyCodeBound(keyCode, defaultStr);
+				return ControllerSettings.checkKeyCodeBound(this.parent.getCurrentControllerId(), keyCode, defaultStr);
 			}
 		}
 		return defaultStr;

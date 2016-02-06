@@ -5,9 +5,12 @@ import java.util.Locale;
 
 import net.minecraft.client.Minecraft;
 
+import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
+import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
@@ -449,6 +452,19 @@ public class ControllerBinding
 		}
 
 		return true;
+	}
+	
+	// return the name of the associated button / axis / pov 
+	public String getInputName()
+	{
+		return ControllerSettings.controllerUtils.getHumanReadableInputName(
+				Controllers.getController(ControllerSettings.joyNo), inputEvent);
+	}
+	
+	// return the name of the associated translat.ed menu item for this binding
+	public String getMenuItemName()
+	{
+		return McObfuscationHelper.lookupString(inputString);
 	}
 
 }

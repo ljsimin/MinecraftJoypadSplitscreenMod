@@ -1,5 +1,9 @@
 package com.shiny.joypadmod.helpers;
 
+import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -7,6 +11,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
+import com.shiny.joypadmod.ButtonScreenTips;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 
@@ -26,8 +31,10 @@ public class ModVersionHelper
 			return;
 		}
 
+		// 1.8
+		MinecraftForge.EVENT_BUS.register(this);
 		// 1.7.2
-		FMLCommonHandler.instance().bus().register(this);
+		//FMLCommonHandler.instance().bus().register(this);
 		// 1.6.4
 		// TickRegistry.registerTickHandler(new RenderTickHandler(),
 		// Side.CLIENT);
@@ -63,6 +70,17 @@ public class ModVersionHelper
 		{
 			GameRenderHandler.HandleClientEndTick();
 		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.NORMAL)
+	public void buttonMapDisplay(RenderGameOverlayEvent.Post event)
+	{
+		
+		if(event.isCancelable() || event.type != ElementType.EXPERIENCE)
+	    {      
+	        return;
+	    }
+		new ButtonScreenTips();
 	}
 	
 	public static ScaledResolution GetScaledResolution()
