@@ -72,7 +72,7 @@ public class ModVersionHelper
 		}
 	}
 	
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void buttonMapDisplay(RenderGameOverlayEvent.Post event)
 	{
 		

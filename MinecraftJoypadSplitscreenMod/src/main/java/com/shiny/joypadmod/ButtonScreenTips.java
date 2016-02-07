@@ -187,7 +187,8 @@ public class ButtonScreenTips extends Gui {
 	
 	private void drawTip(String text, int color)
 	{
-		fr.drawStringWithShadow(text, currentX, currentY, color);
+		this.drawString(fr, text, currentX, currentY, color);
+		//fr.drawStringWithShadow(text, currentX, currentY, color);
 		currentY += fr.FONT_HEIGHT + 5;
 	}
 }
