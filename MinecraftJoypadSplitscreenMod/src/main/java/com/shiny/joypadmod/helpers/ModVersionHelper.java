@@ -7,6 +7,13 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 
+import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.MinecraftForge;
+
+
+import com.shiny.joypadmod.ButtonScreenTips;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 
@@ -15,8 +22,8 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class ModVersionHelper
 {
-	public static final String VERSION = "1.8.9";
-	public static final int MC_VERSION = 189;
+	public static final String VERSION = "1.7.10";
+	public static final int MC_VERSION = 180;
 
 	public void gameInit()
 	{
@@ -26,6 +33,7 @@ public class ModVersionHelper
 			return;
 		}
 
+		MinecraftForge.EVENT_BUS.register(this);
 		// 1.7.2
 		FMLCommonHandler.instance().bus().register(this);
 		// 1.6.4
@@ -63,6 +71,16 @@ public class ModVersionHelper
 		{
 			GameRenderHandler.HandleClientEndTick();
 		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void buttonMapDisplay(RenderGameOverlayEvent.Post event)
+	{
+		if(event.isCancelable() || event.type != ElementType.EXPERIENCE)
+	    {      
+	        return;
+	    }
+		new ButtonScreenTips();
 	}
 	
 	public static ScaledResolution GetScaledResolution()

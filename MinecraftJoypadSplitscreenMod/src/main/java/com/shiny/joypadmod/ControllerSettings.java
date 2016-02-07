@@ -955,6 +955,8 @@ public class ControllerSettings
 	{
 		if (joyNo < 0)
 			return;
+		
+		boolean updated = false;
 
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
@@ -973,8 +975,11 @@ public class ControllerSettings
 						setControllerBinding(joyNo, entry.getKey(), entry.getValue());
 					}
 				}
+				updated = true;
 			}
 		}
+		if (updated)
+			ButtonScreenTips.UpdateHintString();
 	}
 
 	public static boolean checkIfDuplicateBinding(String bindingKey)
@@ -1013,5 +1018,22 @@ public class ControllerSettings
 		{
 			grabMouse = Boolean.parseBoolean(value);
 		}
+		else if (optionKey.contains("DisplayHints"))
+		{
+			displayHints = Boolean.parseBoolean(value);
+		}
+	}
+	
+	public static String checkKeyCodeBound(int joyNum, int keyCode, String defaultStr)
+	{
+		ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode, BindingOptions.GAME_BINDING);
+
+		if (b != null)
+		{
+			return ControllerSettings.controllerUtils.getHumanReadableInputName(
+					Controllers.getController(joyNum), b.inputEvent);
+		}
+
+		return defaultStr;
 	}
 }

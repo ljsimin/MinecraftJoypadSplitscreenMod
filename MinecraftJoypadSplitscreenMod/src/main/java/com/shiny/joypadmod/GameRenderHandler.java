@@ -134,6 +134,7 @@ public class GameRenderHandler
 				}
 
 				DrawRetical();
+				new ButtonScreenTips();
 			}
 
 			if (InGameCheckNeeded())

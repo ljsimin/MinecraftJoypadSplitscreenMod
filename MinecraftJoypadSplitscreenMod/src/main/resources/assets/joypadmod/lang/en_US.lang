@@ -23,6 +23,14 @@ controlMenu.toggleInstructions=Press space to toggle controller
 -Global-.GrabMouse=Mouse Grab
 -Global-.displayAllControls=Display all controllers
 
+-User-.DisplayHints=Button hints
+
+menuHint.quickmove=Quick Move
+menuHint.takeall=Take All
+menuHint.placeall=Place All
+menuHint.takehalf=Take 1/2
+menuHint.placeone=Place 1
+
 joy.guiRightClick=Right Click
 joy.guiLeftClick=Left Click
 joy.shiftClick=Shift click

@@ -28,7 +28,7 @@ public class JoypadMod
 {
 	public static final String MODID = "JoypadSplitscreenMod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final float MINVERSION = 0.15f;
+	public static final float MINVERSION = 0.20f;
 	public static final String REVISION = "";
 
 	private static ControllerSettings controllerSettings;
