@@ -74,6 +74,7 @@ public class ConfigFile
 		preferedJoyNo = config.get(userCategory, "JoyNo", -1).getInt();
 		preferedJoyName = config.get(userCategory, "JoyName", "").getString();
 		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
+		ControllerSettings.displayHints = config.get(userCategory, "DisplayHints", true).getBoolean(true);
 
 		// individual or global
 		lastConfigFileVersion = config.get(getDefaultCategory(), "ConfigVersion", 0.07).getDouble(0.07);
@@ -149,6 +150,8 @@ public class ConfigFile
 
 	public String getConfigFileSetting(String categoryKey)
 	{
+		if (categoryKey.contains("-User-"))
+			categoryKey = categoryKey.replace("-User-", userCategory);
 		int lastIndex = categoryKey.lastIndexOf('.');
 		String category = categoryKey.substring(0, lastIndex);
 		String key = categoryKey.substring(lastIndex + 1);
@@ -157,6 +160,8 @@ public class ConfigFile
 
 	public void setConfigFileSetting(String categoryKey, String value)
 	{
+		if (categoryKey.contains("-User-"))
+			categoryKey = categoryKey.replace("-User-", userCategory);
 		int lastIndex = categoryKey.lastIndexOf('.');
 		String category = categoryKey.substring(0, lastIndex);
 		String key = categoryKey.substring(lastIndex + 1);
