@@ -196,6 +196,8 @@ public class JoypadConfigMenu extends GuiScreen
 	public void onGuiClosed()
 	{
 		LogHelper.Info("JoypadConfigMenu OnGuiClosed");
+		if (ControllerSettings.isInputEnabled())
+			ControllerSettings.controllerUtils.saveCurrentJoypadMap();
 		ControllerSettings.suspendControllerInput(false, 0);
 		if (sensitivity_menuStart != ControllerSettings.inMenuSensitivity
 				|| sensitivity_gameStart != ControllerSettings.inGameSensitivity)
