@@ -306,6 +306,16 @@ public class ControllerUtils
 		}
 	}
 	
+	public void updateCurrentJoypadMap(String key, String value)
+	{
+		if (joypadNameMap != null)
+		{
+			// save if the key is new
+			if (value != joypadNameMap.put(key, value))
+				saveCurrentJoypadMap();
+		}
+	}
+	
 	public boolean saveCurrentJoypadMap()
 	{
 		if (currentController != null)
