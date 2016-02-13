@@ -7,46 +7,18 @@ import com.shiny.joypadmod.ControllerSettings;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class ControllerUtils
 {
-	private static Map<String, String> xinputNamesMap;
+	private static Map<String, String> joypadNameMap;
+	private Controller currentController;
 
 	public ControllerUtils()
 	{
-		xinputNamesMap = new HashMap<String, String>();
-		xinputNamesMap.put("Button 0", "A");
-		xinputNamesMap.put("Button 1", "B");
-		xinputNamesMap.put("Button 2", "X");
-		xinputNamesMap.put("Button 3", "Y");
-		xinputNamesMap.put("Button 4", "LB");
-		xinputNamesMap.put("Button 5", "RB");
-		xinputNamesMap.put("Button 6", "BACK");
-		xinputNamesMap.put("Button 7", "START");
-		xinputNamesMap.put("Button 8", "LS");
-		xinputNamesMap.put("Button 9", "RS");
-		xinputNamesMap.put("Z Axis -", "RT");
-		xinputNamesMap.put("Z Axis +", "LT");
-		xinputNamesMap.put("X Axis +", "LS Right");
-		xinputNamesMap.put("X Axis -", "LS Left");
-		xinputNamesMap.put("Y Axis +", "LS Down");
-		xinputNamesMap.put("Y Axis -", "LS Up");
-		xinputNamesMap.put("X Rotation +", "RS right");
-		xinputNamesMap.put("X Rotation -", "RS left");
-		xinputNamesMap.put("Y Rotation +", "RS down");
-		xinputNamesMap.put("Y Rotation -", "RS up");
-		xinputNamesMap.put("POV X +", "Dpad right");
-		xinputNamesMap.put("POV X -", "Dpad left");
-		xinputNamesMap.put("POV Y +", "Dpad down");
-		xinputNamesMap.put("POV Y -", "Dpad up");
-		xinputNamesMap.put("X Axis", "Left stick horizontal");
-		xinputNamesMap.put("Y Axis", "Left stick vertical");
-		xinputNamesMap.put("X Rotation", "Right stick horizontal");
-		xinputNamesMap.put("Y Rotation", "Right stick vertical");
-		xinputNamesMap.put("Z Axis", "Triggers");
-		xinputNamesMap.put("POV X", "Dpad horizontal");
-		xinputNamesMap.put("POV Y", "Dpad vertical");
+		joypadNameMap = new HashMap<String, String>();
+		currentController = null;
 	}
 
 	public void printDeadZones(Controller joystick2)
@@ -146,26 +118,23 @@ public class ControllerUtils
 
 	public String getHumanReadableInputName(Controller controller, ControllerInputEvent inputEvent)
 	{
-		if (controller == null)
+		if (controller == null || inputEvent == null)
 		{
 			return "NONE";
 		}
 		String result = null;
 		
-		if (controller.getName().toLowerCase().contains("xinput")
-				|| controller.getName().toLowerCase().contains("xusb")
-				|| controller.getName().toLowerCase().contains("xbox"))
-		{			
-			if (ControllerSettings.xbox6Axis.contains(controller.getIndex()))
-			{
-				if (inputEvent.getDescription().contains("Z Axis"))
-					result = "LT";
-				else if (inputEvent.getDescription().contains("Z Rotation"))
-					result = "RT";
-			}
-			if (result == null)
-				result = xinputNamesMap.get(inputEvent.getDescription());			
+		try
+		{
+			setJoypadNameMap(controller);
+			result = joypadNameMap.get(inputEvent.getDescription());
+			if (result == null && inputEvent.getDescription() != "NONE")
+				joypadNameMap.put(inputEvent.getDescription(), inputEvent.getDescription());
+		} catch (Exception ex)
+		{
+			LogHelper.Error("Error in getHumanReadableInputName: " + ex.toString());
 		}
+	
 		return result == null ? inputEvent.getDescription() : result;
 	}
 
@@ -237,6 +206,133 @@ public class ControllerUtils
 		}
 
 		return 1;
+	}
+	
+	private Map<String, String> buildDefaultMap(Controller controller)
+	{
+		Map<String, String> retMap = new HashMap<String, String>();
+		if (controller.getName().toLowerCase().contains("xinput")
+				|| controller.getName().toLowerCase().contains("xusb")
+				|| controller.getName().toLowerCase().contains("xbox"))
+		{
+			retMap = new HashMap<String, String>();
+			retMap.put("Button 0", "A");
+			retMap.put("Button 1", "B");
+			retMap.put("Button 2", "X");
+			retMap.put("Button 3", "Y");
+			retMap.put("Button 4", "LB");
+			retMap.put("Button 5", "RB");
+			retMap.put("Button 6", "BACK");
+			retMap.put("Button 7", "START");
+			retMap.put("Button 8", "LS");
+			retMap.put("Button 9", "RS");
+			retMap.put("X Axis +", "LS Right");
+			retMap.put("X Axis -", "LS Left");
+			retMap.put("Y Axis +", "LS Down");
+			retMap.put("Y Axis -", "LS Up");
+			retMap.put("X Rotation +", "RS right");
+			retMap.put("X Rotation -", "RS left");
+			retMap.put("Y Rotation +", "RS down");
+			retMap.put("Y Rotation -", "RS up");
+			retMap.put("POV X +", "Dpad right");
+			retMap.put("POV X -", "Dpad left");
+			retMap.put("POV Y +", "Dpad down");
+			retMap.put("POV Y -", "Dpad up");
+			retMap.put("X Axis", "Left stick horizontal");
+			retMap.put("Y Axis", "Left stick vertical");
+			retMap.put("X Rotation", "Right stick horizontal");
+			retMap.put("Y Rotation", "Right stick vertical");
+			retMap.put("Z Axis", "Triggers");
+			retMap.put("POV X", "Dpad horizontal");
+			retMap.put("POV Y", "Dpad vertical");
+			if (ControllerSettings.xbox6Axis.contains(controller.getIndex()))
+			{
+				retMap.put("Z Axis -", "LT");
+				retMap.put("Z Axis +", "LT");
+				retMap.put("Z Rotation -", "RT");
+				retMap.put("Z Rotation +", "RT");
+			}
+			else
+			{
+				retMap.put("Z Axis -", "RT");
+				retMap.put("Z Axis +", "LT");
+			}
+			
+			//double check all axis / buttons in case an OS reports these differently
+			for (int iTemp = 0; iTemp < controller.getAxisCount() 
+					+ controller.getButtonCount(); iTemp++)
+			{
+				int i = iTemp >= controller.getAxisCount() ? 
+						iTemp - controller.getAxisCount() : iTemp;
+				String key = iTemp < controller.getAxisCount() ? 
+						controller.getAxisName(i) : controller.getButtonName(i);
+				if (!retMap.containsKey(key))
+					retMap.put(key, key);
+			}		
+		}
+		else // unknown joystick, so create a default map
+		{
+			for (int iTemp = 0; iTemp < controller.getAxisCount() 
+					+ controller.getButtonCount(); iTemp++)
+			{
+				int i = iTemp >= controller.getAxisCount() ? 
+						iTemp - controller.getAxisCount() : iTemp;
+				String key = iTemp < controller.getAxisCount() ? 
+						controller.getAxisName(i) : controller.getButtonName(i);
+				retMap.put(key, key);
+			}	
+		}
+		return retMap;
+	}
+	
+	private void setJoypadNameMap(Controller controller)
+	{
+		if (currentController == null 
+				|| controller.getIndex() != currentController.getIndex())
+		{
+			joypadNameMap.clear();
+			// check if config file has map
+			Map<String, String> newMap = ControllerSettings.config.buildStringMapFromConfig
+					("-ControllerNameMap-", controller.getName());
+			if (newMap == null)
+			{
+				joypadNameMap = buildDefaultMap(controller);
+			}
+			else
+			{
+				joypadNameMap = newMap;
+			}
+			currentController = controller;
+		}
+	}
+	
+	public void updateCurrentJoypadMap(String key, String value)
+	{
+		if (joypadNameMap != null)
+		{
+			// save if the key is new
+			if (value != joypadNameMap.put(key, value))
+				saveCurrentJoypadMap();
+		}
+	}
+	
+	public boolean saveCurrentJoypadMap()
+	{
+		if (currentController != null)
+		{
+			try
+			{
+				ControllerSettings.config.saveStringMap
+					("-ControllerNameMap-", currentController.getName(), 
+					joypadNameMap, "Map the controller button/axis to human readable names");
+				return true;
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("Failed trying to save joypadMap" + ex.toString());
+			}
+		}
+		return false;
 	}
 
 }

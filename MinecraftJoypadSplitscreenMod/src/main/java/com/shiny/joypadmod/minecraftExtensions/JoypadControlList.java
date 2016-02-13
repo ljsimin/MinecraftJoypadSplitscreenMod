@@ -1,5 +1,6 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -9,6 +10,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.settings.KeyBinding;
@@ -44,13 +46,17 @@ public class JoypadControlList extends GuiScrollingList
 
 	public static int lastXClick = 0;
 	public static int lastYClick = 0;
+	public static int lastMouseButton = 0;
 
 	private int selectedIndex = -1;
 	public int bindingIndexToUpdate = -1;
+	public int inputIndexToUpdate = -1;
 	private JoypadConfigMenu parent;
 	private int lastListSize = 0;
 	private int descriptionStartX;
 	private int controlButtonCenterOffset = 20;
+	
+	public static GuiTextField textInputName = null;
 
 	private static Minecraft mc = Minecraft.getMinecraft();
 
@@ -72,6 +78,8 @@ public class JoypadControlList extends GuiScrollingList
 
 		this.parent = parent;
 		this.fontRenderer = fontRenderer;
+		this.textInputName = new GuiTextField(this.fontRenderer, 0, 0, 0, 0);
+		this.textInputName.setVisible(false);
 		joyBindKeys = new ArrayList<String>();
 		descriptionStartX = parent.buttonXStart_top;
 		if (this.parent.getCurrentControllerId() != -1)
@@ -274,10 +282,7 @@ public class JoypadControlList extends GuiScrollingList
 				/ mc.displayHeight - 1;
 
 		// check if any buttons need updating
-		if (slotSelected && !checkButtonPressAction(id, x, y, bindingKey))
-		{
-			return;
-		}
+		checkButtonPressAction(id, x, y, bindingKey);
 
 		ControllerBinding binding = ControllerSettings.get(bindingKey);
 
@@ -313,46 +318,89 @@ public class JoypadControlList extends GuiScrollingList
 						"Found that binding %s has a ControllerBinding (%s) that activates same code. ", bindingKey,
 						controlButtonStr));
 			}
+			// don't change controller input name if we still haven't found a controller input
+			if (id == inputIndexToUpdate && controlButtonStr.equals("NONE"))
+				inputIndexToUpdate = -1;
 		}
-
-		controlButtonStr = this.fontRenderer.trimStringToWidth(controlButtonStr, controlButtonWidth - 2);
-
-		GuiButton b = new GuiButton(10001, x, y, controlButtonWidth, buttonHeight, controlButtonStr);
-		b.drawButton(mc, k, i1);
-
-		if (binding == null)
-			return;
-
-		// - or x
-		// draw a minus if the button is currently valid
-		char optionRemove = McObfuscationHelper.symGet(JSyms.unbind);
-		boolean enable = true;
-		if (!binding.inputEvent.isValid())
+		
+		if (inputIndexToUpdate == id)
 		{
-			// else draw an X if the button is currently invalid and its a user binding
-			if (binding.inputString.contains("user."))
-				optionRemove = McObfuscationHelper.symGet(JSyms.remove);
-			else
-				// disable the button if the input is currently invalid
-				enable = false;
-		}
-
-		if (enable)
-		{
-			// draw the remove/unbind option for this binding
-			b = new GuiButton(10002, x + controlButtonWidth, y, smallButtonWidth, buttonHeight, "" + optionRemove);
-			b.drawButton(mc, k, i1);
-
-			// draw the toggle option button
-			if (binding.inputEvent.getEventType() != EventType.AXIS
-					&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
+			int key = parent.lastKeyCode;
+			if (key == Keyboard.KEY_ESCAPE || key == 28)
 			{
-				char toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.eCircle);
-				if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
-					toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
-				b = new GuiButton(10003, x + controlButtonWidth + smallButtonWidth, y, smallButtonWidth, buttonHeight,
-						"" + toggle);
+				if (key == 28)
+				{
+					String theKey = binding.inputEvent.getDescription();
+					if (theKey != "NONE")
+					{
+						 String newMapping = 
+								 this.textInputName.getText().length() > 0 ?
+								 this.textInputName.getText() : 
+									 binding.inputEvent.getDescription();
+						// update the mapping
+						ControllerSettings.controllerUtils.updateCurrentJoypadMap(theKey, newMapping);
+					}
+				}
+				this.textInputName.setVisible(false);
+				inputIndexToUpdate = -1;
+			} 
+			else
+			{
+				if (!this.textInputName.getVisible())
+				{
+					textInputName.width = controlButtonWidth;
+					textInputName.height = buttonHeight;
+					textInputName.setText(controlButtonStr);
+					this.textInputName.setVisible(true);
+				}
+				textInputName.xPosition = x;
+				textInputName.yPosition = y;
+		        textInputName.drawTextBox();
+		        this.textInputName.setFocused(true);
+			}
+			parent.lastKeyCode = -1;
+		}
+		else
+		{
+			controlButtonStr = this.fontRenderer.trimStringToWidth(controlButtonStr, controlButtonWidth - 2);
+	
+			GuiButton b = new GuiButton(10001, x, y, controlButtonWidth, buttonHeight, controlButtonStr);
+			b.drawButton(mc, k, i1);
+	
+			if (binding == null)
+				return;
+	
+			// - or x
+			// draw a minus if the button is currently valid
+			char optionRemove = McObfuscationHelper.symGet(JSyms.unbind);
+			boolean enable = true;
+			if (!binding.inputEvent.isValid())
+			{
+				// else draw an X if the button is currently invalid and its a user binding
+				if (binding.inputString.contains("user."))
+					optionRemove = McObfuscationHelper.symGet(JSyms.remove);
+				else
+					// disable the button if the input is currently invalid
+					enable = false;
+			}
+	
+			if (enable)
+			{
+				// draw the remove/unbind option for this binding
+				b = new GuiButton(10002, x + controlButtonWidth, y, smallButtonWidth, buttonHeight, "" + optionRemove);
 				b.drawButton(mc, k, i1);
+	
+				// draw the toggle option button
+				if (binding.inputEvent.getEventType() != EventType.AXIS
+						&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
+				{
+					char toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.eCircle);
+					if (binding.bindingOptions.contains(BindingOptions.IS_TOGGLE))
+						toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
+					b = new GuiButton(10003, x + controlButtonWidth + smallButtonWidth, y, smallButtonWidth, buttonHeight,
+							"" + toggle);
+					b.drawButton(mc, k, i1);
+				}
 			}
 		}
 	}
@@ -373,44 +421,68 @@ public class JoypadControlList extends GuiScrollingList
 
 	private boolean checkButtonPressAction(int id, int x, int y, String bindingKey)
 	{
+		boolean checkCancelInputWait = lastYClick > 0;
 		if (lastYClick >= y && lastYClick <= y + buttonHeight && lastXClick >= x)
 		{
-			ControllerBinding binding = ControllerSettings.get(bindingKey);
 			lastYClick = 0;
-			// we are in range of the buttons
-			if (lastXClick <= x + controlButtonWidth)
+			// remove any stale keycodes
+			parent.lastKeyCode = -1;
+			// check if we are in range of the buttons
+			if (this.lastMouseButton == 1 && lastXClick <= x + controlButtonWidth)
 			{
-				bindingIndexToUpdate = id;
-				controllerTickStart = Minecraft.getSystemTime();
-				ControllerSettings.suspendControllerInput(true, 10000);
-			}
-			else if (binding != null)
-			{
-				if (lastXClick <= x + controlButtonWidth + smallButtonWidth)
+				if (bindingIndexToUpdate == -1)
 				{
-					if (binding.inputEvent.isValid())
-					{
-						ControllerSettings.unsetControllerBinding(parent.getCurrentControllerId(), binding.inputString);
-					}
-					else if (binding.inputString.contains("user"))
-					{
-						// delete this user binding
-						ControllerSettings.delete(binding.inputString);
-						joyBindKeys.remove(id);
-						return false;
-					}
-
-				}
-				else if (lastXClick <= x + controlButtonWidth + smallButtonWidth * 2)
-				{
-					if (binding.inputEvent.getEventType() != EventType.AXIS
-							&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
-					{
-						ControllerSettings.setToggle(parent.getCurrentControllerId(), binding.inputString,
-								!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
-					}
+					this.inputIndexToUpdate = id;
+					checkCancelInputWait = false;
 				}
 			}
+			else if (this.lastMouseButton == 0 && !this.textInputName.getVisible())
+			{
+				ControllerBinding binding = ControllerSettings.get(bindingKey);
+				if (lastXClick <= x + controlButtonWidth)
+				{
+					bindingIndexToUpdate = id;
+					controllerTickStart = Minecraft.getSystemTime();
+					ControllerSettings.suspendControllerInput(true, 10000);
+					checkCancelInputWait = false;
+				}
+				else if (binding != null)
+				{
+					if (lastXClick <= x + controlButtonWidth + smallButtonWidth)
+					{
+						if (binding.inputEvent.isValid())
+						{
+							ControllerSettings.unsetControllerBinding(parent.getCurrentControllerId(), binding.inputString);
+						}
+						else if (binding.inputString.contains("user"))
+						{
+							// delete this user binding
+							ControllerSettings.delete(binding.inputString);
+							joyBindKeys.remove(id);
+							return false;
+						}
+	
+					}
+					else if (lastXClick <= x + controlButtonWidth + smallButtonWidth * 2)
+					{
+						if (binding.inputEvent.getEventType() != EventType.AXIS
+								&& !binding.bindingOptions.contains(BindingOptions.MENU_BINDING))
+						{
+							ControllerSettings.setToggle(parent.getCurrentControllerId(), binding.inputString,
+									!binding.bindingOptions.contains(BindingOptions.IS_TOGGLE));
+						}
+					}
+				}
+			}
+		}
+		
+		if (checkCancelInputWait)
+		{
+			if (bindingIndexToUpdate != -1)
+			// click was outside so timeout the controller input wait
+				controllerTickStart = controllerInputTimeout + 1;
+			inputIndexToUpdate = -1;
+			this.textInputName.setVisible(false);
 		}
 		return true;
 	}

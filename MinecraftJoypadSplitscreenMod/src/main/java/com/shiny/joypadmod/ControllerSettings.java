@@ -85,7 +85,7 @@ public class ControllerSettings
 	public static boolean invertYAxis = false;
 	public static boolean grabMouse = false;
 
-	private static ConfigFile config = null;
+	public static ConfigFile config = null;
 
 	public ControllerSettings(File configFile)
 	{

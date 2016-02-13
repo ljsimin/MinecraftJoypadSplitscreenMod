@@ -2,7 +2,9 @@ package com.shiny.joypadmod.helpers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -195,6 +197,39 @@ public class ConfigFile
 				}
 			}
 		}
+	}
+	
+	public Map<String, String> buildStringMapFromConfig(String cat, String name)
+	{
+		String catName = cat + "." + name;
+		if (!config.hasCategory(catName))
+		{
+			LogHelper.Info("No category name mapping found for: " + catName);
+			return null;
+		}
+			
+		ConfigCategory cc = config.getCategory(catName);	
+		Map<String, String> retMap = new HashMap<String, String>();
+		
+		for (String key : cc.keySet())
+		{
+			String nameMap = cc.get(key).getString();
+			retMap.put(key, nameMap);
+		}
+		
+		return retMap;		
+	}
+	
+	public void saveStringMap(String category, String setName, Map<String, String> map, String comment)
+	{
+		for (Map.Entry<String, String> entry : map.entrySet())
+		{
+			setConfigFileSetting(category + "." + setName, 
+					entry.getKey(), entry.getValue());
+		}
+		
+		if (comment != null && !comment.isEmpty())
+			addComment(category, comment);
 	}
 
 	public void deleteUserBinding(ControllerBinding binding)
