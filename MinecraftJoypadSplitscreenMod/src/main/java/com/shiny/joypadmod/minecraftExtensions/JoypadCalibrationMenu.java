@@ -133,12 +133,15 @@ public class JoypadCalibrationMenu extends GuiScreen
 			((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
 			break;
 		case 500: // Done
-			List<Integer> singleDirectionAxisExit = ControllerSettings.getSingleDirectionAxis(joypadIndex);
-			// revert singleDirectionAxis toggles if it wasn't saved
-			for (int i = 0; i < Controllers.getController(joypadIndex).getAxisCount(); i++)
+			if (joypadIndex >= 0)
 			{
-				if (singleDirectionAxisSaved.contains(i) != singleDirectionAxisExit.contains(i))
-					ControllerSettings.toggleSingleDirectionAxis(joypadIndex, i);
+				List<Integer> singleDirectionAxisExit = ControllerSettings.getSingleDirectionAxis(joypadIndex);
+				// revert singleDirectionAxis toggles if it wasn't saved
+				for (int i = 0; i < Controllers.getController(joypadIndex).getAxisCount(); i++)
+				{
+					if (singleDirectionAxisSaved.contains(i) != singleDirectionAxisExit.contains(i))
+						ControllerSettings.toggleSingleDirectionAxis(joypadIndex, i);
+				}
 			}
 			
 			mc.displayGuiScreen(this.parent);
