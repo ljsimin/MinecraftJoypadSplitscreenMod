@@ -346,17 +346,12 @@ public class JoypadControlList extends GuiScrollingList
 			} 
 			else
 			{
-				if (!this.textInputName.getVisible())
-				{
-					textInputName.width = controlButtonWidth;
-					textInputName.height = buttonHeight;
-					textInputName.setText(controlButtonStr);
-					this.textInputName.setVisible(true);
-				}
-				textInputName.xPosition = x;
-				textInputName.yPosition = y;
+				String s = textInputName.getVisible() ? textInputName.getText() : controlButtonStr;
+				textInputName = new GuiTextField(this.fontRenderer, x, y, controlButtonWidth, buttonHeight);
+				textInputName.setText(s);
+				textInputName.setVisible(true);
 		        textInputName.drawTextBox();
-		        this.textInputName.setFocused(true);
+		        textInputName.setFocused(true);
 			}
 			parent.lastKeyCode = -1;
 		}
