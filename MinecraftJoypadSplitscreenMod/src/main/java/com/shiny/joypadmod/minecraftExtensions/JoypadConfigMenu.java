@@ -52,6 +52,8 @@ public class JoypadConfigMenu extends GuiScreen
 	// bottom button parameters
 	private int buttonYStart_bottom;
 	public int bottomButtonWidth = 70;
+	
+	public int lastKeyCode = -1;
 
 	private GuiScreen parentScr;
 
@@ -196,6 +198,8 @@ public class JoypadConfigMenu extends GuiScreen
 	public void onGuiClosed()
 	{
 		LogHelper.Info("JoypadConfigMenu OnGuiClosed");
+		if (ControllerSettings.isInputEnabled())
+			ControllerSettings.controllerUtils.saveCurrentJoypadMap();
 		ControllerSettings.suspendControllerInput(false, 0);
 		if (sensitivity_menuStart != ControllerSettings.inMenuSensitivity
 				|| sensitivity_gameStart != ControllerSettings.inGameSensitivity)
@@ -341,25 +345,21 @@ public class JoypadConfigMenu extends GuiScreen
 			if (Minecraft.getSystemTime() - customBindingTickStart > 5000)
 				customBindingTickStart = 0;
 			changeButtonText(customBindingKeyIndex, sGet("controlMenu.pressKey"));
-			for (int i = 0; i < Keyboard.KEYBOARD_SIZE; i++)
+			if (this.lastKeyCode != -1)
 			{
-				if (Keyboard.isKeyDown(i))
+				String key = Keyboard.getKeyName(this.lastKeyCode);
+				this.lastKeyCode = -1;
+				LogHelper.Info("Received " + key);
+				customBindingTickStart = 0;
+				ControllerBinding binding;
+				binding = new ControllerBinding("user." + key, key, new ButtonInputEvent(
+						this.getCurrentControllerId(), -1, 1), new int[] { Keyboard.getKeyIndex(key) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_MISC));
+				if (this.optionList != null && !this.optionList.joyBindKeys.contains(binding.inputString))
 				{
-					String key = Keyboard.getKeyName(i);
-					LogHelper.Info("Received " + key);
-					customBindingTickStart = 0;
-					ControllerBinding binding;
-					binding = new ControllerBinding("user." + key, key, new ButtonInputEvent(
-							this.getCurrentControllerId(), -1, 1), new int[] { Keyboard.getKeyIndex(key) }, 0,
-							EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
-									BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_MISC));
-					if (this.optionList != null && !this.optionList.joyBindKeys.contains(binding.inputString))
-					{
-						ControllerSettings.addUserBinding(binding);
-						this.optionList.joyBindKeys.add(binding.inputString);
-					}
-
-					break;
+					ControllerSettings.addUserBinding(binding);
+					this.optionList.joyBindKeys.add(binding.inputString);
 				}
 			}
 		}
@@ -378,6 +378,20 @@ public class JoypadConfigMenu extends GuiScreen
 	 */
 	protected void keyTyped(char c, int code)
 	{
+		if (customBindingTickStart > 0)
+		{
+			this.lastKeyCode = code;
+			return;
+		}
+		
+		if (JoypadControlList.textInputName != null 
+				&& JoypadControlList.textInputName.getVisible())
+		{
+			this.lastKeyCode = code;
+			JoypadControlList.textInputName.textboxKeyTyped(c, code);
+			return;
+		}
+		
 		if (c == ' ' && controllers.size() > 0)
 		{
 			toggleController();
@@ -389,14 +403,16 @@ public class JoypadConfigMenu extends GuiScreen
 	}
 
 	@Override
-	protected void mouseClicked(int par1, int par2, int par3)
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
 	{
 		if (this.optionList != null)
 		{
-			JoypadControlList.lastXClick = par1;
-			JoypadControlList.lastYClick = par2;
+			JoypadControlList.lastXClick = mouseX;
+			JoypadControlList.lastYClick = mouseY;
+			JoypadControlList.lastMouseButton = mouseButton;
 		}
-		super.mouseClicked(par1, par2, par3);
+		super.mouseClicked(mouseX, mouseY, mouseButton);
+
 	}
 
 	private int getJoypadIndex(int offset)
