@@ -212,12 +212,13 @@ public class JoypadConfigMenu extends GuiScreen
 	@Override
 	protected void actionPerformed(GuiButton guiButton)
 	{
-		LogHelper.Info("Action performed on buttonID " + getButtonId(guiButton));
+		int id = getButtonId(guiButton);
+		LogHelper.Info("Action performed on buttonID " + id);
 
-		if (!joyConfigMenuEnabled() && getButtonId(guiButton) < 500)
+		if (!joyConfigMenuEnabled() && id != 420 && id < 500)
 			return;
 
-		switch (getButtonId(guiButton))
+		switch (id)
 		{
 		case 100: // Controller button
 			toggleController();
