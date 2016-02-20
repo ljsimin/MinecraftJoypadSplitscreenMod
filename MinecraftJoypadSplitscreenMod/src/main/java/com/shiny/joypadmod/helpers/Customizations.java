@@ -71,7 +71,7 @@ public class Customizations {
 				{
 					mc.renderEngine.bindTexture(resource);
 					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-					Gui.drawModalRectWithCustomSizedTexture(x - width/2, y-height/2, 0, 0, 
+					Gui.func_146110_a(x - width/2, y-height/2, 0, 0, 
 							width, height, imageWidth, imageHeight);
 				} catch (Exception ex)
 				{
