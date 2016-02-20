@@ -38,6 +38,8 @@ public class ModVersionHelper
 		// 1.6.4
 		// TickRegistry.registerTickHandler(new RenderTickHandler(),
 		// Side.CLIENT);
+		
+		Customizations.init();
 	}
 
 	public static int getVersion()
