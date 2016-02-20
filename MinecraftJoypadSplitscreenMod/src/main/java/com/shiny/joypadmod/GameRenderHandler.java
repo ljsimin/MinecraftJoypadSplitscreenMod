@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -13,6 +12,7 @@ import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Mouse;
 
+import com.shiny.joypadmod.helpers.Customizations;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
@@ -202,9 +202,7 @@ public class GameRenderHandler
 		JoypadMouse.updateXY();
 		int x = JoypadMouse.getX();
 		int y = JoypadMouse.getY();
-
-		Gui.drawRect(x - 3, y, x + 4, y + 1, reticalColor);
-		Gui.drawRect(x, y - 3, x + 1, y + 4, reticalColor);
+		Customizations.Reticle.Draw(x, y);
 	}
 
 	private static void UpdateInGameCamera()
