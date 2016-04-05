@@ -20,8 +20,8 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class ModVersionHelper
 {
-	public static final String VERSION = "1.8.9";
-	public static final int MC_VERSION = 189;
+	public static final String VERSION = "1.9.0";
+	public static final int MC_VERSION = 190;
 
 	public void gameInit()
 	{
@@ -31,7 +31,7 @@ public class ModVersionHelper
 			return;
 		}
 
-		// 1.8
+		// 1.8+
 		MinecraftForge.EVENT_BUS.register(this);
 		// 1.7.2
 		//FMLCommonHandler.instance().bus().register(this);
@@ -78,7 +78,7 @@ public class ModVersionHelper
 	public void buttonMapDisplay(RenderGameOverlayEvent.Post event)
 	{
 		
-		if(event.isCancelable() || event.type != ElementType.EXPERIENCE)
+		if(event.isCancelable() || event.getType() != ElementType.EXPERIENCE)
 	    {      
 	        return;
 	    }
@@ -88,7 +88,7 @@ public class ModVersionHelper
 	public static ScaledResolution GetScaledResolution()
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-		// 1.8.8
+		// 1.8.8+
 		return new ScaledResolution(mc);
 		// 1.7.10 - 1.8.2 
 		//return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);

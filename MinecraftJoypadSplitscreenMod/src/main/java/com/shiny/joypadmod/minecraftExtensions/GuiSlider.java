@@ -3,7 +3,7 @@ package com.shiny.joypadmod.minecraftExtensions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -130,8 +130,8 @@ public class GuiSlider extends GuiButton
 			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}
 		else
-		{
-			this.displayString = StatCollector.translateToLocalFormatted(this.baseDisplayString,
+		{			
+			this.displayString = I18n.translateToLocalFormatted(this.baseDisplayString,
 					(int) (this.sliderValue * 100.0F));
 		}
 	}
