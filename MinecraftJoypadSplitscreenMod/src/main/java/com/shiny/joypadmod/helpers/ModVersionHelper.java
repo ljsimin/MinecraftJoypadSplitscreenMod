@@ -20,7 +20,8 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class ModVersionHelper
 {
-	public static final String VERSION = "1.9.0";
+	public static final String VERSION = "1.10.0";
+	//what should I type there for 1.10?
 	public static final int MC_VERSION = 190;
 
 	public void gameInit()
