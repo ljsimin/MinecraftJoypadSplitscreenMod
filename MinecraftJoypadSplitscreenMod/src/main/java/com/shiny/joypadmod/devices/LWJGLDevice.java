@@ -62,5 +62,10 @@ public class LWJGLDevice extends InputDevice {
 	public void setDeadZone(int axisIndex, float value) {
 		Controllers.getController(myIndex).setDeadZone(axisIndex, value);
 	}
+	
+	public void setIndex(int index)
+	{
+		myIndex = index;
+	}
 
 }

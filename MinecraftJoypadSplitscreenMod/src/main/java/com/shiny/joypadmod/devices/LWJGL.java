@@ -4,10 +4,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 
 public class LWJGL extends InputLibrary {
-
+	
+	LWJGLDevice theDevice;
+	
 	@Override
 	public void create() throws LWJGLException {
 		Controllers.create();
+		theDevice = new LWJGLDevice(0);
 
 	}
 
@@ -19,12 +22,12 @@ public class LWJGL extends InputLibrary {
 	@Override
 	public void clearEvents() {
 		Controllers.clearEvents();
-
 	}
 
 	@Override
 	public InputDevice getController(int index) {
-		return new LWJGLDevice(index);
+		theDevice.setIndex(index);
+		return theDevice;
 	}
 
 	@Override
@@ -34,7 +37,8 @@ public class LWJGL extends InputLibrary {
 
 	@Override
 	public InputDevice getEventSource() {
-		return new LWJGLDevice(Controllers.getEventControlIndex());
+		theDevice.setIndex(Controllers.getEventSource().getIndex());
+		return theDevice;
 	}
 
 	@Override
