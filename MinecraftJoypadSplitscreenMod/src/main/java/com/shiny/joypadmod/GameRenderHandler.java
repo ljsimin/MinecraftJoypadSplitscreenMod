@@ -3,13 +3,6 @@ package com.shiny.joypadmod;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.helpers.Customizations;
@@ -22,6 +15,12 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 
 
@@ -266,7 +265,7 @@ public class GameRenderHandler
 				binding.isPressed();
 		}
 
-		while (Controllers.next() && mc.currentScreen != null)
+		while (ControllerSettings.JoypadModInputLibrary.next() && mc.currentScreen != null)
 		{
 			// ignore controller events in the milliseconds following in GAME
 			// controlling
@@ -278,7 +277,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
+							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()
@@ -315,7 +314,7 @@ public class GameRenderHandler
 			binding.isPressed();
 		}
 
-		while (Controllers.next() && (mc.currentScreen == null || lastFlansModCheckValue))
+		while (ControllerSettings.JoypadModInputLibrary.next() && (mc.currentScreen == null || lastFlansModCheckValue))
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
@@ -327,7 +326,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
+							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()

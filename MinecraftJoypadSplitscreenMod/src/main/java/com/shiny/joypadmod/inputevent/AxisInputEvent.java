@@ -1,8 +1,6 @@
 package com.shiny.joypadmod.inputevent;
 
 import com.shiny.joypadmod.ControllerSettings;
-import org.lwjgl.input.Controllers;
-
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class AxisInputEvent extends ControllerInputEvent
@@ -29,7 +27,7 @@ public class AxisInputEvent extends ControllerInputEvent
 			else
 			{
 				LogHelper.Error("Attempted to create a binding with invalid axis number. Axis index requested: "
-						+ axisNumber + " axis available: " + Controllers.getController(controllerNumber).getAxisCount());
+						+ axisNumber + " axis available: " + ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getAxisCount());
 			}
 
 			LogHelper.Warn("Processing will continue with invalid axis " + axisNumber
@@ -41,7 +39,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isTargetEvent()
 	{
-		return Controllers.isEventAxis() && Controllers.getEventControlIndex() == axisNumber;
+		return ControllerSettings.JoypadModInputLibrary.isEventAxis() && ControllerSettings.JoypadModInputLibrary.getEventControlIndex() == axisNumber;
 	}
 
 	@Override
@@ -49,7 +47,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return 0;
-		return ControllerUtils.getAxisValue(Controllers.getController(controllerNumber), axisNumber);
+		return ControllerUtils.getAxisValue(ControllerSettings.JoypadModInputLibrary.getController(controllerNumber), axisNumber);
 	}
 
 	@Override
@@ -57,7 +55,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return 0;
-		return Controllers.getController(controllerNumber).getDeadZone(axisNumber);
+		return ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getDeadZone(axisNumber);
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return "Not Set";
-		return Controllers.getController(controllerNumber).getAxisName(axisNumber);
+		return ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getAxisName(axisNumber);
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public class AxisInputEvent extends ControllerInputEvent
 			return;
 		LogHelper.Info("Setting deadzone on controller " + controllerNumber + " axis " + this.axisNumber + " value "
 				+ deadzone);
-		Controllers.getController(controllerNumber).setDeadZone(this.axisNumber, deadzone);
+		ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).setDeadZone(this.axisNumber, deadzone);
 		this.deadzone = deadzone;
 	}
 
@@ -111,6 +109,6 @@ public class AxisInputEvent extends ControllerInputEvent
 	public boolean isValid()
 	{
 		return controllerNumber >= 0 && axisNumber >= 0
-				&& axisNumber < Controllers.getController(controllerNumber).getAxisCount();
+				&& axisNumber < ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getAxisCount();
 	}
 }

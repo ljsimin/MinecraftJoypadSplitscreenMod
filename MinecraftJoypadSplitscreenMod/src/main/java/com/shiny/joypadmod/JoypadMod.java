@@ -1,5 +1,12 @@
 package com.shiny.joypadmod;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McGuiHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
+import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
+
 /*
  * Main class for Joypad mod. This initializes everything.
  */
@@ -11,24 +18,17 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import com.shiny.joypadmod.helpers.LogHelper;
-import com.shiny.joypadmod.helpers.McGuiHelper;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
-import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
-
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
-		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.10.0,)")
+		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.11.0,)")
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
-	public static final String MODID = "JoypadSplitscreenMod";
+	public static final String MODID = "joypadsplitscreenmod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
-	public static final float MINVERSION = 0.21f;
-	public static final String REVISION = "";
+	public static final float MINVERSION = 0.22f;
+	public static final String REVISION = "";	
 
 	private static ControllerSettings controllerSettings;
 

@@ -1,7 +1,5 @@
 package com.shiny.joypadmod.inputevent;
 
-import org.lwjgl.input.Controllers;
-
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 
@@ -114,7 +112,7 @@ public abstract class ControllerInputEvent
 		if (!isValid())
 			return false;
 
-		if (Controllers.getEventSource().getIndex() == controllerNumber && isTargetEvent())
+		if (ControllerSettings.JoypadModInputLibrary.getEventSource().getIndex() == controllerNumber && isTargetEvent())
 		{
 			pressedOnce = true;
 			return true;

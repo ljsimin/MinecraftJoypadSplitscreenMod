@@ -13,14 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
-
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.devices.InputLibrary;
+import com.shiny.joypadmod.devices.LWJGL;
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -33,6 +30,10 @@ import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 
 public class ControllerSettings
 {
@@ -48,7 +49,10 @@ public class ControllerSettings
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
 	// public static Controller joystick;
+	public static InputLibrary JoypadModInputLibrary;
 	public static int joyNo = -1;
+	//public static XInputDevice xinputDevice = null;
+	//static XInputDeviceListener listener = null;
 
 	public static int inGameSensitivity = 25;
 	public static int inMenuSensitivity = 10;
@@ -100,7 +104,8 @@ public class ControllerSettings
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
 		try
 		{
-			Controllers.create();
+			JoypadModInputLibrary = new LWJGL();
+			JoypadModInputLibrary.create();
 		}
 		catch (Exception ex)
 		{
@@ -129,7 +134,7 @@ public class ControllerSettings
 		int xAxisIndex = ControllerUtils.findXAxisIndex(joyIndex);
 		
 		// check for new Xbox one case 
-		Controller controller = Controllers.getController(joyIndex);
+		InputDevice controller = JoypadModInputLibrary.getController(joyIndex);
 		if (controller.getName().toLowerCase().contains("xbox one") && controller.getAxisCount() == 6)
 		{
 			LogHelper.Info("XBox One 6 axis joypad detected.");
@@ -394,7 +399,7 @@ public class ControllerSettings
 			if (selectedController >= 0)
 			{
 				setController(selectedController);
-				Controllers.clearEvents();
+				JoypadModInputLibrary.clearEvents();
 			}
 			else
 			{
@@ -415,40 +420,68 @@ public class ControllerSettings
 	{
 		validControllers.clear();
 		inValidControllers.clear();
-
-		try
-		{
-			if (!Controllers.isCreated())
-				Controllers.create();
-
-			if (Controllers.getControllerCount() > 0)
-			{
-				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
-				for (int joyIndex = 0; joyIndex < Controllers.getControllerCount(); joyIndex++)
-				{
-					Controller thisController = Controllers.getController(joyIndex);
-
-					logControllerInfo(thisController);
-
-					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
-							requiredMinButtonCount, requiredAxisCount))
+		
+		/*
+		
+		if (XInputDevice.isAvailable()) {
+		    LogHelper.Info("XInput 1.3 is available on this platform.");		
+		
+			try {
+				XInputDevice[] devices = XInputDevice.getAllDevices();
+				int connectedDevices = 0;				
+				
+				for (int i = 0; i < devices.length; i++)
+				{			
+					if (devices[i].isConnected())
 					{
-						LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
-								+ ") meets the input requirements");
-						addControllerToList(validControllers, thisController.getName(), joyIndex);
-					}
-					else
-					{
-						LogHelper.Info("This controller does not meet the input requirements");
-						addControllerToList(inValidControllers, thisController.getName(), joyIndex);
-					}
-					LogHelper.Info("---");
+						addControllerToList(validControllers, "XInput Device " + i, i);
+						if (xinputDevice == null)
+							xinputDevice = devices[i];
+					}																
 				}
+				
+			} catch (XInputNotLoadedException e) {
+				validControllers.clear();
+				LogHelper.Fatal("Error setting up XInput device. Fall back to LWJGL.");
 			}
 		}
-		catch (org.lwjgl.LWJGLException e)
+		*/	
+		
 		{
-			System.err.println("Couldn't initialize Controllers: " + e.getMessage());
+			try
+			{
+				if (!JoypadModInputLibrary.isCreated())
+					JoypadModInputLibrary.create();
+	
+				if (JoypadModInputLibrary.getControllerCount() > 0)
+				{
+					LogHelper.Info("Found " + JoypadModInputLibrary.getControllerCount() + " controller(s) in total.");
+					for (int joyIndex = 0; joyIndex < JoypadModInputLibrary.getControllerCount(); joyIndex++)
+					{
+						InputDevice thisController = JoypadModInputLibrary.getController(joyIndex);
+	
+						logControllerInfo(thisController);
+	
+						if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
+								requiredMinButtonCount, requiredAxisCount))
+						{
+							LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
+									+ ") meets the input requirements");
+							addControllerToList(validControllers, thisController.getName(), joyIndex);
+						}
+						else
+						{
+							LogHelper.Info("This controller does not meet the input requirements");
+							addControllerToList(inValidControllers, thisController.getName(), joyIndex);
+						}
+						LogHelper.Info("---");
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				System.err.println("Couldn't initialize Controllers: " + e.getMessage());
+			}
 		}
 
 		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
@@ -516,7 +549,7 @@ public class ControllerSettings
 	private static void setSingleDirectionAxis(int controllerNo, List<Integer> axisList)
 	{
 		List<Integer> finalAxisList = new ArrayList<Integer>();
-		Controller c = Controllers.getController(controllerNo);
+		InputDevice c = JoypadModInputLibrary.getController(controllerNo);
 		StringBuilder sbSDAMessage = new StringBuilder();
 		sbSDAMessage.append("Setting the following as Single Direction Axes on " + c.getName());
 		for (Integer i : axisList)
@@ -569,76 +602,114 @@ public class ControllerSettings
 	public static boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
-		try
+		
+		/*if (xinputDevice != null)
 		{
-			if (!Controllers.isCreated())
-				Controllers.create();
-
-			LogHelper.Info("Controllers.getControllerCount == " + Controllers.getControllerCount());
-
-			if (controllerNo < 0 || controllerNo >= Controllers.getControllerCount())
+			try
 			{
-				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently "
-						+ Controllers.getControllerCount() + " controllers detected.");
-				return false;
+				xinputDevice.removeListener(listener);
+				xinputDevice = XInputDevice.getDeviceFor(controllerNo);			
+				
+				listener = new SimpleXInputDeviceListener() {
+				    @Override
+				    public void connected() {
+				        LogHelper.Info("XInputDevice connected");
+				    }
+	
+				    @Override
+				    public void disconnected() {
+				    	LogHelper.Info("XInputDevice disconnected");
+				    }
+	
+				    @Override
+				    public void buttonChanged(final XInputButton button, final boolean pressed) {
+				    	if (pressed)
+				    		LogHelper.Info("ButtonPressed");
+				    	else
+				    		LogHelper.Info("Button released");
+				        // the given button was just pressed (if pressed == true) or released (pressed == false)
+				    }
+				};
+				xinputDevice.addListener(listener);
 			}
-
-			addSingleDirectionAxis(controllerNo);
-
-			Controller controller = Controllers.getController(controllerNo);
-			ControllerSettings.setDefaultJoyBindingMap(controllerNo, true);
-			joyNo = controllerNo;
-			controllerUtils.printDeadZones(controller);
-			inputEnabled = true;
-
-			applySavedDeadZones(joyNo);
-			
-			String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+controller.getName());
-			if (axisStr != null) // should never be null (default to "false") but just in case
+			catch (Exception ex)
 			{
-				// handle the case where a 6 axis xbox controller is detected 
-				// and they haven't manually applied any SDA settings
-				if (axisStr.equals("false"))
-				{		
-					if (xbox6Axis.contains(joyNo))
+				LogHelper.Fatal("Failure in ControllerSettings.setController " + ex.toString());
+			}
+		}
+		else
+		{		*/
+			try
+			{
+				if (!JoypadModInputLibrary.isCreated())
+					JoypadModInputLibrary.create();
+	
+				LogHelper.Info("Controllers.getControllerCount == " + JoypadModInputLibrary.getControllerCount());
+	
+				if (controllerNo < 0 || controllerNo >= JoypadModInputLibrary.getControllerCount())
+				{
+					LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently "
+							+ JoypadModInputLibrary.getControllerCount() + " controllers detected.");
+					return false;
+				}
+	
+				addSingleDirectionAxis(controllerNo);
+	
+				InputDevice controller = JoypadModInputLibrary.getController(controllerNo);
+				ControllerSettings.setDefaultJoyBindingMap(controllerNo, true);
+				joyNo = controllerNo;
+				controllerUtils.printDeadZones(controller);
+				inputEnabled = true;
+	
+				applySavedDeadZones(joyNo);
+				
+				String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+controller.getName());
+				if (axisStr != null) // should never be null (default to "false") but just in case
+				{
+					// handle the case where a 6 axis xbox controller is detected 
+					// and they haven't manually applied any SDA settings
+					if (axisStr.equals("false"))
+					{		
+						if (xbox6Axis.contains(joyNo))
+						{
+							setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4,5)));
+							LogHelper.Info("Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
+						}
+					}
+					else if (!axisStr.equals(""))
 					{
-						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4,5)));
-						LogHelper.Info("Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
+						setSingleDirectionAxis(joyNo, stringToIntList(axisStr));
+						LogHelper.Info("Retrieved informations about single-direction axis");
 					}
 				}
-				else if (!axisStr.equals(""))
-				{
-					setSingleDirectionAxis(joyNo, stringToIntList(axisStr));
-					LogHelper.Info("Retrieved informations about single-direction axis");
-				}
+	
+				config.updatePreferedJoy(controllerNo, controller.getName());
+	
+				Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
+				JoypadMouse.AxisReader.centerCrosshairs();
+				checkIfBindingsNeedUpdating();
+				unpressAll();
+				return true;
 			}
-
-			config.updatePreferedJoy(controllerNo, controller.getName());
-
-			Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = false;
-			JoypadMouse.AxisReader.centerCrosshairs();
-			checkIfBindingsNeedUpdating();
-			unpressAll();
-			return true;
-		}
-		catch (Exception e)
-		{
-			LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
-			inputEnabled = false;
-		}
+			catch (Exception e)
+			{
+				LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
+				inputEnabled = false;
+			}
+		
 		return false;
 	}
 
 	public static void resetBindings(int joyIndex)
 	{
-		if (joyIndex >= 0 && joyIndex < Controllers.getControllerCount())
+		if (joyIndex >= 0 && joyIndex < JoypadModInputLibrary.getControllerCount())
 		{
 			currentDisplayedMap = -1;
 			setDefaultJoyBindingMap(joyIndex, false);
 			for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 			{
 				if (!entry.getKey().contains("user."))
-					config.saveControllerBinding(Controllers.getController(joyIndex).getName(), entry.getValue());
+					config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(), entry.getValue());
 			}
 		}
 
@@ -669,7 +740,7 @@ public class ControllerSettings
 		}
 
 		inputEnabled = true;
-		config.updatePreferedJoy(joyIndex, Controllers.getController(joyIndex).getName());
+		config.updatePreferedJoy(joyIndex, JoypadModInputLibrary.getController(joyIndex).getName());
 		JoypadMouse.AxisReader.centerCrosshairs();
 	}
 
@@ -702,7 +773,7 @@ public class ControllerSettings
 	public static void setControllerBinding(int joyIndex, String bindingKey, ControllerBinding binding)
 	{
 		ControllerSettings.joyBindingsMap.put(bindingKey, binding);
-		config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
+		config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(), binding);
 	}
 
 	public static void unsetControllerBinding(int joyIndex, String key)
@@ -711,7 +782,7 @@ public class ControllerSettings
 		if (binding != null)
 		{
 			binding.inputEvent = new ButtonInputEvent(0, -1, 1);
-			config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
+			config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(), binding);
 			unpressAll();
 		}
 	}
@@ -758,7 +829,7 @@ public class ControllerSettings
 		return -1;
 	}
 
-	private void logControllerInfo(Controller controller)
+	private void logControllerInfo(InputDevice controller)
 	{
 		LogHelper.Info("Found controller " + controller.getName() + " (" + controller.getIndex() + ")");
 		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
@@ -888,7 +959,7 @@ public class ControllerSettings
 				+ ControllerSettings.inMenuSensitivity);
 	}
 
-	public static void saveDeadZones(Controller controller)
+	public static void saveDeadZones(InputDevice controller)
 	{
 		DecimalFormat df = new DecimalFormat("#0.00");
 
@@ -901,7 +972,7 @@ public class ControllerSettings
 		LogHelper.Info("Saved deadzones for " + controller.getName());
 	}
 
-	public static void saveSingleDirectionAxis(Controller controller)
+	public static void saveSingleDirectionAxis(InputDevice controller)
 	{
 		String axisList = intListToString(getSingleDirectionAxis(controller.getIndex()));
 		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisList);
@@ -912,7 +983,7 @@ public class ControllerSettings
 
 	private static void saveCurrentJoyBindings()
 	{
-		String joyName = Controllers.getController(currentDisplayedMap).getName();
+		String joyName = JoypadModInputLibrary.getController(currentDisplayedMap).getName();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
 			config.saveControllerBinding(joyName, entry.getValue());
@@ -926,7 +997,7 @@ public class ControllerSettings
 
 		LogHelper.Info("Applying configurated deadzones");
 
-		config.applySavedDeadZones(Controllers.getController(joyId));
+		config.applySavedDeadZones(JoypadModInputLibrary.getController(joyId));
 
 	}
 
@@ -1031,7 +1102,7 @@ public class ControllerSettings
 		if (b != null)
 		{
 			return ControllerSettings.controllerUtils.getHumanReadableInputName(
-					Controllers.getController(joyNum), b.inputEvent);
+					JoypadModInputLibrary.getController(joyNum), b.inputEvent);
 		}
 
 		return defaultStr;

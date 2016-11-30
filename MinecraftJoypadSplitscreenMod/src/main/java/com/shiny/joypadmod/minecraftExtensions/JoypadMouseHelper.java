@@ -1,9 +1,9 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
-import net.minecraft.util.MouseHelper;
-
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
+
+import net.minecraft.util.MouseHelper;
 
 // warning: small but non zero chance of this causing incompatibility with other mods
 public class JoypadMouseHelper extends MouseHelper

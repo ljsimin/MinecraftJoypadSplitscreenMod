@@ -3,12 +3,6 @@ package com.shiny.joypadmod.minecraftExtensions;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiScreen;
-
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
@@ -20,6 +14,12 @@ import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiScreen;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -469,12 +469,6 @@ public class JoypadConfigMenu extends GuiScreen
 		if (!enabled)
 			guiButton.enabled = false;
 		// field_146292_n.add(guiButton);
-		buttonList.add(guiButton);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void addButton(GuiButton guiButton)
-	{
 		buttonList.add(guiButton);
 	}
 

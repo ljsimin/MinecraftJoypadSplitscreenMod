@@ -1,23 +1,12 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.client.GuiScrollingList;
-
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -33,6 +22,15 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.fml.client.GuiScrollingList;
 
 
 
@@ -294,7 +292,7 @@ public class JoypadControlList extends GuiScrollingList
 			else if (binding != null)
 			{
 				controlButtonStr = ControllerSettings.controllerUtils.getHumanReadableInputName(
-						Controllers.getController(this.parent.getCurrentControllerId()), binding.inputEvent);
+						ControllerSettings.JoypadModInputLibrary.getController(this.parent.getCurrentControllerId()), binding.inputEvent);
 			}
 		}
 		if (controlButtonStr.equals("NONE"))
@@ -491,7 +489,7 @@ public class JoypadControlList extends GuiScrollingList
 	{
 		try
 		{
-			while (Controllers.next())
+			while (ControllerSettings.JoypadModInputLibrary.next())
 			{
 				if (Minecraft.getSystemTime() - controllerTickStart < 200)
 				{
@@ -499,12 +497,12 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				else
 				{
-					if (Controllers.getEventSource() != Controllers.getController(parent.getCurrentControllerId()))
+					if (ControllerSettings.JoypadModInputLibrary.getEventSource() != ControllerSettings.JoypadModInputLibrary.getController(parent.getCurrentControllerId()))
 						continue;
 
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							Controllers.getController(parent.getCurrentControllerId()),
-							Controllers.getEventControlIndex());
+							ControllerSettings.JoypadModInputLibrary.getController(parent.getCurrentControllerId()),
+							ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						float threshold = inputEvent.getThreshold();
