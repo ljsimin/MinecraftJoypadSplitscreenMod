@@ -475,7 +475,7 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		
 		if (checkCancelInputWait)
-		{
+		{			
 			if (bindingIndexToUpdate != -1)
 			// click was outside so timeout the controller input wait
 				controllerTickStart = controllerInputTimeout + 1;
@@ -489,6 +489,7 @@ public class JoypadControlList extends GuiScrollingList
 	{
 		try
 		{
+			ControllerSettings.JoypadModInputLibrary.poll();
 			while (ControllerSettings.JoypadModInputLibrary.next())
 			{
 				if (Minecraft.getSystemTime() - controllerTickStart < 200)

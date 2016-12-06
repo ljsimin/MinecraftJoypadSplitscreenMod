@@ -3,12 +3,11 @@ package com.shiny.joypadmod.minecraftExtensions;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
+import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
@@ -282,7 +281,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 		try
 		{
-			Controller control = Controllers.getController(this.getCurrentControllerId());
+			InputDevice control = ControllerSettings.JoypadModInputLibrary.getController(this.getCurrentControllerId());
 			if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 			{
 				ret += String.format("%s %d/%d - ", sGet("controlMenu.controller"), currentJoyIndex + 1,

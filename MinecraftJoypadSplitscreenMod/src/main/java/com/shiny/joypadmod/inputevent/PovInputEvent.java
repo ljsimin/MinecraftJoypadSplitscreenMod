@@ -1,6 +1,6 @@
 package com.shiny.joypadmod.inputevent;
 
-import org.lwjgl.input.Controllers;
+import com.shiny.joypadmod.ControllerSettings;
 
 public class PovInputEvent extends ControllerInputEvent
 {
@@ -17,14 +17,14 @@ public class PovInputEvent extends ControllerInputEvent
 	protected boolean isTargetEvent()
 	{
 		if (povNumber == 0)
-			return Controllers.isEventPovX();
-		return Controllers.isEventPovY();
+			return ControllerSettings.JoypadModInputLibrary.isEventPovX();
+		return ControllerSettings.JoypadModInputLibrary.isEventPovY();
 	}
 
 	@Override
 	public float getAnalogReading()
 	{
-		return povNumber == 0 ? Controllers.getController(controllerNumber).getPovX() : Controllers.getController(
+		return povNumber == 0 ? ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getPovX() : ControllerSettings.JoypadModInputLibrary.getController(
 				controllerNumber).getPovY();
 	}
 

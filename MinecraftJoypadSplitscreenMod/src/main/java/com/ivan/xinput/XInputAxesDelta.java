@@ -146,7 +146,7 @@ public class XInputAxesDelta {
     public float getDelta(final XInputAxis axis) {
         switch (axis) {
             case LEFT_THUMBSTICK_X:
-                return getRXDelta();
+                return getLXDelta();
             case LEFT_THUMBSTICK_Y:
                 return getLYDelta();
             case RIGHT_THUMBSTICK_X:
@@ -172,7 +172,7 @@ public class XInputAxesDelta {
     public int getRawDelta(final XInputAxis axis) {
         switch (axis) {
             case LEFT_THUMBSTICK_X:
-                return getRXRawDelta();
+                return getLXRawDelta();
             case LEFT_THUMBSTICK_Y:
                 return getLYRawDelta();
             case RIGHT_THUMBSTICK_X:

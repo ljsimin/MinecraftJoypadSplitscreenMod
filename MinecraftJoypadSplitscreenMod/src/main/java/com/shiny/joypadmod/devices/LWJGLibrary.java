@@ -3,14 +3,14 @@ package com.shiny.joypadmod.devices;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 
-public class LWJGL extends InputLibrary {
+public class LWJGLibrary extends InputLibrary {
 	
-	LWJGLDevice theDevice;
+	LWJGLDeviceWrapper theDevice;
 	
 	@Override
 	public void create() throws LWJGLException {
 		Controllers.create();
-		theDevice = new LWJGLDevice(0);
+		theDevice = new LWJGLDeviceWrapper(0);
 
 	}
 
@@ -69,6 +69,11 @@ public class LWJGL extends InputLibrary {
 	@Override
 	public Boolean next() {
 		return Controllers.next();
+	}
+
+	@Override
+	public void poll() {
+		return; // polling happens within Minecraft itself so no need to do our own		
 	}
 
 }

@@ -2,9 +2,9 @@ package com.shiny.joypadmod.devices;
 
 import org.lwjgl.input.Controllers;
 
-public class LWJGLDevice extends InputDevice {
+public class LWJGLDeviceWrapper extends InputDevice {
 
-	public LWJGLDevice(int index) {
+	public LWJGLDeviceWrapper(int index) {
 		super(index);		
 	}
 
@@ -66,6 +66,11 @@ public class LWJGLDevice extends InputDevice {
 	public void setIndex(int index)
 	{
 		myIndex = index;
+	}
+
+	@Override
+	public Boolean isConnected() {
+		return true; // if this device ever disconnects LWJGL chokes and minecraft needs to be restarted
 	}
 
 }

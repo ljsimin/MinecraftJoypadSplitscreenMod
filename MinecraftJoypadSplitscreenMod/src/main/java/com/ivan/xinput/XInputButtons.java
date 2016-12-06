@@ -1,5 +1,7 @@
 package com.ivan.xinput;
 
+import com.ivan.xinput.enums.XInputButton;
+
 /**
  * Contains the states of all XInput buttons.
  *
@@ -15,6 +17,47 @@ public class XInputButtons {
 
     protected XInputButtons() {
         reset();
+    }
+    
+    public Boolean isPressed(XInputButton button)
+    {
+    	switch(button)
+    	{
+    	case A:
+    		return a;
+    	case B:
+    		return b;
+    	case X:
+    		return x;
+    	case Y:
+    		return y;
+    	case BACK:
+    		return back;
+    	case START:
+    		return start;
+    	case LEFT_SHOULDER:
+    		return lShoulder;
+    	case RIGHT_SHOULDER:
+    		return rShoulder;
+    	case LEFT_THUMBSTICK:
+    		return lThumb;
+    	case RIGHT_THUMBSTICK:
+    		return rThumb;
+    	case DPAD_UP:
+    		return up;
+    	case DPAD_DOWN:
+    		return down;
+    	case DPAD_LEFT:
+    		return left; 
+    	case DPAD_RIGHT:
+    		return right;
+    	case GUIDE_BUTTON:
+    		return guide;
+    		
+		default:
+			return false;
+    	
+    	}
     }
 
     /**

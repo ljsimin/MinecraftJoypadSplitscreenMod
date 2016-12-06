@@ -17,7 +17,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.devices.InputLibrary;
-import com.shiny.joypadmod.devices.LWJGL;
+import com.shiny.joypadmod.devices.LWJGLibrary;
+import com.shiny.joypadmod.devices.XInputLibrary;
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -104,7 +105,8 @@ public class ControllerSettings
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
 		try
 		{
-			JoypadModInputLibrary = new LWJGL();
+			//JoypadModInputLibrary = new LWJGL();
+			JoypadModInputLibrary = new XInputLibrary();
 			JoypadModInputLibrary.create();
 		}
 		catch (Exception ex)

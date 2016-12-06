@@ -17,7 +17,6 @@ public abstract class InputLibrary {
 	public abstract Boolean isEventPovX();
 	public abstract Boolean isEventPovY();
 	public abstract Boolean next(); // returns true if there is still an event to process
-	
-	
-	
+	public abstract void poll();
+		
 }

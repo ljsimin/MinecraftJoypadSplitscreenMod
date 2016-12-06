@@ -60,6 +60,7 @@ public class GameRenderHandler
 
 				if (InGuiCheckNeeded())
 				{
+					ControllerSettings.JoypadModInputLibrary.poll();
 					if (Mouse.isInsideWindow()
 							&& Minecraft.getSystemTime() - JoypadMouse.AxisReader.lastNon0Reading > 1000)
 					{
@@ -94,6 +95,7 @@ public class GameRenderHandler
 
 			if (InGameCheckNeeded())
 			{
+				ControllerSettings.JoypadModInputLibrary.poll();
 				for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 				{
 					if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
@@ -120,6 +122,8 @@ public class GameRenderHandler
 	{
 		if (ControllerSettings.isSuspended())
 			return;
+		
+		ControllerSettings.JoypadModInputLibrary.poll();
 
 		try
 		{
@@ -178,6 +182,7 @@ public class GameRenderHandler
 		{
 			HandleJoystickInGui();
 			lastInGuiTick = Minecraft.getSystemTime();
+			HandleDragAndScrolling();
 		}
 
 		if (InGameCheckNeeded())
