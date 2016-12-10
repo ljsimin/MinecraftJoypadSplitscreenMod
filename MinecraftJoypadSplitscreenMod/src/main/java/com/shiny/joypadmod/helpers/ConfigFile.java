@@ -6,16 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
-
-import org.lwjgl.input.Controller;
-
-import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.JoypadMod;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 
 public class ConfigFile
 {
@@ -77,6 +76,7 @@ public class ConfigFile
 		preferedJoyName = config.get(userCategory, "JoyName", "").getString();
 		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
 		ControllerSettings.displayHints = config.get(userCategory, "DisplayHints", true).getBoolean(true);
+		ControllerSettings.useLegacyInput = config.get(userCategory, "LegacyInput", false).getBoolean(false);
 
 		// individual or global
 		lastConfigFileVersion = config.get(getDefaultCategory(), "ConfigVersion", 0.07).getDouble(0.07);
@@ -175,24 +175,24 @@ public class ConfigFile
 		updateKey(category, key, value, true);
 	}
 
-	public void applySavedDeadZones(Controller c)
+	public void applySavedDeadZones(InputDevice inputDevice)
 	{
-		ConfigCategory cc = config.getCategory("-Deadzones-." + c.getName());
+		ConfigCategory cc = config.getCategory("-Deadzones-." + inputDevice.getName());
 
-		for (int i = 0; i < c.getAxisCount(); i++)
+		for (int i = 0; i < inputDevice.getAxisCount(); i++)
 		{
-			String key = c.getAxisName(i);
+			String key = inputDevice.getAxisName(i);
 			if (cc.containsKey(key))
 			{
 				try
 				{
 					String floatStr = cc.get(key).getString();
-					LogHelper.Info("Applying deadzone value " + floatStr + " to " + c.getAxisName(i));
-					c.setDeadZone(i, Float.parseFloat(floatStr));
+					LogHelper.Info("Applying deadzone value " + floatStr + " to " + inputDevice.getAxisName(i));
+					inputDevice.setDeadZone(i, Float.parseFloat(floatStr));
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Failed trying to apply deadzone for " + c.getAxisName(i) + " using the value for "
+					LogHelper.Error("Failed trying to apply deadzone for " + inputDevice.getAxisName(i) + " using the value for "
 							+ key + " from the config file");
 				}
 			}

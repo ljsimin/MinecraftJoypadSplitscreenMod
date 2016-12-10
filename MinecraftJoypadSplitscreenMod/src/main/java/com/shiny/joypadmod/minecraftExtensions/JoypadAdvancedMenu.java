@@ -1,11 +1,11 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
+
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 
 public class JoypadAdvancedMenu extends GuiScreen
 {
@@ -21,7 +21,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private JoypadConfigMenu parent;
 
 	private String[] otherButtons = { "controlMenu.calibrate", "controlMenu.invert" };
-	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse", "-User-.DisplayHints" };
+	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse", "-User-.DisplayHints", "-User-.LegacyInput" };
 
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
 	{
