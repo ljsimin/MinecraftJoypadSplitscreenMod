@@ -1,8 +1,11 @@
 package com.shiny.joypadmod.devices;
 
+import com.ivan.xinput.XInputBatteryInformation;
+import com.ivan.xinput.XInputButtons;
 import com.ivan.xinput.XInputDevice;
 import com.ivan.xinput.XInputDevice14;
 import com.ivan.xinput.enums.XInputAxis;
+import com.ivan.xinput.enums.XInputBatteryDeviceType;
 import com.ivan.xinput.enums.XInputButton;
 import com.ivan.xinput.exceptions.XInputNotLoadedException;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -11,15 +14,6 @@ public class XInputDeviceWrapper extends InputDevice {
 
 	public XInputDevice theDevice;
 	public Boolean xInput14 = false;
-	
-/*	public enum XInputButtonW {
-		A =XInputButton.A, B, X, Y,
-		BACK, START,
-		LEFT_SHOULDER, RIGHT_SHOULDER,
-		LEFT_THUMBSTICK, RIGHT_THUMBSTICK,
-		DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT,
-		GUIDE_BUTTON, UNKNOWN;
-	} */
 	
 	float[] deadZones = new float[] { 0.15f,0.15f,0.15f,0.15f,0.15f,0.15f };
 	
@@ -31,8 +25,6 @@ public class XInputDeviceWrapper extends InputDevice {
 	@Override
 	public String getName() {
 		String name = "XInput Device";
-		if (!theDevice.isConnected())
-			name += " [Disconnected]";
 		return name;		
 	}
 
@@ -89,7 +81,7 @@ public class XInputDeviceWrapper extends InputDevice {
 	@Override
 	public Boolean isButtonPressed(int index) {
 		
-		return theDevice.getComponents().getButtons().isPressed(XInputButton.values()[index]);
+		return isPressed(XInputButton.values()[index], theDevice.getComponents().getButtons());
 	}
 
 	@Override
@@ -127,7 +119,7 @@ public class XInputDeviceWrapper extends InputDevice {
 			}
 			else 
 				theDevice = XInputDevice.getDeviceFor(index);
-			
+			myIndex = index;
 			theDevice.poll();
 		} catch (XInputNotLoadedException e) { 
 			LogHelper.Fatal("Failed calling setIndex on XInputDevice: " + e.toString());
@@ -138,5 +130,61 @@ public class XInputDeviceWrapper extends InputDevice {
 	public Boolean isConnected() {
 		return theDevice.isConnected();		
 	}
+	
+	@Override
+	public int getBatteryLevel()
+	{
+		try
+		{
+			XInputBatteryInformation gamepadBattInfo = ((XInputDevice14)theDevice).getBatteryInformation(XInputBatteryDeviceType.GAMEPAD);
+		
+			return gamepadBattInfo.getLevel().ordinal();
+		}
+		catch (Exception ex)
+		{
+			return -1;
+		}
+	}
 
+	
+    public Boolean isPressed(XInputButton buttonToCheck, XInputButtons buttons)
+    {
+    	switch(buttonToCheck)
+    	{
+    	case A:
+    		return buttons.a;
+    	case B:
+    		return buttons.b;
+    	case X:
+    		return buttons.x;
+    	case Y:
+    		return buttons.y;
+    	case BACK:
+    		return buttons.back;
+    	case START:
+    		return buttons.start;
+    	case LEFT_SHOULDER:
+    		return buttons.lShoulder;
+    	case RIGHT_SHOULDER:
+    		return buttons.rShoulder;
+    	case LEFT_THUMBSTICK:
+    		return buttons.lThumb;
+    	case RIGHT_THUMBSTICK:
+    		return buttons.rThumb;
+    	case DPAD_UP:
+    		return buttons.up;
+    	case DPAD_DOWN:
+    		return buttons.down;
+    	case DPAD_LEFT:
+    		return buttons.left; 
+    	case DPAD_RIGHT:
+    		return buttons.right;
+    	case GUIDE_BUTTON:
+    		return buttons.guide;
+    		
+		default:
+			return false;
+    	
+    	}
+    }
 }

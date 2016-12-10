@@ -498,7 +498,7 @@ public class JoypadControlList extends GuiScrollingList
 				}
 				else
 				{
-					if (ControllerSettings.JoypadModInputLibrary.getEventSource() != ControllerSettings.JoypadModInputLibrary.getController(parent.getCurrentControllerId()))
+					if (ControllerSettings.JoypadModInputLibrary.getEventSource().getIndex() != parent.getCurrentControllerId())
 						continue;
 
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(

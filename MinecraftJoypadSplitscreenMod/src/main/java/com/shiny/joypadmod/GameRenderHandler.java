@@ -89,7 +89,7 @@ public class GameRenderHandler
 						}
 						preRenderGuiBucket.clear();
 					}
-					HandleDragAndScrolling();
+					HandleDragAndScrolling();					
 				}
 			}
 
@@ -117,6 +117,9 @@ public class GameRenderHandler
 			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 	}
+	
+	public static int displayCountDown = 0;
+	public static String displayMessage = "";
 
 	public static void HandlePostRender()
 	{
@@ -124,6 +127,30 @@ public class GameRenderHandler
 			return;
 		
 		ControllerSettings.JoypadModInputLibrary.poll();
+		
+		if (ControllerSettings.JoypadModInputLibrary.wasDisconnected())
+		{
+			displayCountDown = 300;
+			displayMessage = "Joypad disconnected";			
+		}
+		
+		if (ControllerSettings.JoypadModInputLibrary.wasConnected())
+		{
+			displayCountDown = 300;
+			displayMessage = "Joypad connected";		
+		}
+		
+		int batteryLevel = ControllerSettings.JoypadModInputLibrary.getCurrentController().getBatteryLevel();
+		if (batteryLevel != -1)
+		{
+			Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow("" + batteryLevel, 0, 0, 0xFFFF55 );	
+		}
+		
+		if (displayCountDown > 0)
+		{
+			Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(displayMessage, 0, 0, 0xFFFF55 );	
+			displayCountDown--;
+		}
 
 		try
 		{

@@ -291,8 +291,10 @@ public class JoypadConfigMenu extends GuiScreen
 			}
 			else if (joyInfo == JoyInfoEnum.name)
 			{
-				ret += control.getName() + ": ";
-				ret += ControllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off");
+				ret += control.getName();
+				if (!control.isConnected())
+					ret += " [Disconnected]";
+				ret += ": " + (ControllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off"));
 			}
 
 		}

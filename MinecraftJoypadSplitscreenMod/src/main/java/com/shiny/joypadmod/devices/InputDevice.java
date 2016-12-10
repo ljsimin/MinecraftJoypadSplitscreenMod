@@ -19,5 +19,6 @@ public abstract class InputDevice {
 	public abstract Float getPovY();
 	public abstract void setDeadZone(int axisIndex, float value);
 	public abstract Boolean isConnected();
+	public abstract int getBatteryLevel();
 	
 }

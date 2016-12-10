@@ -73,4 +73,9 @@ public class LWJGLDeviceWrapper extends InputDevice {
 		return true; // if this device ever disconnects LWJGL chokes and minecraft needs to be restarted
 	}
 
+	@Override
+	public int getBatteryLevel() { 
+		return -1; // not supported
+	}
+
 }

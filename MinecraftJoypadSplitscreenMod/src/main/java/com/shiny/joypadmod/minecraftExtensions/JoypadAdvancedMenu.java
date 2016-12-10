@@ -21,7 +21,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	private JoypadConfigMenu parent;
 
 	private String[] otherButtons = { "controlMenu.calibrate", "controlMenu.invert" };
-	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse", "-User-.DisplayHints" };
+	private String[] gameOptions = { "-Global-.SharedProfile", "-Global-.displayAllControls", "-Global-.GrabMouse", "-User-.DisplayHints", "-User-.LegacyInput" };
 
 	public JoypadAdvancedMenu(JoypadConfigMenu parent, int joyIndex)
 	{

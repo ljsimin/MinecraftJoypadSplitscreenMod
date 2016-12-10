@@ -3,15 +3,18 @@ package com.shiny.joypadmod.devices;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 
+import com.shiny.joypadmod.helpers.LogHelper;
+
 public class LWJGLibrary extends InputLibrary {
 	
 	LWJGLDeviceWrapper theDevice;
+	LWJGLDeviceWrapper tempDevice;
 	
 	@Override
 	public void create() throws LWJGLException {
 		Controllers.create();
 		theDevice = new LWJGLDeviceWrapper(0);
-
+		tempDevice = new LWJGLDeviceWrapper(0);
 	}
 
 	@Override
@@ -37,8 +40,8 @@ public class LWJGLibrary extends InputLibrary {
 
 	@Override
 	public InputDevice getEventSource() {
-		theDevice.setIndex(Controllers.getEventSource().getIndex());
-		return theDevice;
+		tempDevice.setIndex(Controllers.getEventSource().getIndex());		
+		return tempDevice;
 	}
 
 	@Override
@@ -74,6 +77,21 @@ public class LWJGLibrary extends InputLibrary {
 	@Override
 	public void poll() {
 		return; // polling happens within Minecraft itself so no need to do our own		
+	}
+	
+	@Override
+	public Boolean wasDisconnected() {
+		return false; // not supported in this library
+	}
+
+	@Override
+	public Boolean wasConnected() {
+		return false; // not supported in this library
+	}
+
+	@Override
+	public InputDevice getCurrentController() {
+		return theDevice;
 	}
 
 }

@@ -24,6 +24,7 @@ controlMenu.toggleInstructions=Press space to toggle controller
 -Global-.displayAllControls=Display all controllers
 
 -User-.DisplayHints=Button hints
+-User-.LegacyInput=Legacy input
 
 menuHint.quickmove=Quick Move
 menuHint.takeall=Take All

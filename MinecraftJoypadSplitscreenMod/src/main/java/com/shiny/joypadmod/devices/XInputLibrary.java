@@ -22,6 +22,9 @@ public class XInputLibrary extends InputLibrary {
 	float axisSignalThreshold = 0.5f; // the point at which we will trigger an axis event if it meets the threshold	
 	protected Boolean xInput14 = false;
 	
+	public Boolean recentlyDisconnected = false;
+	public Boolean recentlyConnected = false;
+	
 	XInputDeviceWrapper theDevice;
 	
 	static LinkedList events = new LinkedList();
@@ -139,11 +142,13 @@ public class XInputLibrary extends InputLibrary {
 	    @Override
 	    public void connected() {
 	        LogHelper.Info("Connection message received");
+	        recentlyConnected = true;
 	    }
 
 	    @Override
 	    public void disconnected() {
 	    	LogHelper.Info("Disconnection message received");
+	    	recentlyDisconnected = true;
 	    }
 
 	    @Override
@@ -153,5 +158,31 @@ public class XInputLibrary extends InputLibrary {
 	        // the given button was just pressed (if pressed == true) or released (pressed == false)
 	    }
 	};
+	
+	@Override
+	public Boolean wasDisconnected() {
+		if (recentlyDisconnected)
+		{
+			recentlyDisconnected = false;
+			return true;		
+		}
+		return false;
+	}
+
+	@Override
+	public Boolean wasConnected() {
+		if (recentlyConnected)
+		{
+			recentlyConnected = false;
+			return true;		
+		}
+		return false;
+	}
+
+	@Override
+	public InputDevice getCurrentController() {
+
+		return theDevice;
+	}
 
 }

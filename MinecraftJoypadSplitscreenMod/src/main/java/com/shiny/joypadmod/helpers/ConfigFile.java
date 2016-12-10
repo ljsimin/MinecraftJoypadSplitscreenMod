@@ -76,6 +76,7 @@ public class ConfigFile
 		preferedJoyName = config.get(userCategory, "JoyName", "").getString();
 		ControllerSettings.invertYAxis = config.get(userCategory, "InvertY", false).getBoolean(false);
 		ControllerSettings.displayHints = config.get(userCategory, "DisplayHints", true).getBoolean(true);
+		ControllerSettings.useLegacyInput = config.get(userCategory, "LegacyInput", false).getBoolean(false);
 
 		// individual or global
 		lastConfigFileVersion = config.get(getDefaultCategory(), "ConfigVersion", 0.07).getDouble(0.07);

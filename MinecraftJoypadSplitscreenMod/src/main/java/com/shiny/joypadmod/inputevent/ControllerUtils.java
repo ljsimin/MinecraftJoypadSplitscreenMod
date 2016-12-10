@@ -11,12 +11,12 @@ import com.shiny.joypadmod.helpers.LogHelper;
 public class ControllerUtils
 {
 	private static Map<String, String> joypadNameMap;
-	private InputDevice currentController;
+	private int mappedControllerIndex;
 
 	public ControllerUtils()
 	{
 		joypadNameMap = new HashMap<String, String>();
-		currentController = null;
+		mappedControllerIndex = -1;
 	}
 
 	public void printDeadZones(InputDevice joystick2)
@@ -289,8 +289,7 @@ public class ControllerUtils
 	
 	private void setJoypadNameMap(InputDevice controller)
 	{
-		if (currentController == null 
-				|| controller.getIndex() != currentController.getIndex())
+		if (controller.getIndex() != mappedControllerIndex)
 		{
 			joypadNameMap.clear();
 			// check if config file has map
@@ -304,7 +303,7 @@ public class ControllerUtils
 			{
 				joypadNameMap = newMap;
 			}
-			currentController = controller;
+			mappedControllerIndex = controller.getIndex();			
 		}
 	}
 	
@@ -320,12 +319,12 @@ public class ControllerUtils
 	
 	public boolean saveCurrentJoypadMap()
 	{
-		if (currentController != null)
+		if (mappedControllerIndex >= 0)
 		{
 			try
 			{
 				ControllerSettings.config.saveStringMap
-					("-ControllerNameMap-", currentController.getName(), 
+					("-ControllerNameMap-", ControllerSettings.JoypadModInputLibrary.getController(mappedControllerIndex).getName(), 
 					joypadNameMap, "Map the controller button/axis to human readable names");
 				return true;
 			}
