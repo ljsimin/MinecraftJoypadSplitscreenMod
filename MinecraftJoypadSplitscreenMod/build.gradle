@@ -20,7 +20,7 @@ allprojects {
 
 
    
-version = "1.11-13.19.1.2188"
+version = "1.10.2-12.18.3.2185"
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
 
@@ -31,7 +31,7 @@ compileJava {
 
 
 minecraft {
-    version = "1.11-13.19.1.2188"
+    version = "1.10.2-12.18.3.2185"
     runDir = "run"
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
