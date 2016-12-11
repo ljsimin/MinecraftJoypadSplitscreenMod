@@ -3,23 +3,22 @@ package com.shiny.joypadmod.minecraftExtensions;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiScreen;
-
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
+import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiScreen;
 
 public class JoypadConfigMenu extends GuiScreen
 {
@@ -282,7 +281,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 		try
 		{
-			Controller control = Controllers.getController(this.getCurrentControllerId());
+			InputDevice control = ControllerSettings.JoypadModInputLibrary.getController(this.getCurrentControllerId());
 			if (joyInfo == JoyInfoEnum.buttonAxisInfo)
 			{
 				ret += String.format("%s %d/%d - ", sGet("controlMenu.controller"), currentJoyIndex + 1,
@@ -292,8 +291,10 @@ public class JoypadConfigMenu extends GuiScreen
 			}
 			else if (joyInfo == JoyInfoEnum.name)
 			{
-				ret += control.getName() + ": ";
-				ret += ControllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off");
+				ret += control.getName();
+				if (!control.isConnected())
+					ret += " [Disconnected]";
+				ret += ": " + (ControllerSettings.isInputEnabled() ? sGet("options.on") : sGet("options.off"));
 			}
 
 		}
@@ -471,7 +472,7 @@ public class JoypadConfigMenu extends GuiScreen
 		// field_146292_n.add(guiButton);
 		buttonList.add(guiButton);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private void addButton(GuiButton guiButton)
 	{

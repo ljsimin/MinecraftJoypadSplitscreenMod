@@ -1,19 +1,17 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
-
-import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
 
 public class JoypadCalibrationMenu extends GuiScreen
 {
@@ -81,7 +79,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		GuiButton doneButton = new GuiButton(500, xPos, buttonYStart_bottom, bottomButtonWidth, 20, McObfuscationHelper.lookupString("gui.cancel"));
 
 		// these buttons will be moved if we display axis values
-		if (joypadIndex != -1 && Controllers.getController(joypadIndex).getAxisCount() > 0)
+		if (joypadIndex != -1 && ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount() > 0)
 		{
 			int listStartY = (instructions.length + 3) * fr.FONT_HEIGHT + 20;
 			int entryHeight = 32;
@@ -130,7 +128,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		{
 		case 400: // Save
 			singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
-			Controller controller = Controllers.getController(joypadIndex);
+			InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 			ControllerSettings.saveDeadZones(controller);
 			ControllerSettings.saveSingleDirectionAxis(controller);
 			((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
@@ -140,7 +138,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 			{
 				List<Integer> singleDirectionAxisExit = ControllerSettings.getSingleDirectionAxis(joypadIndex);
 				// revert singleDirectionAxis toggles if it wasn't saved
-				for (int i = 0; i < Controllers.getController(joypadIndex).getAxisCount(); i++)
+				for (int i = 0; i < ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount(); i++)
 				{
 					if (singleDirectionAxisSaved.contains(i) != singleDirectionAxisExit.contains(i))
 						ControllerSettings.toggleSingleDirectionAxis(joypadIndex, i);
@@ -162,10 +160,10 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		int ySpace = fr.FONT_HEIGHT;
 		String title = McObfuscationHelper.lookupString("controlMenu.calibrate");
-		Controller controller = null;
+		InputDevice controller = null;
 		if (joypadIndex != -1)
 		{
-			controller = Controllers.getController(joypadIndex);
+			controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 			title += " - " + controller.getName();
 		}
 
@@ -175,7 +173,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		{
 			write(yStart + ySpace * 2, McObfuscationHelper.lookupString("controlMenu.noControllers"));
 		}
-		else if (Controllers.getController(joypadIndex).getAxisCount() <= 0)
+		else if (ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount() <= 0)
 		{
 			write(yStart + ySpace * 2, McObfuscationHelper.lookupString("controlMenu.axis") + "# 0!");
 		}
@@ -266,28 +264,28 @@ public class JoypadCalibrationMenu extends GuiScreen
 	{
 		try
 		{
-			Controller controller = Controllers.getController(this.joypadIndex);
-			while (Controllers.next() && Controllers.getEventSource() == controller)
+			InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(this.joypadIndex);
+			while (ControllerSettings.JoypadModInputLibrary.next() && ControllerSettings.JoypadModInputLibrary.getEventSource() == controller)
 			{
-				if (Controllers.isEventAxis())
+				if (ControllerSettings.JoypadModInputLibrary.isEventAxis())
 				{
-					lastControllerEvent = controller.getAxisName(Controllers.getEventControlIndex());
+					lastControllerEvent = controller.getAxisName(ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 				}
-				else if (Controllers.isEventButton())
+				else if (ControllerSettings.JoypadModInputLibrary.isEventButton())
 				{
-					lastControllerEvent = controller.getButtonName(Controllers.getEventControlIndex());
+					lastControllerEvent = controller.getButtonName(ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 				}
-				else if (Controllers.isEventPovX())
+				else if (ControllerSettings.JoypadModInputLibrary.isEventPovX())
 				{
 					lastControllerEvent = "PovX";
 				}
-				else if (Controllers.isEventPovY())
+				else if (ControllerSettings.JoypadModInputLibrary.isEventPovY())
 				{
 					lastControllerEvent = "PovY";
 				}
 				else
 				{
-					lastControllerEvent = "Unknown controller event with index: " + Controllers.getEventControlIndex();
+					lastControllerEvent = "Unknown controller event with index: " + ControllerSettings.JoypadModInputLibrary.getEventControlIndex();
 				}
 			}
 		}
@@ -299,7 +297,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	private int[] drawButtons(int xStart, int yStart, int ySpace)
 	{
-		Controller controller = Controllers.getController(joypadIndex);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 		int yPos = yStart;
 		int maxButtons = 13;
 		int butWidth = buttonBoxWidth;
@@ -324,7 +322,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 	private int[] drawPov(int xStart, int yStart, int ySpace)
 	{
-		Controller controller = Controllers.getController(joypadIndex);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 		int yPos = yStart;
 		int butWidth = povBoxWidth;
 		int numStrings = 2;

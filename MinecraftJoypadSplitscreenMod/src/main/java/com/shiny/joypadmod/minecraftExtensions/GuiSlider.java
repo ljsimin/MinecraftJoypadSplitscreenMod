@@ -1,14 +1,14 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.StatCollector;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.StatCollector;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 
 public class GuiSlider extends GuiButton
 {
@@ -130,7 +130,7 @@ public class GuiSlider extends GuiButton
 			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}
 		else
-		{
+		{			
 			this.displayString = StatCollector.translateToLocalFormatted(this.baseDisplayString,
 					(int) (this.sliderValue * 100.0F));
 		}

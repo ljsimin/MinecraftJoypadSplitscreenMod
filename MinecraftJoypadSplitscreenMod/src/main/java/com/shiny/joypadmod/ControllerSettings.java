@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.settings.KeyBinding;
-
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
+import com.shiny.joypadmod.devices.DefaultAxisMappings;
+import com.shiny.joypadmod.devices.DefaultButtonMappings;
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.devices.InputLibrary;
+import com.shiny.joypadmod.devices.LWJGLibrary;
+import com.shiny.joypadmod.devices.XInputLibrary;
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.LogHelper;
@@ -33,6 +33,10 @@ import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 
 public class ControllerSettings
 {
@@ -47,7 +51,9 @@ public class ControllerSettings
 
 	public static boolean useConstantCameraMovement = false;
 	public static boolean displayHints = false;
-	// public static Controller joystick;
+	public static boolean useLegacyInput = false;
+
+	public static InputLibrary JoypadModInputLibrary = null;
 	public static int joyNo = -1;
 
 	public static int inGameSensitivity = 25;
@@ -64,8 +70,10 @@ public class ControllerSettings
 	private static Map<String, List<Integer>> validControllers;
 	private static Map<String, List<Integer>> inValidControllers;
 	private static Map<Integer, List<Integer>> singleDirectionAxis;
+	private static DefaultButtonMappings bMap = new DefaultButtonMappings();
+	private static DefaultAxisMappings aMap = new DefaultAxisMappings();
 	public static ControllerUtils controllerUtils;
-	
+
 	public static List<Integer> xbox6Axis = new ArrayList<Integer>();
 
 	// modDisabled will not set up the event handlers and will therefore render
@@ -98,13 +106,48 @@ public class ControllerSettings
 		joyBindingsMap = new HashMap<String, ControllerBinding>();
 		userDefinedBindings = new ArrayList<ControllerBinding>();
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
-		try
+
+		// copy this path because XInput NativeLibraryHelper will change it. we
+		// need to set it back after
+		if (!useLegacyInput)
 		{
-			Controllers.create();
+			String origLibraryPath = System.getProperty("java.library.path");
+
+			// try XInput only first
+			try
+			{
+				JoypadModInputLibrary = new XInputLibrary();
+				JoypadModInputLibrary.create();
+				LogHelper.Info("Using XInput library for Joypad Mod controls");
+			}
+			catch (UnsatisfiedLinkError e)
+			{
+				LogHelper.Error("Controller object linking error. " + e.toString());
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error("Failed creating controller object. " + ex.toString());
+			}
+
+			System.setProperty("java.library.path", origLibraryPath);
 		}
-		catch (Exception ex)
+
+		if (JoypadModInputLibrary == null || !JoypadModInputLibrary.isCreated())
 		{
-			LogHelper.Error("Failed creating controller object. " + ex.toString());
+			// if it failed fall back to LWJGL
+			try
+			{
+				JoypadModInputLibrary = new LWJGLibrary();
+				JoypadModInputLibrary.create();
+				bMap = bMap.new LWJGLButtonMappings();
+				aMap = aMap.new LWJGLAxisMappings();
+				LogHelper.Info("Using LWJGL for Joypad Mod controls");
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Fatal("Failed creating LWJGL controller object. This mod will not work. " + ex.toString());
+				modDisabled = true;
+			}
 		}
 	}
 
@@ -127,198 +170,176 @@ public class ControllerSettings
 
 		int yAxisIndex = ControllerUtils.findYAxisIndex(joyIndex);
 		int xAxisIndex = ControllerUtils.findXAxisIndex(joyIndex);
-		
-		// check for new Xbox one case 
-		Controller controller = Controllers.getController(joyIndex);
+
+		// check for new Xbox one case
+		InputDevice controller = JoypadModInputLibrary.getController(joyIndex);
 		if (controller.getName().toLowerCase().contains("xbox one") && controller.getAxisCount() == 6)
 		{
 			LogHelper.Info("XBox One 6 axis joypad detected.");
 			if (!xbox6Axis.contains(joyIndex))
-				xbox6Axis.add(joyIndex);			
+				xbox6Axis.add(joyIndex);
 		}
 
-		joyBindingsMap.put(
-				"joy.jump",
-				new ControllerBinding("joy.jump", "Jump", new ButtonInputEvent(joyIndex, 0, 1),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindJump) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.jump",
+				new ControllerBinding("joy.jump", "Jump", new ButtonInputEvent(joyIndex, bMap.A(), 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindJump) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
 
-		joyBindingsMap.put(
-				"joy.inventory",
-				new ControllerBinding("joy.inventory", "Open inventory", new ButtonInputEvent(joyIndex, 3, 1),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_INVENTORY)));
+		joyBindingsMap.put("joy.inventory",
+				new ControllerBinding("joy.inventory", "Open inventory", new ButtonInputEvent(joyIndex, bMap.Y(), 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_INVENTORY)));
 
-		joyBindingsMap.put(
-				"joy.drop",
-				new ControllerBinding("joy.drop", "Drop", new ButtonInputEvent(joyIndex, 6, 1),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindDrop) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.drop",
+				new ControllerBinding("joy.drop", "Drop", new ButtonInputEvent(joyIndex, bMap.Back(), 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindDrop) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.sneak",
-				new ControllerBinding("joy.sneak", "Sneak", new ButtonInputEvent(joyIndex, 8, 1),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.sneak",
+				new ControllerBinding("joy.sneak", "Sneak", new ButtonInputEvent(joyIndex, bMap.LS(), 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindSneak) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
-		
+
 		int axisIndexToUse = xbox6Axis.contains(joyIndex) ? 5 : 4;
 		float thresholdToUse = xbox6Axis.contains(joyIndex) ? defaultAxisThreshhold : defaultAxisThreshhold * -1;
 
-		joyBindingsMap.put(
-				"joy.attack",
-				new ControllerBinding("joy.attack", "Attack", new AxisInputEvent(joyIndex, axisIndexToUse, thresholdToUse, 
-						defaultAxisDeadZone), new int[] { -100 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.attack",
+				new ControllerBinding("joy.attack", "Attack",
+						new AxisInputEvent(joyIndex, aMap.RT(), thresholdToUse, defaultAxisDeadZone),
+						new int[] { -100 }, 0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.use",
-				new ControllerBinding("joy.use", "Use", new AxisInputEvent(joyIndex, 4, defaultAxisThreshhold,
-						defaultAxisDeadZone), new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.use",
+				new ControllerBinding("joy.use", "Use",
+						new AxisInputEvent(joyIndex, aMap.LT(), defaultAxisThreshhold, defaultAxisDeadZone),
+						new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.interact",
-				new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyIndex, 2, 1),
-						new int[] { -99 }, 0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.interact",
+				new ControllerBinding("joy.interact", "Interact", new ButtonInputEvent(joyIndex, bMap.X(), 1),
+						new int[] { -99 }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
 
 		joyBindingsMap.put("joy.guiLeftClick",
-				new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyIndex, 0, 1),
+				new ControllerBinding("joy.guiLeftClick", "Left click", new ButtonInputEvent(joyIndex, bMap.A(), 1),
 						new int[] { -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_UI)));
 
 		joyBindingsMap.put("joy.guiRightClick",
-				new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyIndex, 2, 1),
+				new ControllerBinding("joy.guiRightClick", "Right click", new ButtonInputEvent(joyIndex, bMap.X(), 1),
 						new int[] { -99 }, 0, EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.prevItem",
-				new ControllerBinding("joy.prevItem", "Previous item", new ButtonInputEvent(joyIndex, 4, 1),
+		joyBindingsMap.put("joy.prevItem",
+				new ControllerBinding("joy.prevItem", "Previous item", new ButtonInputEvent(joyIndex, bMap.LB(), 1),
 						new int[] { -199 }, 0,
 						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.nextItem",
-				new ControllerBinding("joy.nextItem", "Next item", new ButtonInputEvent(joyIndex, 5, 1),
+		joyBindingsMap.put("joy.nextItem",
+				new ControllerBinding("joy.nextItem", "Next item", new ButtonInputEvent(joyIndex, bMap.RB(), 1),
 						new int[] { -201 }, 0,
 						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.sprint",
-				new ControllerBinding("joy.sprint", "Sprint", new ButtonInputEvent(joyIndex, 9, 1),
+		joyBindingsMap.put("joy.sprint",
+				new ControllerBinding("joy.sprint", "Sprint", new ButtonInputEvent(joyIndex, bMap.RS(), 1),
 						new int[] { Keyboard.KEY_LCONTROL }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
 								BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.menu",
-				new ControllerBinding("joy.menu", "Open menu", new ButtonInputEvent(joyIndex, 7, 1),
-						new int[] { Keyboard.KEY_ESCAPE }, 0, EnumSet.of(BindingOptions.GAME_BINDING,
-								BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_MISC)));
+		joyBindingsMap.put("joy.menu", new ControllerBinding("joy.menu", "Open menu",
+				new ButtonInputEvent(joyIndex, bMap.Start(), 1), new int[] { Keyboard.KEY_ESCAPE }, 0,
+				EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_MISC)));
 
-		joyBindingsMap.put(
-				"joy.shiftClick",
-				new ControllerBinding("joy.shiftClick", "Shift-click", new ButtonInputEvent(joyIndex, 1, 1), new int[] {
-						Keyboard.KEY_LSHIFT, -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_INVENTORY)));
+		joyBindingsMap.put("joy.shiftClick",
+				new ControllerBinding("joy.shiftClick", "Shift-click", new ButtonInputEvent(joyIndex, bMap.B(), 1),
+						new int[] { Keyboard.KEY_LSHIFT, -100 }, 0, EnumSet.of(BindingOptions.MENU_BINDING,
+								BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_INVENTORY)));
 
-		joyBindingsMap.put(
-				"joy.cameraX+",
-				new ControllerBinding("joy.cameraX+", "Look right", new AxisInputEvent(joyIndex, xAxisIndex + 2,
-						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.cameraX+",
+				new ControllerBinding("joy.cameraX+", "Look right",
+						new AxisInputEvent(joyIndex, aMap.RSx(), defaultAxisThreshhold, defaultAxisDeadZone), null, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.cameraX-",
-				new ControllerBinding("joy.cameraX-", "Look left", new AxisInputEvent(joyIndex, xAxisIndex + 2,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.cameraX-",
+				new ControllerBinding("joy.cameraX-", "Look left",
+						new AxisInputEvent(joyIndex, aMap.RSx(), defaultAxisThreshhold * -1, defaultAxisDeadZone), null,
+						0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.cameraY-",
-				new ControllerBinding("joy.cameraY-", "Look up", new AxisInputEvent(joyIndex, xAxisIndex + 1,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.cameraY-",
+				new ControllerBinding("joy.cameraY-", "Look up",
+						new AxisInputEvent(joyIndex, aMap.RSy(), defaultAxisThreshhold * -1, defaultAxisDeadZone), null,
+						0, EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.cameraY+",
-				new ControllerBinding("joy.cameraY+", "Look down", new AxisInputEvent(joyIndex, xAxisIndex + 1,
-						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.GAME_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_GAMEPLAY)));
+		joyBindingsMap.put("joy.cameraY+",
+				new ControllerBinding("joy.cameraY+", "Look down",
+						new AxisInputEvent(joyIndex, aMap.RSy(), defaultAxisThreshhold, defaultAxisDeadZone), null, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.CATEGORY_GAMEPLAY)));
 
-		joyBindingsMap.put(
-				"joy.right",
-				new ControllerBinding("joy.right", "Strafe right", new AxisInputEvent(joyIndex, xAxisIndex,
-						defaultAxisThreshhold, defaultAxisDeadZone),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.right",
+				new ControllerBinding("joy.right", "Strafe right",
+						new AxisInputEvent(joyIndex, aMap.LSx(), defaultAxisThreshhold, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindRight) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
 
-		joyBindingsMap.put(
-				"joy.left",
-				new ControllerBinding("joy.left", "Strafe left", new AxisInputEvent(joyIndex, xAxisIndex,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.left",
+				new ControllerBinding("joy.left", "Strafe left",
+						new AxisInputEvent(joyIndex, aMap.LSx(), defaultAxisThreshhold * -1, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindLeft) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
 
-		joyBindingsMap.put(
-				"joy.back",
-				new ControllerBinding("joy.back", "Move backward", new AxisInputEvent(joyIndex, yAxisIndex,
-						defaultAxisThreshhold, defaultAxisDeadZone),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, yAxisIndex, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.back",
+				new ControllerBinding("joy.back", "Move backward",
+						new AxisInputEvent(joyIndex, aMap.LSy(), defaultAxisThreshhold, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindBack) }, yAxisIndex,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
 
-		joyBindingsMap.put(
-				"joy.forward",
-				new ControllerBinding("joy.forward", "Move forward", new AxisInputEvent(joyIndex, yAxisIndex,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, 0, EnumSet.of(
-								BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
+		joyBindingsMap.put("joy.forward",
+				new ControllerBinding("joy.forward", "Move forward",
+						new AxisInputEvent(joyIndex, aMap.LSy(), defaultAxisThreshhold * -1, defaultAxisDeadZone),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindForward) }, 0,
+						EnumSet.of(BindingOptions.GAME_BINDING, BindingOptions.REPEAT_IF_HELD,
 								BindingOptions.CATEGORY_MOVEMENT)));
 
-		joyBindingsMap.put(
-				"joy.guiX+",
-				new ControllerBinding("joy.guiX+", "GUI right", new AxisInputEvent(joyIndex, xAxisIndex,
-						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.guiX+", new ControllerBinding("joy.guiX+", "GUI right",
+				new AxisInputEvent(joyIndex, aMap.LSx(), defaultAxisThreshhold, defaultAxisDeadZone), null, 0,
+				EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.guiX-",
-				new ControllerBinding("joy.guiX-", "GUI left", new AxisInputEvent(joyIndex, xAxisIndex,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.guiX-", new ControllerBinding("joy.guiX-", "GUI left",
+				new AxisInputEvent(joyIndex, aMap.LSx(), defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0,
+				EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.guiY+",
-				new ControllerBinding("joy.guiY+", "GUI down", new AxisInputEvent(joyIndex, yAxisIndex,
-						defaultAxisThreshhold, defaultAxisDeadZone), null, 0, EnumSet.of(BindingOptions.MENU_BINDING,
-						BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.guiY+", new ControllerBinding("joy.guiY+", "GUI down",
+				new AxisInputEvent(joyIndex, aMap.LSy(), defaultAxisThreshhold, defaultAxisDeadZone), null, 0,
+				EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.guiY-",
-				new ControllerBinding("joy.guiY-", "GUI up", new AxisInputEvent(joyIndex, yAxisIndex,
-						defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0, EnumSet.of(
-						BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.guiY-", new ControllerBinding("joy.guiY-", "GUI up",
+				new AxisInputEvent(joyIndex, aMap.LSy(), defaultAxisThreshhold * -1, defaultAxisDeadZone), null, 0,
+				EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.closeInventory",
-				new ControllerBinding("joy.closeInventory", "Close container", new ButtonInputEvent(joyIndex, 3, 1),
-						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100, EnumSet.of(
-								BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_INVENTORY)));
+		joyBindingsMap.put("joy.closeInventory",
+				new ControllerBinding("joy.closeInventory", "Close container",
+						new ButtonInputEvent(joyIndex, bMap.Y(), 1),
+						new int[] { McObfuscationHelper.keyCode(settings.keyBindInventory) }, 100,
+						EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.CATEGORY_INVENTORY)));
 
-		joyBindingsMap.put(
-				"joy.scrollDown",
-				new ControllerBinding("joy.scrollDown", "Scroll down", new ButtonInputEvent(joyIndex, 5, 1),
-						new int[] { -201 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.scrollDown",
+				new ControllerBinding("joy.scrollDown", "Scroll down", new ButtonInputEvent(joyIndex, bMap.RB(), 1),
+						new int[] { -201 }, scrollDelay,
+						EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
-		joyBindingsMap.put(
-				"joy.scrollUp",
-				new ControllerBinding("joy.scrollUp", "Scroll up", new ButtonInputEvent(joyIndex, 4, 1),
-						new int[] { -199 }, scrollDelay, EnumSet.of(BindingOptions.MENU_BINDING,
-								BindingOptions.REPEAT_IF_HELD, BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
+		joyBindingsMap.put("joy.scrollUp",
+				new ControllerBinding("joy.scrollUp", "Scroll up", new ButtonInputEvent(joyIndex, bMap.LB(), 1),
+						new int[] { -199 }, scrollDelay,
+						EnumSet.of(BindingOptions.MENU_BINDING, BindingOptions.REPEAT_IF_HELD,
+								BindingOptions.RENDER_TICK, BindingOptions.CATEGORY_UI)));
 
 		if (updateWithConfigFile)
 			config.getJoypadSavedBindings(joyIndex, controller.getName());
@@ -394,7 +415,7 @@ public class ControllerSettings
 			if (selectedController >= 0)
 			{
 				setController(selectedController);
-				Controllers.clearEvents();
+				JoypadModInputLibrary.clearEvents();
 			}
 			else
 			{
@@ -415,40 +436,41 @@ public class ControllerSettings
 	{
 		validControllers.clear();
 		inValidControllers.clear();
-
-		try
 		{
-			if (!Controllers.isCreated())
-				Controllers.create();
-
-			if (Controllers.getControllerCount() > 0)
+			try
 			{
-				LogHelper.Info("Found " + Controllers.getControllerCount() + " controller(s) in total.");
-				for (int joyIndex = 0; joyIndex < Controllers.getControllerCount(); joyIndex++)
+				if (!JoypadModInputLibrary.isCreated())
+					JoypadModInputLibrary.create();
+
+				if (JoypadModInputLibrary.getControllerCount() > 0)
 				{
-					Controller thisController = Controllers.getController(joyIndex);
-
-					logControllerInfo(thisController);
-
-					if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
-							requiredMinButtonCount, requiredAxisCount))
+					LogHelper.Info("Found " + JoypadModInputLibrary.getControllerCount() + " controller(s) in total.");
+					for (int joyIndex = 0; joyIndex < JoypadModInputLibrary.getControllerCount(); joyIndex++)
 					{
-						LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
-								+ ") meets the input requirements");
-						addControllerToList(validControllers, thisController.getName(), joyIndex);
+						InputDevice thisController = JoypadModInputLibrary.getController(joyIndex);
+
+						logControllerInfo(thisController);
+
+						if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
+								requiredMinButtonCount, requiredAxisCount))
+						{
+							LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
+									+ ") meets the input requirements");
+							addControllerToList(validControllers, thisController.getName(), joyIndex);
+						}
+						else
+						{
+							LogHelper.Info("This controller does not meet the input requirements");
+							addControllerToList(inValidControllers, thisController.getName(), joyIndex);
+						}
+						LogHelper.Info("---");
 					}
-					else
-					{
-						LogHelper.Info("This controller does not meet the input requirements");
-						addControllerToList(inValidControllers, thisController.getName(), joyIndex);
-					}
-					LogHelper.Info("---");
 				}
 			}
-		}
-		catch (org.lwjgl.LWJGLException e)
-		{
-			System.err.println("Couldn't initialize Controllers: " + e.getMessage());
+			catch (Exception e)
+			{
+				System.err.println("Couldn't initialize Controllers: " + e.getMessage());
+			}
 		}
 
 		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
@@ -460,7 +482,7 @@ public class ControllerSettings
 		StringBuilder sb = new StringBuilder();
 		if (intList.size() > 0)
 		{
-			for(Integer theInt: intList)
+			for (Integer theInt : intList)
 			{
 				sb.append(theInt);
 				sb.append(',');
@@ -516,7 +538,7 @@ public class ControllerSettings
 	private static void setSingleDirectionAxis(int controllerNo, List<Integer> axisList)
 	{
 		List<Integer> finalAxisList = new ArrayList<Integer>();
-		Controller c = Controllers.getController(controllerNo);
+		InputDevice c = JoypadModInputLibrary.getController(controllerNo);
 		StringBuilder sbSDAMessage = new StringBuilder();
 		sbSDAMessage.append("Setting the following as Single Direction Axes on " + c.getName());
 		for (Integer i : axisList)
@@ -569,41 +591,44 @@ public class ControllerSettings
 	public static boolean setController(int controllerNo)
 	{
 		LogHelper.Info("Attempting to use controller " + controllerNo);
+
 		try
 		{
-			if (!Controllers.isCreated())
-				Controllers.create();
+			if (!JoypadModInputLibrary.isCreated())
+				JoypadModInputLibrary.create();
 
-			LogHelper.Info("Controllers.getControllerCount == " + Controllers.getControllerCount());
+			LogHelper.Info("Controllers.getControllerCount == " + JoypadModInputLibrary.getControllerCount());
 
-			if (controllerNo < 0 || controllerNo >= Controllers.getControllerCount())
+			if (controllerNo < 0 || controllerNo >= JoypadModInputLibrary.getControllerCount())
 			{
 				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently "
-						+ Controllers.getControllerCount() + " controllers detected.");
+						+ JoypadModInputLibrary.getControllerCount() + " controllers detected.");
 				return false;
 			}
 
 			addSingleDirectionAxis(controllerNo);
 
-			Controller controller = Controllers.getController(controllerNo);
+			InputDevice controller = JoypadModInputLibrary.getController(controllerNo);
 			ControllerSettings.setDefaultJoyBindingMap(controllerNo, true);
 			joyNo = controllerNo;
 			controllerUtils.printDeadZones(controller);
 			inputEnabled = true;
 
 			applySavedDeadZones(joyNo);
-			
-			String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-."+controller.getName());
-			if (axisStr != null) // should never be null (default to "false") but just in case
+
+			String axisStr = config.getConfigFileSetting("-SingleDirectionAxis-." + controller.getName());
+			if (axisStr != null) // should never be null (default to "false")
+									// but just in case
 			{
-				// handle the case where a 6 axis xbox controller is detected 
+				// handle the case where a 6 axis xbox controller is detected
 				// and they haven't manually applied any SDA settings
 				if (axisStr.equals("false"))
-				{		
+				{
 					if (xbox6Axis.contains(joyNo))
 					{
-						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4,5)));
-						LogHelper.Info("Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
+						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4, 5)));
+						LogHelper.Info(
+								"Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
 					}
 				}
 				else if (!axisStr.equals(""))
@@ -626,19 +651,21 @@ public class ControllerSettings
 			LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
 			inputEnabled = false;
 		}
+
 		return false;
 	}
 
 	public static void resetBindings(int joyIndex)
 	{
-		if (joyIndex >= 0 && joyIndex < Controllers.getControllerCount())
+		if (joyIndex >= 0 && joyIndex < JoypadModInputLibrary.getControllerCount())
 		{
 			currentDisplayedMap = -1;
 			setDefaultJoyBindingMap(joyIndex, false);
 			for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 			{
 				if (!entry.getKey().contains("user."))
-					config.saveControllerBinding(Controllers.getController(joyIndex).getName(), entry.getValue());
+					config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(),
+							entry.getValue());
 			}
 		}
 
@@ -669,7 +696,7 @@ public class ControllerSettings
 		}
 
 		inputEnabled = true;
-		config.updatePreferedJoy(joyIndex, Controllers.getController(joyIndex).getName());
+		config.updatePreferedJoy(joyIndex, JoypadModInputLibrary.getController(joyIndex).getName());
 		JoypadMouse.AxisReader.centerCrosshairs();
 	}
 
@@ -702,7 +729,7 @@ public class ControllerSettings
 	public static void setControllerBinding(int joyIndex, String bindingKey, ControllerBinding binding)
 	{
 		ControllerSettings.joyBindingsMap.put(bindingKey, binding);
-		config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
+		config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(), binding);
 	}
 
 	public static void unsetControllerBinding(int joyIndex, String key)
@@ -711,7 +738,7 @@ public class ControllerSettings
 		if (binding != null)
 		{
 			binding.inputEvent = new ButtonInputEvent(0, -1, 1);
-			config.saveControllerBinding(Controllers.getController(joyIndex).getName(), binding);
+			config.saveControllerBinding(JoypadModInputLibrary.getController(joyIndex).getName(), binding);
 			unpressAll();
 		}
 	}
@@ -758,7 +785,7 @@ public class ControllerSettings
 		return -1;
 	}
 
-	private void logControllerInfo(Controller controller)
+	private void logControllerInfo(InputDevice controller)
 	{
 		LogHelper.Info("Found controller " + controller.getName() + " (" + controller.getIndex() + ")");
 		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
@@ -881,14 +908,14 @@ public class ControllerSettings
 	public static void saveSensitivityValues()
 	{
 		LogHelper.Info("Saving game sensitivity value: " + ControllerSettings.inGameSensitivity);
-		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GameSensitivity, ""
-				+ ControllerSettings.inGameSensitivity);
+		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GameSensitivity,
+				"" + ControllerSettings.inGameSensitivity);
 		LogHelper.Info("Saving menu sensitivity value: " + ControllerSettings.inMenuSensitivity);
-		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity, ""
-				+ ControllerSettings.inMenuSensitivity);
+		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity,
+				"" + ControllerSettings.inMenuSensitivity);
 	}
 
-	public static void saveDeadZones(Controller controller)
+	public static void saveDeadZones(InputDevice controller)
 	{
 		DecimalFormat df = new DecimalFormat("#0.00");
 
@@ -901,18 +928,17 @@ public class ControllerSettings
 		LogHelper.Info("Saved deadzones for " + controller.getName());
 	}
 
-	public static void saveSingleDirectionAxis(Controller controller)
+	public static void saveSingleDirectionAxis(InputDevice controller)
 	{
 		String axisList = intListToString(getSingleDirectionAxis(controller.getIndex()));
 		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisList);
 		config.addComment("-SingleDirectionAxis-", "Set single-direction axis for this controller");
-		LogHelper.Info("Saved single-direction axis for " + controller.getName() 
-			+ " values: '" + axisList + "'");
+		LogHelper.Info("Saved single-direction axis for " + controller.getName() + " values: '" + axisList + "'");
 	}
 
 	private static void saveCurrentJoyBindings()
 	{
-		String joyName = Controllers.getController(currentDisplayedMap).getName();
+		String joyName = JoypadModInputLibrary.getController(currentDisplayedMap).getName();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
 			config.saveControllerBinding(joyName, entry.getValue());
@@ -926,7 +952,7 @@ public class ControllerSettings
 
 		LogHelper.Info("Applying configurated deadzones");
 
-		config.applySavedDeadZones(Controllers.getController(joyId));
+		config.applySavedDeadZones(JoypadModInputLibrary.getController(joyId));
 
 	}
 
@@ -955,7 +981,7 @@ public class ControllerSettings
 	{
 		if (joyNo < 0)
 			return;
-		
+
 		boolean updated = false;
 
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
@@ -993,8 +1019,10 @@ public class ControllerSettings
 			if (entry.getValue().inputEvent.isValid() && !entry.getKey().equals(bindingKey)
 					&& entry.getValue().inputEvent.equals(b.inputEvent))
 			{
-				if ((b.bindingOptions.contains(BindingOptions.GAME_BINDING) && entry.getValue().bindingOptions.contains(BindingOptions.GAME_BINDING))
-						|| (b.bindingOptions.contains(BindingOptions.MENU_BINDING) && entry.getValue().bindingOptions.contains(BindingOptions.MENU_BINDING)))
+				if ((b.bindingOptions.contains(BindingOptions.GAME_BINDING)
+						&& entry.getValue().bindingOptions.contains(BindingOptions.GAME_BINDING))
+						|| (b.bindingOptions.contains(BindingOptions.MENU_BINDING)
+								&& entry.getValue().bindingOptions.contains(BindingOptions.MENU_BINDING)))
 					return true;
 			}
 		}
@@ -1023,15 +1051,15 @@ public class ControllerSettings
 			displayHints = Boolean.parseBoolean(value);
 		}
 	}
-	
+
 	public static String checkKeyCodeBound(int joyNum, int keyCode, String defaultStr)
 	{
 		ControllerBinding b = ControllerSettings.findControllerBindingWithKey(keyCode, BindingOptions.GAME_BINDING);
 
 		if (b != null)
 		{
-			return ControllerSettings.controllerUtils.getHumanReadableInputName(
-					Controllers.getController(joyNum), b.inputEvent);
+			return ControllerSettings.controllerUtils
+					.getHumanReadableInputName(JoypadModInputLibrary.getController(joyNum), b.inputEvent);
 		}
 
 		return defaultStr;

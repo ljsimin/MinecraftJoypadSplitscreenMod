@@ -19,11 +19,26 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
 }
+//Only edit below this line, the above code adds and enables the nessasary things for Forge to be setup.
+
+allprojects {
+        repositories {
+            jcenter()
+            maven { url "https://jitpack.io" }
+        }
+   }
+
 
 
 version = "1.8-11.14.4.1563"
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
+
+sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.6"
+}
+
 
 minecraft {
     version = "1.8-11.14.4.1563"
@@ -37,6 +52,17 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+
+//configurations {
+//    embed
+//    compile.extendsFrom(embed)
+//}
+
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -46,7 +72,9 @@ dependencies {
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-    compile 'org.lwjgl.lwjgl:lwjgl:2.+'
+    shade 'org.lwjgl.lwjgl:lwjgl:2.+'
+	
+	shade 'com.github.strikerx3:jxinput:master-SNAPSHOT'
 
     // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
     //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
@@ -61,6 +89,16 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
 }
+
+jar {
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+}
+
+
 
 processResources
 {
@@ -81,5 +119,10 @@ processResources
         exclude 'mcmod.info'
     }
 }
- 
+
+sourceSets {
+    main.compileClasspath += configurations.shade
+    main.runtimeClasspath += configurations.shade
+}
+
 
