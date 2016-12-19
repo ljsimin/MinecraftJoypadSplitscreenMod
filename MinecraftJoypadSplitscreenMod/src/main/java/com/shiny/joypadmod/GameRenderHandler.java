@@ -3,13 +3,6 @@ package com.shiny.joypadmod;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiControls;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.helpers.Customizations;
@@ -22,6 +15,12 @@ import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiControls;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 
 
 
@@ -61,6 +60,7 @@ public class GameRenderHandler
 
 				if (InGuiCheckNeeded())
 				{
+					ControllerSettings.JoypadModInputLibrary.poll();
 					if (Mouse.isInsideWindow()
 							&& Minecraft.getSystemTime() - JoypadMouse.AxisReader.lastNon0Reading > 1000)
 					{
@@ -89,12 +89,13 @@ public class GameRenderHandler
 						}
 						preRenderGuiBucket.clear();
 					}
-					HandleDragAndScrolling();
+					HandleDragAndScrolling();					
 				}
 			}
 
 			if (InGameCheckNeeded())
 			{
+				ControllerSettings.JoypadModInputLibrary.poll();
 				for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 				{
 					if (binding.bindingOptions.contains(BindingOptions.RENDER_TICK))
@@ -116,11 +117,40 @@ public class GameRenderHandler
 			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 	}
+	
+	public static int displayCountDown = 0;
+	public static String displayMessage = "";
 
 	public static void HandlePostRender()
 	{
 		if (ControllerSettings.isSuspended())
 			return;
+		
+		ControllerSettings.JoypadModInputLibrary.poll();
+		
+		if (ControllerSettings.JoypadModInputLibrary.wasDisconnected())
+		{
+			displayCountDown = 300;
+			displayMessage = "Joypad disconnected";			
+		}
+		
+		if (ControllerSettings.JoypadModInputLibrary.wasConnected())
+		{
+			displayCountDown = 300;
+			displayMessage = "Joypad connected";		
+		}
+		
+		int batteryLevel = ControllerSettings.JoypadModInputLibrary.getCurrentController().getBatteryLevel();
+		if (batteryLevel != -1)
+		{
+			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("" + batteryLevel, 0, 0, 0xFFFF55 );	
+		}
+		
+		if (displayCountDown > 0)
+		{
+			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(displayMessage, 0, 0, 0xFFFF55 );	
+			displayCountDown--;
+		}
 
 		try
 		{
@@ -179,6 +209,7 @@ public class GameRenderHandler
 		{
 			HandleJoystickInGui();
 			lastInGuiTick = Minecraft.getSystemTime();
+			HandleDragAndScrolling();
 		}
 
 		if (InGameCheckNeeded())
@@ -266,7 +297,7 @@ public class GameRenderHandler
 				binding.isPressed();
 		}
 
-		while (Controllers.next() && mc.currentScreen != null)
+		while (ControllerSettings.JoypadModInputLibrary.next() && mc.currentScreen != null)
 		{
 			// ignore controller events in the milliseconds following in GAME
 			// controlling
@@ -278,7 +309,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
+							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()
@@ -315,7 +346,7 @@ public class GameRenderHandler
 			binding.isPressed();
 		}
 
-		while (Controllers.next() && (mc.currentScreen == null || lastFlansModCheckValue))
+		while (ControllerSettings.JoypadModInputLibrary.next() && (mc.currentScreen == null || lastFlansModCheckValue))
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
@@ -327,7 +358,7 @@ public class GameRenderHandler
 				try
 				{
 					ControllerInputEvent inputEvent = ControllerSettings.controllerUtils.getLastEvent(
-							Controllers.getController(ControllerSettings.joyNo), Controllers.getEventControlIndex());
+							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
 						LogHelper.Info("Input event " + inputEvent.toString()

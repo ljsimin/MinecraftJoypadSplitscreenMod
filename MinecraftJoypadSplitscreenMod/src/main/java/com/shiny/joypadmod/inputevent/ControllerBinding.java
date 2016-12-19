@@ -3,9 +3,6 @@ package com.shiny.joypadmod.inputevent;
 import java.util.EnumSet;
 import java.util.Locale;
 
-import net.minecraft.client.Minecraft;
-
-import org.lwjgl.input.Controllers;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
@@ -15,6 +12,8 @@ import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadCalibrationMenu;
+
+import net.minecraft.client.Minecraft;
 
 public class ControllerBinding
 {
@@ -458,7 +457,7 @@ public class ControllerBinding
 	public String getInputName()
 	{
 		return ControllerSettings.controllerUtils.getHumanReadableInputName(
-				Controllers.getController(ControllerSettings.joyNo), inputEvent);
+				ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), inputEvent);
 	}
 	
 	// return the name of the associated translat.ed menu item for this binding

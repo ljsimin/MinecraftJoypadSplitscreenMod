@@ -4,24 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.shiny.joypadmod.ControllerSettings;
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
-
-import com.shiny.joypadmod.helpers.ConfigFile;
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.devices.XInputDeviceWrapper;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class ControllerUtils
 {
 	private static Map<String, String> joypadNameMap;
-	private Controller currentController;
+	private int mappedControllerIndex;
 
 	public ControllerUtils()
 	{
 		joypadNameMap = new HashMap<String, String>();
-		currentController = null;
+		mappedControllerIndex = -1;
 	}
 
-	public void printDeadZones(Controller joystick2)
+	public void printDeadZones(InputDevice joystick2)
 	{
 		if (joystick2 != null)
 		{
@@ -32,7 +30,7 @@ public class ControllerUtils
 		}
 	}
 
-	public void printAxisNames(Controller joystick2)
+	public void printAxisNames(InputDevice joystick2)
 	{
 		for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++)
 		{
@@ -40,15 +38,15 @@ public class ControllerUtils
 		}
 	}
 
-	public void printButtonNames(Controller joystick2)
+	public void printButtonNames(InputDevice joystick2)
 	{
 		for (int buttonNo = 0; buttonNo < joystick2.getButtonCount(); buttonNo++)
-		{
+		{			
 			LogHelper.Info("Button " + buttonNo + ", " + joystick2.getButtonName(buttonNo));
 		}
 	}
 
-	public boolean checkJoypadRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount,
+	public boolean checkJoypadRequirements(InputDevice controller, int requiredButtonCount, int requiredMinButtonCount,
 			int requiredAxisCount)
 	{
 		boolean meetsRequirements = meetsInputRequirements(controller, requiredButtonCount, requiredMinButtonCount,
@@ -63,13 +61,13 @@ public class ControllerUtils
 					"Axes required - ").append(requiredAxisCount).append(" , detected - ").append(
 					controller.getAxisCount()).append("\n").append(
 					"Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n").append(
-					"Total number of controllers detected: ").append(Controllers.getControllerCount());
+					"Total number of controllers detected: ").append(ControllerSettings.JoypadModInputLibrary.getControllerCount());
 			LogHelper.Info(msg.toString());
 		}
 		return meetsRequirements;
 	}
 
-	public boolean meetsInputRequirements(Controller controller, int requiredButtonCount, int requiredMinButtonCount,
+	public boolean meetsInputRequirements(InputDevice controller, int requiredButtonCount, int requiredMinButtonCount,
 			int requiredAxisCount)
 	{
 		boolean meetsRequirements = true;
@@ -81,44 +79,44 @@ public class ControllerUtils
 		return meetsRequirements;
 	}
 
-	public ControllerInputEvent getLastEvent(Controller controller, int eventIndex)
+	public ControllerInputEvent getLastEvent(InputDevice inputDevice, int eventIndex)
 	{
-		if (Controllers.isEventAxis())
+		if (ControllerSettings.JoypadModInputLibrary.isEventAxis())
 		{
-			if (Math.abs(ControllerUtils.getAxisValue(controller, eventIndex)) > 0.75f)
+			if (Math.abs(ControllerUtils.getAxisValue(inputDevice, eventIndex)) > 0.75f)
 			{
-				return new AxisInputEvent(controller.getIndex(), eventIndex, ControllerUtils.getAxisValue(controller, eventIndex),
-						controller.getDeadZone(eventIndex));
+				return new AxisInputEvent(inputDevice.getIndex(), eventIndex, ControllerUtils.getAxisValue(inputDevice, eventIndex),
+						inputDevice.getDeadZone(eventIndex));
 			}
 		}
-		else if (Controllers.isEventButton())
+		else if (ControllerSettings.JoypadModInputLibrary.isEventButton())
 		{
-			int id = Controllers.getEventControlIndex();
-			if (controller.isButtonPressed(id))
+			int id = ControllerSettings.JoypadModInputLibrary.getEventControlIndex();
+			if (inputDevice.isButtonPressed(id))
 			{
-				return new ButtonInputEvent(controller.getIndex(), id, 1);
+				return new ButtonInputEvent(inputDevice.getIndex(), id, 1);
 			}
 		}
-		else if (Controllers.isEventPovX())
+		else if (ControllerSettings.JoypadModInputLibrary.isEventPovX())
 		{
-			if (Math.abs(controller.getPovX()) > 0.5f)
+			if (Math.abs(inputDevice.getPovX()) > 0.5f)
 			{
-				return new PovInputEvent(controller.getIndex(), 0, controller.getPovX() / 2);
+				return new PovInputEvent(inputDevice.getIndex(), 0, inputDevice.getPovX() / 2);
 			}
 		}
-		else if (Controllers.isEventPovY())
+		else if (ControllerSettings.JoypadModInputLibrary.isEventPovY())
 		{
-			if (Math.abs(controller.getPovY()) > 0.5f)
+			if (Math.abs(inputDevice.getPovY()) > 0.5f)
 			{
-				return new PovInputEvent(controller.getIndex(), 1, controller.getPovY() / 2);
+				return new PovInputEvent(inputDevice.getIndex(), 1, inputDevice.getPovY() / 2);
 			}
 		}
 		return null;
 	}
 
-	public String getHumanReadableInputName(Controller controller, ControllerInputEvent inputEvent)
+	public String getHumanReadableInputName(InputDevice inputDevice, ControllerInputEvent inputEvent)
 	{
-		if (controller == null || inputEvent == null)
+		if (inputDevice == null || inputEvent == null)
 		{
 			return "NONE";
 		}
@@ -126,7 +124,7 @@ public class ControllerUtils
 		
 		try
 		{
-			setJoypadNameMap(controller);
+			setJoypadNameMap(inputDevice);
 			result = joypadNameMap.get(inputEvent.getDescription());
 			if (result == null && inputEvent.getDescription() != "NONE")
 				joypadNameMap.put(inputEvent.getDescription(), inputEvent.getDescription());
@@ -144,7 +142,7 @@ public class ControllerUtils
 	 * @param controller
 	 * @return
 	 */
-	public boolean isDeadlocked(Controller controller)
+	public boolean isDeadlocked(InputDevice controller)
 	{
 		Integer numberOfNegativeAxes = 0;
 		if (controller.getAxisCount() < 1)
@@ -163,7 +161,7 @@ public class ControllerUtils
 
 	public static void autoCalibrateAxis(int joyId, int axisId)
 	{
-		Controller controller = Controllers.getController(joyId);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joyId);
 		controller.setDeadZone(axisId, 0);
 		float currentValue = Math.abs(getAxisValue(controller, axisId));
 		LogHelper.Info("Axis: " + axisId + " currently has a value of: " + currentValue);
@@ -172,10 +170,10 @@ public class ControllerUtils
 		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
 	}
 
-	public static float getAxisValue(Controller controller, int axisNum)
+	public static float getAxisValue(InputDevice inputDevice, int axisNum)
 	{
-		float rawValue = controller.getAxisValue(axisNum);
-		if (ControllerSettings.isSingleDirectionAxis(controller.getIndex(), axisNum))
+		float rawValue = inputDevice.getAxisValue(axisNum);
+		if (ControllerSettings.isSingleDirectionAxis(inputDevice.getIndex(), axisNum))
 		{
 			return (rawValue + 1f) / 2f;
 		}
@@ -184,7 +182,9 @@ public class ControllerUtils
 
 	public static int findYAxisIndex(int joyId)
 	{
-		Controller controller = Controllers.getController(joyId);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joyId);
+		if (controller.getClass() == XInputDeviceWrapper.class)
+			return 1;
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
 			String axisName = controller.getAxisName(i);
@@ -197,7 +197,9 @@ public class ControllerUtils
 
 	public static int findXAxisIndex(int joyId)
 	{
-		Controller controller = Controllers.getController(joyId);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joyId);
+		if (controller.getClass() == XInputDeviceWrapper.class)
+			return 0;
 		for (int i = 0; i < controller.getAxisCount(); i++)
 		{
 			String axisName = controller.getAxisName(i);
@@ -208,7 +210,7 @@ public class ControllerUtils
 		return 1;
 	}
 	
-	private Map<String, String> buildDefaultMap(Controller controller)
+	private Map<String, String> buildDefaultMap(InputDevice controller)
 	{
 		Map<String, String> retMap = new HashMap<String, String>();
 		if (controller.getName().toLowerCase().contains("xinput")
@@ -285,10 +287,9 @@ public class ControllerUtils
 		return retMap;
 	}
 	
-	private void setJoypadNameMap(Controller controller)
+	private void setJoypadNameMap(InputDevice controller)
 	{
-		if (currentController == null 
-				|| controller.getIndex() != currentController.getIndex())
+		if (controller.getIndex() != mappedControllerIndex)
 		{
 			joypadNameMap.clear();
 			// check if config file has map
@@ -302,7 +303,7 @@ public class ControllerUtils
 			{
 				joypadNameMap = newMap;
 			}
-			currentController = controller;
+			mappedControllerIndex = controller.getIndex();			
 		}
 	}
 	
@@ -318,12 +319,12 @@ public class ControllerUtils
 	
 	public boolean saveCurrentJoypadMap()
 	{
-		if (currentController != null)
+		if (mappedControllerIndex >= 0)
 		{
 			try
 			{
 				ControllerSettings.config.saveStringMap
-					("-ControllerNameMap-", currentController.getName(), 
+					("-ControllerNameMap-", ControllerSettings.JoypadModInputLibrary.getController(mappedControllerIndex).getName(), 
 					joypadNameMap, "Map the controller button/axis to human readable names");
 				return true;
 			}

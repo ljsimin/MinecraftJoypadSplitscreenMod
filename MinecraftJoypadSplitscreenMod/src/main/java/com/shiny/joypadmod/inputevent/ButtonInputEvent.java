@@ -1,6 +1,6 @@
 package com.shiny.joypadmod.inputevent;
 
-import org.lwjgl.input.Controllers;
+import com.shiny.joypadmod.ControllerSettings;
 
 public class ButtonInputEvent extends ControllerInputEvent
 {
@@ -12,13 +12,13 @@ public class ButtonInputEvent extends ControllerInputEvent
 	@Override
 	protected boolean isTargetEvent()
 	{
-		return Controllers.isEventButton() && Controllers.getEventControlIndex() == buttonNumber;
+		return ControllerSettings.JoypadModInputLibrary.isEventButton() && ControllerSettings.JoypadModInputLibrary.getEventControlIndex() == buttonNumber;
 	}
 
 	@Override
 	public float getAnalogReading()
 	{
-		if (Controllers.getController(controllerNumber).isButtonPressed(buttonNumber))
+		if (ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).isButtonPressed(buttonNumber))
 		{
 			return 1.0f;
 		}
@@ -31,7 +31,7 @@ public class ButtonInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return "NONE";
-		return Controllers.getController(controllerNumber).getButtonName(buttonNumber);
+		return ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getButtonName(buttonNumber);
 	}
 
 	@Override
@@ -51,6 +51,6 @@ public class ButtonInputEvent extends ControllerInputEvent
 	public boolean isValid()
 	{
 		return controllerNumber >= 0 && buttonNumber >= 0
-				&& buttonNumber < Controllers.getController(controllerNumber).getButtonCount();
+				&& buttonNumber < ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getButtonCount();
 	}
 }

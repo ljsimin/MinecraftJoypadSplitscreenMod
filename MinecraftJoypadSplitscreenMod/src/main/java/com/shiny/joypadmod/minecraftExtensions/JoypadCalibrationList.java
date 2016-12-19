@@ -4,7 +4,15 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.input.Mouse;
+
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.devices.InputDevice;
+import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.helpers.ModVersionHelper;
+import com.shiny.joypadmod.inputevent.ControllerUtils;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -19,6 +27,7 @@ import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
+
 
 
 public class JoypadCalibrationList extends GuiScrollingList
@@ -43,7 +52,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 	@Override
 	protected int getSize()
 	{
-		int ret = Controllers.getController(joypadIndex).getAxisCount();
+		int ret = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount();
 		if (ret > 0)
 		{
 			int theHeight = this.bottom - this.top;
@@ -52,7 +61,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 				ret = (int) Math.floor(theHeight / entryHeight);
 		}
 
-		return Math.max(Controllers.getController(joypadIndex).getAxisCount(), ret);
+		return Math.max(ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount(), ret);
 	}
 
 	@Override
@@ -76,7 +85,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 	{
 		int axisId = guiButton.id;
 		LogHelper.Info("Action performed on buttonID " + axisId);
-		Controller controller = this.joypadIndex != -1 ? Controllers.getController(this.joypadIndex) : null;
+		InputDevice controller = this.joypadIndex != -1 ? ControllerSettings.JoypadModInputLibrary.getController(this.joypadIndex) : null;
 
 		if (guiButton.id < 100)
 		{
@@ -126,7 +135,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 		final int i1 = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight()
 				/ mc.displayHeight - 1;
 
-		if (var1 < Controllers.getController(joypadIndex).getAxisCount())
+		if (var1 < ControllerSettings.JoypadModInputLibrary.getController(joypadIndex).getAxisCount())
 		{
 			int totalWidth = parent.axisBoxWidth;
 			drawAxis(var1, this.width / 2 - totalWidth / 2, var3 + 2, 21, k, i1, totalWidth);
@@ -144,7 +153,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 
 	private int[] drawAxis(int axisNum, int xStart, int yStart, int ySpace, int par1, int par2, int totalWidth)
 	{
-		Controller controller = Controllers.getController(joypadIndex);
+		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 		int yPos = yStart;
 		DecimalFormat df = new DecimalFormat("#0.00");
 		int autoButtonWidth = mc.fontRenderer.getStringWidth(McObfuscationHelper.lookupString("calibrationMenu.auto")) + 10;

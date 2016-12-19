@@ -1,10 +1,5 @@
 package com.shiny.joypadmod;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lwjgl.input.Controllers;
-
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
