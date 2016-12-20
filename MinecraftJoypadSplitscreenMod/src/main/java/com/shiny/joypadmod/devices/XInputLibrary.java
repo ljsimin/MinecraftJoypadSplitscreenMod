@@ -7,11 +7,13 @@ import com.ivan.xinput.XInputButtonsDelta;
 import com.ivan.xinput.XInputComponentsDelta;
 import com.ivan.xinput.XInputDevice;
 import com.ivan.xinput.XInputDevice14;
+import com.ivan.xinput.XInputLibraryVersion;
 import com.ivan.xinput.enums.XInputAxis;
 import com.ivan.xinput.enums.XInputButton;
 import com.ivan.xinput.exceptions.XInputNotLoadedException;
 import com.ivan.xinput.listener.SimpleXInputDeviceListener;
 import com.ivan.xinput.listener.XInputDeviceListener;
+import com.ivan.xinput.natives.XInputNatives;
 import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.inputevent.AxisInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
@@ -48,11 +50,23 @@ public class XInputLibrary extends InputLibrary {
 		if (XInputDevice14.isAvailable())
 			xInput14 = true;
 		else if (!XInputDevice.isAvailable())
+		{
+			if (!XInputNatives.isLoaded())
+			{
+				LogHelper.Error("XInput native libraries failed to load with error: " + XInputNatives.getLoadError().toString());
+			}
+			else
+			{
+				LogHelper.Error("XInputNatives were loaded but XInputDevice reports it is not available");
+			}
+			
 			throw new Exception("XInput is not available on system.");
+		}
 		
 		theDevice = new XInputDeviceWrapper(0);
 		theDevice.setIndex(0, xInput14);
 		created = true;
+		LogHelper.Info("XInput is available on system.  Using version: " + XInputLibraryVersion.values()[XInputNatives.getLoadedLibVersion()].toString());
 	}
 
 	@Override
