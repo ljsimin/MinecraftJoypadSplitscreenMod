@@ -125,6 +125,10 @@ public class ControllerSettings
 				LogHelper.Error("XInput: Failed creating controller object. " + ex.toString());
 			}
 		}
+		else
+		{
+			LogHelper.Info("XInput: LegacyInput is set to true.");
+		}
 
 		if (JoypadModInputLibrary == null || !JoypadModInputLibrary.isCreated())
 		{
