@@ -140,11 +140,12 @@ public class GameRenderHandler
 			displayMessage = "Joypad connected";		
 		}
 		
+		/* no point in this for now
 		int batteryLevel = ControllerSettings.JoypadModInputLibrary.getCurrentController().getBatteryLevel();
 		if (batteryLevel != -1)
 		{
 			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("" + batteryLevel, 0, 0, 0xFFFF55 );	
-		}
+		}*/
 		
 		if (displayCountDown > 0)
 		{

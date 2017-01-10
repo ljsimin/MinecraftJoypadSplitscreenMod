@@ -23,7 +23,7 @@ import net.minecraft.client.gui.ScaledResolution;
 public class ModVersionHelper
 {
 	public static final String VERSION = "1.7.10";
-	public static final int MC_VERSION = 180;
+	public static final int MC_VERSION = 171;
 
 	public void gameInit()
 	{
