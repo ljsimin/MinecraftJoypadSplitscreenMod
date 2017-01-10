@@ -29,7 +29,7 @@ allprojects {
    }
 
 
-version = "1.9.4-12.17.0.1976" 
+version = "1.9.4-1.10.2" 
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
 
