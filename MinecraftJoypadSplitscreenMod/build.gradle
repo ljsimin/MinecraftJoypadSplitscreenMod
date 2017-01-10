@@ -29,7 +29,6 @@ allprojects {
    }
 
 
-
 version = "1.8-11.14.4.1563"
 group = "com.shiny.joypadmod"
 archivesBaseName = "JoypadMod"
@@ -38,7 +37,6 @@ sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse t
 compileJava {
     sourceCompatibility = targetCompatibility = "1.6"
 }
-
 
 minecraft {
     version = "1.8-11.14.4.1563"

@@ -107,12 +107,8 @@ public class ControllerSettings
 		userDefinedBindings = new ArrayList<ControllerBinding>();
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
 
-		// copy this path because XInput NativeLibraryHelper will change it. we
-		// need to set it back after
 		if (!useLegacyInput)
 		{
-			String origLibraryPath = System.getProperty("java.library.path");
-
 			// try XInput only first
 			try
 			{
@@ -122,14 +118,16 @@ public class ControllerSettings
 			}
 			catch (UnsatisfiedLinkError e)
 			{
-				LogHelper.Error("Controller object linking error. " + e.toString());
+				LogHelper.Error("XInput: Controller object linking error. " + e.toString());
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Failed creating controller object. " + ex.toString());
+				LogHelper.Error("XInput: Failed creating controller object. " + ex.toString());
 			}
-
-			System.setProperty("java.library.path", origLibraryPath);
+		}
+		else
+		{
+			LogHelper.Info("XInput: LegacyInput is set to true.");
 		}
 
 		if (JoypadModInputLibrary == null || !JoypadModInputLibrary.isCreated())
