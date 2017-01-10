@@ -34,7 +34,7 @@ public class ModVersionHelper
 
 		MinecraftForge.EVENT_BUS.register(this);
 		// 1.7.2
-		FMLCommonHandler.instance().bus().register(this);
+		//FMLCommonHandler.instance().bus().register(this);
 		// 1.6.4
 		// TickRegistry.registerTickHandler(new RenderTickHandler(),
 		// Side.CLIENT);
@@ -88,9 +88,9 @@ public class ModVersionHelper
 	{
 		Minecraft mc = Minecraft.getMinecraft();
 		// 1.8.8
-		//return new ScaledResolution(mc);
+		return new ScaledResolution(mc);
 		// 1.7.10 - 1.8.2 
-		return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		//return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		// 1.7.2
 		//return new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
 	}
