@@ -472,6 +472,12 @@ public class JoypadConfigMenu extends GuiScreen
 		// field_146292_n.add(guiButton);
 		buttonList.add(guiButton);
 	}
+	
+	@SuppressWarnings("unchecked")
+ 	private void addButton(GuiButton guiButton)
+ 	{
+ 		buttonList.add(guiButton);
+ 	}
 
 	private int getButtonId(GuiButton guiButton)
 	{

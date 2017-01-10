@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
-		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.10,1.10.2]")
+		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.9.4,1.10.2]")
 // 1.6.4
 // @NetworkMod(serverSideRequired = false)
 public class JoypadMod
