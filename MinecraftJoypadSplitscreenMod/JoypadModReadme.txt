@@ -1,4 +1,4 @@
-JOYPAD SPLITSCREEN MOD modding
+JOYPAD SPLITSCREEN MOD modding TEST
 
 Note: You should have some familiarity with Forge modding.  These instructions won't cover that.
 
