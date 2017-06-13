@@ -239,7 +239,7 @@ public class GameRenderHandler
 
 	private static void UpdateInGameCamera()
 	{
-		if (mc.thePlayer != null)
+		if (mc.player != null)
 		{
 			if (lastFlansModCheckValue)
 			{
@@ -258,7 +258,8 @@ public class GameRenderHandler
 			}
 			else if (JoypadMouse.pollAxis(false))
 			{
-				mc.thePlayer.setAngles(JoypadMouse.AxisReader.deltaX, JoypadMouse.AxisReader.deltaY
+				
+				mc.player.turn(JoypadMouse.AxisReader.deltaX, JoypadMouse.AxisReader.deltaY
 						* (ControllerSettings.getInvertYAxis() ? 1.0f : -1.0f));
 			}
 		}
@@ -379,7 +380,7 @@ public class GameRenderHandler
 			{
 				if (ControllerSettings.get("joy.sprint").wasPressed())
 				{
-					mc.thePlayer.setSprinting(true);
+					mc.player.setSprinting(true);
 					continue;
 				}
 			}
@@ -424,7 +425,7 @@ public class GameRenderHandler
 
 	public static boolean InGameCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.thePlayer == null || (mc.currentScreen != null && !lastFlansModCheckValue))
+		if (!CheckIfModEnabled() || mc.player == null || (mc.currentScreen != null && !lastFlansModCheckValue))
 		{
 			return false;
 		}

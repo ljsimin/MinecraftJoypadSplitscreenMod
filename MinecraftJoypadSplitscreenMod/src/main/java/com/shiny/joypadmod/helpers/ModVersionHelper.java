@@ -20,9 +20,9 @@ import net.minecraft.client.gui.ScaledResolution;
 
 public class ModVersionHelper
 {
-	public static final String VERSION = "1.11.0";
+	public static final String VERSION = "1.12.0";
 	
-	public static final int MC_VERSION = 1110;
+	public static final int MC_VERSION = 1120;
 
 	public void gameInit()
 	{

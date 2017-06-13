@@ -128,9 +128,9 @@ public class ButtonScreenTips extends Gui {
 
         if (mc.currentScreen instanceof GuiContainer)
         {
-        	boolean isHolding = mc.thePlayer != null &&
-        			mc.thePlayer.inventory != null &&
-        			mc.thePlayer.inventory.getItemStack() != null;
+        	boolean isHolding = mc.player != null &&
+        			mc.player.inventory != null &&
+        			mc.player.inventory.getItemStack() != null;
         	int maxLen = findMaxStringLength(blTipsMenu, true, isHolding);
         	currentX = width / 2 - 100 - maxLen;
             currentY = height - ( (fr.FONT_HEIGHT * blTipsMenu.length) + (blTipsMenu.length * 5) );

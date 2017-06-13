@@ -135,7 +135,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 				if (buttonList.size() > i)
 				{
 					buttonList.get(i).yPosition = var3 + 5;
-					buttonList.get(i).drawButton(Minecraft.getMinecraft(), k, i1);
+					buttonList.get(i).func_191745_a(Minecraft.getMinecraft(), k, i1, 0);
 				}
 			}
 		}
