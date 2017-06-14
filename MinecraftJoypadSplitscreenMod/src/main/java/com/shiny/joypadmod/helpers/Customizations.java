@@ -21,6 +21,8 @@ public class Customizations {
 		
 		private static ResourceLocation resource = null;
 		private static Minecraft mc;
+		private static boolean glBlend = true;
+		private static boolean glDepthTest = false;
 		
 		public static String getLocation()
 		{
@@ -36,6 +38,31 @@ public class Customizations {
 			imageWidth = inImageWidth;
 			imageHeight = inImageHeight;
 			mc = Minecraft.getMinecraft();
+		}
+		
+		public static void SetupGl()
+		{
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			if(GL11.glIsEnabled(GL11.GL_DEPTH_TEST)){  // do this to ensure that we render on top of everything
+				glDepthTest=true;
+		        GL11.glDisable(GL11.GL_DEPTH_TEST);
+		    } 
+			if(resource != null && !GL11.glIsEnabled(GL11.GL_BLEND)){  // do this to ensure that transparency is on for our reticle texture
+				glBlend=false;
+		        GL11.glEnable(GL11.GL_BLEND);
+		    } 
+		}
+		
+		public static void RestoreGl()
+		{
+			if (glDepthTest)
+			{
+				GL11.glEnable(GL11.GL_DEPTH_TEST);
+			}
+			if (resource != null && !glBlend)
+			{
+				GL11.glDisable(GL11.GL_BLEND);
+			}
 		}
 		
 		public static Boolean parseSettings(String settings)
@@ -65,14 +92,16 @@ public class Customizations {
 		
 		public static void Draw(int x, int y)
 		{
+			SetupGl();
 			if (resource != null)
 			{
 				try
 				{
 					mc.renderEngine.bindTexture(resource);
-					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+					
 					Gui.drawModalRectWithCustomSizedTexture(x - width/2, y-height/2, 0, 0, 
-							width, height, imageWidth, imageHeight);
+							width, height, imageWidth, imageHeight);	
+					
 				} catch (Exception ex)
 				{
 					LogHelper.Error("Caught exception when rendering reticle. Defaulting to basic."
@@ -85,6 +114,7 @@ public class Customizations {
 				Gui.drawRect(x - 3, y, x + 4, y + 1, reticleColor);
 				Gui.drawRect(x, y - 3, x + 1, y + 4, reticleColor);
 			}
+			RestoreGl();
 		}
 		
 	}
