@@ -1,10 +1,10 @@
 MinecraftJoypadSplitscreenMod
 =============================
 
-Joypad mod for Minecraft.
+**Mod that adds support for joypads in Minecraft: Java Edition.**
 
-Supports: Forge 1.6.4,1.7.x,1.8, 1.9, 1.10, 1.11, 1.12
+_Notice: The mod supports as many joypads as your PC can handle, as well as supporting your keyboard and mouse._
 
-For more info:
 
-http://www.minecraftforum.net/topic/1213778-162-0151-joypad-mod-usb-controller-split-screen-over-60k-downloads/
+Original [mod](https://github.com/ljsimin/MinecraftJoypadSplitscreenMod)<br>
+Original [forum post](http://www.minecraftforum.net/topic/1213778-162-0151-joypad-mod-usb-controller-split-screen-over-60k-downloads/)
