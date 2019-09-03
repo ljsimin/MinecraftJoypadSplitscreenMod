@@ -22,8 +22,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-
-
 public class GameRenderHandler
 {
 	private static Minecraft mc = Minecraft.getMinecraft();
@@ -349,16 +347,6 @@ public class GameRenderHandler
 			}
 
 			mc.inGameHasFocus = true;
-
-			// hack in sprint
-			if (ModVersionHelper.getVersion() == 164)
-			{
-				if (ControllerSettings.get("joy.sprint").wasPressed())
-				{
-					mc.player.setSprinting(true);
-					continue;
-				}
-			}
 
 			for (ControllerBinding binding = ControllerSettings.startGameBindIteration(); binding != null; binding = ControllerSettings.getNextGameAutoBinding())
 			{

@@ -32,8 +32,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
-
-
 public class JoypadControlList extends GuiScrollingList
 {
 	private FontRenderer fontRenderer;
@@ -92,8 +90,7 @@ public class JoypadControlList extends GuiScrollingList
 
 		KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(mc.gameSettings.keyBindings);
 
-		if (ModVersionHelper.getVersion() >= 172)
-			Arrays.sort(akeybinding);
+		Arrays.sort(akeybinding);
 
 		ControllerSettings.setDefaultJoyBindingMap(parent.getCurrentControllerId(), true);
 

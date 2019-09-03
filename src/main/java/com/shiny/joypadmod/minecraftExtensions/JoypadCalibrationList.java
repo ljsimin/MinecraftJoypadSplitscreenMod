@@ -19,7 +19,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.GuiScrollingList;
 
-
 public class JoypadCalibrationList extends GuiScrollingList
 {
 	private Minecraft mc;
