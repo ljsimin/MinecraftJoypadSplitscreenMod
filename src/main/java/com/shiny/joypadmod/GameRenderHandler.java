@@ -33,7 +33,6 @@ public class GameRenderHandler
 	public static boolean allowOrigControlsMenu = false;
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
-	private static boolean lastFlansModCheckValue = false;
 
 	public static List<String> preRenderGuiBucket = new ArrayList<String>();
 	public static List<String> preRenderGameBucket = new ArrayList<String>();
@@ -192,19 +191,10 @@ public class GameRenderHandler
 
 	}
 
-	private static long lastFlansModCheckTick = 0;
-
 	public static void HandleClientStartTick()
 	{
 		if (ControllerSettings.isSuspended())
 			return;
-
-		if (Minecraft.getSystemTime() - lastFlansModCheckTick > 750)
-		{
-			lastFlansModCheckValue = mc.currentScreen != null
-					&& mc.currentScreen.getClass().toString().contains("GuiDriveableController");
-			lastFlansModCheckTick = Minecraft.getSystemTime();
-		}
 
 		if (InGuiCheckNeeded())
 		{
@@ -241,22 +231,7 @@ public class GameRenderHandler
 	{
 		if (mc.player != null)
 		{
-			if (lastFlansModCheckValue)
-			{
-				if (JoypadMouse.pollAxis(false))
-				{
-					float multiplier = 4f * mc.gameSettings.mouseSensitivity;
-					VirtualMouse.moveMouse(
-							(int) (JoypadMouse.AxisReader.deltaX * multiplier),
-							(int) (JoypadMouse.AxisReader.deltaY * multiplier * (ControllerSettings.getInvertYAxis() ? 1.0f
-									: -1.0f)));
-				}
-				else
-				{
-					VirtualMouse.moveMouse(0, 0);
-				}
-			}
-			else if (JoypadMouse.pollAxis(false))
+			if (JoypadMouse.pollAxis(false))
 			{
 				
 				mc.player.turn(JoypadMouse.AxisReader.deltaX, JoypadMouse.AxisReader.deltaY
@@ -348,7 +323,7 @@ public class GameRenderHandler
 			binding.isPressed();
 		}
 
-		while (ControllerSettings.JoypadModInputLibrary.next() && (mc.currentScreen == null || lastFlansModCheckValue))
+		while (ControllerSettings.JoypadModInputLibrary.next() && (mc.currentScreen == null))
 		{
 			// ignore controller events in the milliseconds following in GUI
 			// controlling
@@ -425,7 +400,7 @@ public class GameRenderHandler
 
 	public static boolean InGameCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.player == null || (mc.currentScreen != null && !lastFlansModCheckValue))
+		if (!CheckIfModEnabled() || mc.player == null)
 		{
 			return false;
 		}
@@ -435,7 +410,7 @@ public class GameRenderHandler
 
 	public static boolean InGuiCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.currentScreen == null || lastFlansModCheckValue)
+		if (!CheckIfModEnabled() || mc.currentScreen == null)
 		{
 			return false;
 		}
