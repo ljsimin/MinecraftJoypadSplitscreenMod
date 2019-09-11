@@ -146,7 +146,7 @@ public class GameRenderHandler
 		
 		if (displayCountDown > 0)
 		{
-			Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(displayMessage, 0, 0, 0xFFFF55 );	
+			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(displayMessage, 0, 0, 0xFFFF55 );
 			displayCountDown--;
 		}
 

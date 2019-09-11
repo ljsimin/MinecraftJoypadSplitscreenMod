@@ -34,7 +34,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	private JoypadCalibrationList calibrationList = null;
 	private List<Integer> singleDirectionAxisSaved = null;
 
-	FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+	FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
 	String[] instructions = new String[] { "calibrationMenu.instructions1", "calibrationMenu.instructions2",
 			"calibrationMenu.save" };
@@ -91,7 +91,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 			buttonList.add(new GuiButton(400, xPos, buttonYStart_bottom, bottomButtonWidth, 20,
 					McObfuscationHelper.lookupString("calibrationMenu.save")));
 			xPos += bottomButtonWidth;
-			doneButton.xPosition += bottomButtonWidth / 2;
+			doneButton.x += bottomButtonWidth / 2;
 			doneButton.displayString = McObfuscationHelper.lookupString("gui.cancel");
 		}
 

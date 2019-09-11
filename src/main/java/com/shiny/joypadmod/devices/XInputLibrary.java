@@ -2,21 +2,14 @@ package com.shiny.joypadmod.devices;
 
 import java.util.LinkedList;
 
-import com.ivan.xinput.XInputAxesDelta;
-import com.ivan.xinput.XInputButtonsDelta;
-import com.ivan.xinput.XInputComponentsDelta;
-import com.ivan.xinput.XInputDevice;
-import com.ivan.xinput.XInputDevice14;
-import com.ivan.xinput.XInputLibraryVersion;
-import com.ivan.xinput.enums.XInputAxis;
-import com.ivan.xinput.enums.XInputButton;
-import com.ivan.xinput.exceptions.XInputNotLoadedException;
-import com.ivan.xinput.listener.SimpleXInputDeviceListener;
-import com.ivan.xinput.listener.XInputDeviceListener;
-import com.ivan.xinput.natives.XInputNatives;
+import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.XInputDevice14;
+import com.github.strikerx3.jxinput.XInputLibraryVersion;
+import com.github.strikerx3.jxinput.enums.XInputButton;
+import com.github.strikerx3.jxinput.listener.SimpleXInputDeviceListener;
+import com.github.strikerx3.jxinput.listener.XInputDeviceListener;
+import com.github.strikerx3.jxinput.natives.XInputNatives;
 import com.shiny.joypadmod.helpers.LogHelper;
-import com.shiny.joypadmod.inputevent.AxisInputEvent;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
 
 public class XInputLibrary extends InputLibrary {
 	

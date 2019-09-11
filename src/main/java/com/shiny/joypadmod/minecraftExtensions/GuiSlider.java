@@ -70,15 +70,15 @@ public class GuiSlider extends GuiButton
 		{
 			if (this.dragging)
 			{
-				setValue((float) (mouseX - (this.xPosition + 4)) / (float) (this.width - 8));
+				setValue((float) (mouseX - (this.x + 4)) / (float) (this.width - 8));
 				this.updateText();
 			}
 
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (this.width - 8)), this.yPosition, 0,
+			this.drawTexturedModalRect(this.x + (int) (this.sliderValue * (this.width - 8)), this.y, 0,
 					66, 4, 20);
-			this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (this.width - 8)) + 4,
-					this.yPosition, 196, 66, 4, 20);
+			this.drawTexturedModalRect(this.x + (int) (this.sliderValue * (this.width - 8)) + 4,
+					this.y, 196, 66, 4, 20);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class GuiSlider extends GuiButton
 	{
 		if (super.mousePressed(minecraft, mouseX, mouseY))
 		{
-			setValue((float) (mouseX - (this.xPosition + 4)) / (float) (this.width - 8));
+			setValue((float) (mouseX - (this.x + 4)) / (float) (this.width - 8));
 
 			this.dragging = true;
 			return true;
@@ -125,7 +125,7 @@ public class GuiSlider extends GuiButton
 		}
 		if (output != "")
 		{
-			FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+			FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 			String value = ": " + (int) (this.sliderValue * 100.0F);
 			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}

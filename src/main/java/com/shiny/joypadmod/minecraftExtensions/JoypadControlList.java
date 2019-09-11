@@ -348,8 +348,8 @@ public class JoypadControlList extends GuiScrollingList
 					textInputName.setText(controlButtonStr);
 					this.textInputName.setVisible(true);
 				}
-				textInputName.xPosition = x;
-				textInputName.yPosition = y;
+				textInputName.x = x;
+				textInputName.y = y;
 		        textInputName.drawTextBox();
 		        this.textInputName.setFocused(true);
 			}
@@ -360,7 +360,7 @@ public class JoypadControlList extends GuiScrollingList
 			controlButtonStr = this.fontRenderer.trimStringToWidth(controlButtonStr, controlButtonWidth - 2);
 	
 			GuiButton b = new GuiButton(10001, x, y, controlButtonWidth, buttonHeight, controlButtonStr);
-			b.func_191745_a(mc, k, i1,0);
+			b.drawButton(mc, k, i1,0);
 	
 			if (binding == null)
 				return;
@@ -383,7 +383,7 @@ public class JoypadControlList extends GuiScrollingList
 			{
 				// draw the remove/unbind option for this binding
 				b = new GuiButton(10002, x + controlButtonWidth, y, smallButtonWidth, buttonHeight, "" + optionRemove);
-				b.func_191745_a(mc, k, i1,0);
+				b.drawButton(mc, k, i1,0);
 	
 				// draw the toggle option button
 				if (binding.inputEvent.getEventType() != EventType.AXIS
@@ -394,7 +394,7 @@ public class JoypadControlList extends GuiScrollingList
 						toggle = McObfuscationHelper.symGet(McObfuscationHelper.JSyms.fCircle);
 					b = new GuiButton(10003, x + controlButtonWidth + smallButtonWidth, y, smallButtonWidth, buttonHeight,
 							"" + toggle);
-					b.func_191745_a(mc, k, i1,0);
+					b.drawButton(mc, k, i1,0);
 				}
 			}
 		}

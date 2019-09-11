@@ -59,14 +59,14 @@ public class JoypadAdvancedMenu extends GuiScreen
 		for (int i = 0; i < otherButtons.length; i++)
 		{
 			String buttonString = createToggleString(otherButtons[i], true);
-			int width = mc.fontRendererObj.getStringWidth(buttonString);
+			int width = mc.fontRenderer.getStringWidth(buttonString);
 			maxWidth = width > maxWidth ? width : maxWidth;
 		}
 
 		for (int i = 0; i < gameOptions.length; i++)
 		{
 			String buttonString = createToggleString(gameOptions[i], true);
-			int width = mc.fontRendererObj.getStringWidth(buttonString);
+			int width = mc.fontRenderer.getStringWidth(buttonString);
 			maxWidth = width > maxWidth ? width : maxWidth;
 		}
 

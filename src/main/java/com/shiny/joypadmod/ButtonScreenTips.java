@@ -74,7 +74,7 @@ public class ButtonScreenTips extends Gui {
 			new HintString("joy.interact","menuHint.takehalf","menuHint.placeone") /* take half stack / drop 1 item */};
 	
 	Minecraft mc = Minecraft.getMinecraft();
-	FontRenderer fr = mc.fontRendererObj;
+	FontRenderer fr = mc.fontRenderer;
 	int currentX = 5;
 	int currentY = 20;
 	

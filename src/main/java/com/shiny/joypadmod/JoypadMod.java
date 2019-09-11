@@ -6,11 +6,6 @@ import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
-
-/*
- * Main class for Joypad mod. This initializes everything.
- */
-
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -20,8 +15,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
 		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.12,)")
-// 1.6.4
-// @NetworkMod(serverSideRequired = false)
 public class JoypadMod
 {
 	public static final String MODID = "joypadsplitscreenmod";
@@ -46,7 +39,7 @@ public class JoypadMod
 		LogHelper.Info("init");
 		try
 		{
-			if (!(Minecraft.getMinecraft().mouseHelper instanceof net.minecraft.util.MouseHelper))
+			if (Minecraft.getMinecraft().mouseHelper == null)
 			{
 				LogHelper.Warn("Replacing Mousehelper that may have already been replaced by another mod!");
 			}

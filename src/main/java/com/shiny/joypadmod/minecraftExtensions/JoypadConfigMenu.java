@@ -490,7 +490,7 @@ public class JoypadConfigMenu extends GuiScreen
 	{
 		// return this.field_146289_q;
 		// return this.fontRenderer;
-		return this.fontRendererObj;
+		return this.fontRenderer;
 	}
 
 	public String sGet(String inputCode)

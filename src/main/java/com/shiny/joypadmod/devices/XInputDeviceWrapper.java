@@ -1,13 +1,13 @@
 package com.shiny.joypadmod.devices;
 
-import com.ivan.xinput.XInputBatteryInformation;
-import com.ivan.xinput.XInputButtons;
-import com.ivan.xinput.XInputDevice;
-import com.ivan.xinput.XInputDevice14;
-import com.ivan.xinput.enums.XInputAxis;
-import com.ivan.xinput.enums.XInputBatteryDeviceType;
-import com.ivan.xinput.enums.XInputButton;
-import com.ivan.xinput.exceptions.XInputNotLoadedException;
+import com.github.strikerx3.jxinput.XInputBatteryInformation;
+import com.github.strikerx3.jxinput.XInputButtons;
+import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.XInputDevice14;
+import com.github.strikerx3.jxinput.enums.XInputAxis;
+import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
+import com.github.strikerx3.jxinput.enums.XInputButton;
+import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.shiny.joypadmod.helpers.LogHelper;
 
 public class XInputDeviceWrapper extends InputDevice {
