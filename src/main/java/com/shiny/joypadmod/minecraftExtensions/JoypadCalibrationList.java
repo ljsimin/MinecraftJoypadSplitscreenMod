@@ -4,11 +4,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerUtils;
@@ -73,7 +73,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 	public void actionPerformed(GuiButton guiButton)
 	{
 		int axisId = guiButton.id;
-		LogHelper.Info("Action performed on buttonID " + axisId);
+		JoypadMod.logger.info("Action performed on buttonID " + axisId);
 		InputDevice controller = this.joypadIndex != -1 ? ControllerSettings.JoypadModInputLibrary.getController(this.joypadIndex) : null;
 
 		if (guiButton.id < 100)

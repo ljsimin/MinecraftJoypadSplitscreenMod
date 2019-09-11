@@ -1,10 +1,9 @@
 package com.shiny.joypadmod.helpers;
 
-import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
+import com.shiny.joypadmod.JoypadMod;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -28,17 +27,11 @@ public class ModVersionHelper
 	{
 		if (ControllerSettings.modDisabled)
 		{
-			LogHelper.Warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
+			JoypadMod.logger.warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
 			return;
 		}
 
-		// 1.8+
 		MinecraftForge.EVENT_BUS.register(this);
-		// 1.7.2
-		//FMLCommonHandler.instance().bus().register(this);
-		// 1.6.4
-		// TickRegistry.registerTickHandler(new RenderTickHandler(),
-		// Side.CLIENT);
 		
 		Customizations.init();
 	}

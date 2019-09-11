@@ -1,6 +1,5 @@
 package com.shiny.joypadmod;
 
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -23,7 +22,7 @@ public class ButtonScreenTips extends Gui {
 		private String hintOverrideHolding;
 		public HintString(String bindString, String menuHintOverride, String menuHintOverrideHolding)
 		{
-			LogHelper.Info(String.format("HintString Constructor called with " +
+			JoypadMod.logger.info(String.format("HintString Constructor called with " +
 					"binding: %s. MenuOverride: %s. menuHintOverrideHolding: %s",
 					bindString, menuHintOverride, menuHintOverrideHolding));
 			bindingString = bindString;
@@ -56,12 +55,12 @@ public class ButtonScreenTips extends Gui {
 						hintHolding = b.getInputName() + " - " + 
 						McObfuscationHelper.lookupString(hintOverrideHolding);
 				}
-				LogHelper.Info(String.format("HintString: %s, HintStringHolding: %s", 
+				JoypadMod.logger.info(String.format("HintString: %s, HintStringHolding: %s",
 						hintNormal, hintHolding));
 			} catch (Exception ex)
 			{
 				isValid = false;
-				LogHelper.Error("Error updating HintString " + bindingString + " " + ex.getLocalizedMessage());
+				JoypadMod.logger.error("Error updating HintString " + bindingString + " " + ex.getLocalizedMessage());
 			}
 		}
 	}

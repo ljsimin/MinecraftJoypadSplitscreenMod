@@ -1,7 +1,7 @@
 package com.shiny.joypadmod.inputevent;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.JoypadMod;
 
 /**
  * Input event that encapsulates the button press, pov and axis movement
@@ -28,7 +28,7 @@ public abstract class ControllerInputEvent
 
 	public ControllerInputEvent(EventType type, int controllerNumber, int buttonNumber, float threshold, float deadzone)
 	{
-		LogHelper.Info("ControllerInputEvent constructor params:( type: " + type + ", controllerNumber: "
+		JoypadMod.logger.info("ControllerInputEvent constructor params:( type: " + type + ", controllerNumber: "
 				+ controllerNumber + ", buttonNumber: " + buttonNumber + ", threshhold: " + threshold + ", deadzone: "
 				+ deadzone + ")");
 		this.type = type;
@@ -99,7 +99,7 @@ public abstract class ControllerInputEvent
 
 		if (isActive && wasReleased)
 		{
-			LogHelper.Warn("wasPressed returning true prior to the wasReleased being consumed");
+			JoypadMod.logger.warn("wasPressed returning true prior to the wasReleased being consumed");
 			wasReleased = false;
 		}
 
@@ -128,7 +128,7 @@ public abstract class ControllerInputEvent
 		if (wasReleased)
 		{
 			if (ControllerSettings.loggingLevel > 1)
-				LogHelper.Debug("wasReleased returning true for " + getName());
+				JoypadMod.logger.debug("wasReleased returning true for " + getName());
 			bRet = true;
 			wasReleased = false;
 		}

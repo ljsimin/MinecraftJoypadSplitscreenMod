@@ -3,12 +3,12 @@ package com.shiny.joypadmod.minecraftExtensions;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ButtonInputEvent;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
@@ -196,7 +196,7 @@ public class JoypadConfigMenu extends GuiScreen
 	@Override
 	public void onGuiClosed()
 	{
-		LogHelper.Info("JoypadConfigMenu OnGuiClosed");
+		JoypadMod.logger.info("JoypadConfigMenu OnGuiClosed");
 		if (ControllerSettings.isInputEnabled())
 			ControllerSettings.controllerUtils.saveCurrentJoypadMap();
 		ControllerSettings.suspendControllerInput(false, 0);
@@ -212,7 +212,7 @@ public class JoypadConfigMenu extends GuiScreen
 	protected void actionPerformed(GuiButton guiButton)
 	{
 		int id = getButtonId(guiButton);
-		LogHelper.Info("Action performed on buttonID " + id);
+		JoypadMod.logger.info("Action performed on buttonID " + id);
 
 		if (!joyConfigMenuEnabled() && id != 420 && id < 500)
 			return;
@@ -270,7 +270,7 @@ public class JoypadConfigMenu extends GuiScreen
 	enum JoyInfoEnum
 	{
 		name, buttonAxisInfo
-	};
+	}
 
 	private String getJoystickInfo(JoyInfoEnum joyInfo)
 	{
@@ -351,7 +351,7 @@ public class JoypadConfigMenu extends GuiScreen
 			{
 				String key = Keyboard.getKeyName(this.lastKeyCode);
 				this.lastKeyCode = -1;
-				LogHelper.Info("Received " + key);
+				JoypadMod.logger.info("Received " + key);
 				customBindingTickStart = 0;
 				ControllerBinding binding;
 				binding = new ControllerBinding("user." + key, key, new ButtonInputEvent(
@@ -446,7 +446,7 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private void toggleController()
 	{
-		LogHelper.Info("Enable/disable input");
+		JoypadMod.logger.info("Enable/disable input");
 		ControllerSettings.setInputEnabled(getCurrentControllerId(), !ControllerSettings.isInputEnabled());
 		updateControllerButton();
 	}

@@ -6,12 +6,12 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper.JSyms;
@@ -68,7 +68,7 @@ public class JoypadControlList extends GuiScrollingList
 				parent.controlListXStart, // left start
 				buttonHeight); // entryHeight
 
-		LogHelper.Info("width:" + parent.controlListWidth + " height:" + parent.height + " yStart:"
+		JoypadMod.logger.info("width:" + parent.controlListWidth + " height:" + parent.height + " yStart:"
 				+ parent.controlListYStart + " bottomEnd:" + (parent.controlListYStart + parent.controlListHeight)
 				+ "xStart: " + parent.controlListXStart);
 
@@ -309,7 +309,7 @@ public class JoypadControlList extends GuiScrollingList
 
 			if (ControllerSettings.loggingLevel > 1 && !controlButtonStr.equals("NONE"))
 			{
-				LogHelper.Info(String.format(
+				JoypadMod.logger.info(String.format(
 						"Found that binding %s has a ControllerBinding (%s) that activates same code. ", bindingKey,
 						controlButtonStr));
 			}
@@ -491,7 +491,7 @@ public class JoypadControlList extends GuiScrollingList
 			{
 				if (Minecraft.getSystemTime() - controllerTickStart < 200)
 				{
-					LogHelper.Info("Discarding events that occured too soon after last button click");
+					JoypadMod.logger.info("Discarding events that occured too soon after last button click");
 				}
 				else
 				{
@@ -504,7 +504,7 @@ public class JoypadControlList extends GuiScrollingList
 					if (inputEvent != null)
 					{
 						float threshold = inputEvent.getThreshold();
-						LogHelper.Info("Received from controller: " + inputEvent.getName() + " threshold: " + threshold);
+						JoypadMod.logger.info("Received from controller: " + inputEvent.getName() + " threshold: " + threshold);
 
 						if (inputEvent.getEventType() == EventType.AXIS)
 						{
@@ -531,7 +531,7 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Caught exception while trying to set controller button! " + ex.toString());
+			JoypadMod.logger.error("Caught exception while trying to set controller button! " + ex.toString());
 		}
 		return false;
 	}

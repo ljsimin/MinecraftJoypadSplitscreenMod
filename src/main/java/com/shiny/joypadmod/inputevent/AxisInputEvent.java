@@ -1,7 +1,7 @@
 package com.shiny.joypadmod.inputevent;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.JoypadMod;
 
 public class AxisInputEvent extends ControllerInputEvent
 {
@@ -22,15 +22,15 @@ public class AxisInputEvent extends ControllerInputEvent
 		{
 			if (controllerId < 0)
 			{
-				LogHelper.Error("Tried to create an axis with invalid controller number");
+				JoypadMod.logger.error("Tried to create an axis with invalid controller number");
 			}
 			else
 			{
-				LogHelper.Error("Attempted to create a binding with invalid axis number. Axis index requested: "
+				JoypadMod.logger.error("Attempted to create a binding with invalid axis number. Axis index requested: "
 						+ axisNumber + " axis available: " + ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).getAxisCount());
 			}
 
-			LogHelper.Warn("Processing will continue with invalid axis " + axisNumber
+			JoypadMod.logger.warn("Processing will continue with invalid axis " + axisNumber
 					+ ".  Binding will not respond until rebound and may cause instability in mod.");
 		}
 
@@ -81,7 +81,7 @@ public class AxisInputEvent extends ControllerInputEvent
 	{
 		if (!isValid())
 			return;
-		LogHelper.Info("Setting deadzone on controller " + controllerNumber + " axis " + this.axisNumber + " value "
+		JoypadMod.logger.info("Setting deadzone on controller " + controllerNumber + " axis " + this.axisNumber + " value "
 				+ deadzone);
 		ControllerSettings.JoypadModInputLibrary.getController(controllerNumber).setDeadZone(this.axisNumber, deadzone);
 		this.deadzone = deadzone;

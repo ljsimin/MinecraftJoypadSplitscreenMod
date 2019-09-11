@@ -3,10 +3,10 @@ package com.shiny.joypadmod.lwjglVirtualInput;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 
 public class VirtualMouse
 {
@@ -36,7 +36,7 @@ public class VirtualMouse
 		if (created)
 			return;
 
-		LogHelper.Info("Creating VirtualMouse");
+		JoypadMod.logger.info("Creating VirtualMouse");
 		xField = getSetField("x");
 		yField = getSetField("y");
 		dxField = getSetField("dx");
@@ -81,7 +81,7 @@ public class VirtualMouse
 			return false;
 
 		if (ControllerSettings.loggingLevel > 1)
-			LogHelper.Info("Moving mouse: dx:" + dx + " dy:" + dy);
+			JoypadMod.logger.info("Moving mouse: dx:" + dx + " dy:" + dy);
 		addMouseEvent((byte) -1, (byte) 0, dx, dy, 0, 1000);
 		try
 		{
@@ -90,7 +90,7 @@ public class VirtualMouse
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed setting dx/dy value of mouse. " + ex.toString());
+			JoypadMod.logger.error("Failed setting dx/dy value of mouse. " + ex.toString());
 		}
 
 		return true;
@@ -104,12 +104,12 @@ public class VirtualMouse
 		if (onlyIfNotHeld && buttonsDown[button] != 0)
 		{
 			if (ControllerSettings.loggingLevel > 1)
-				LogHelper.Info("rejecting mouse button press as its already indicated as held");
+				JoypadMod.logger.info("rejecting mouse button press as its already indicated as held");
 			return true;
 		}
 
 		if (ControllerSettings.loggingLevel > 1)
-			LogHelper.Info("Holding mouse button: " + button);
+			JoypadMod.logger.info("Holding mouse button: " + button);
 		setMouseButton(button, true);
 		addMouseEvent((byte) button, (byte) 1, lastX, lastY, 0, 1000);
 		buttonsDown[button] = 1;
@@ -125,7 +125,7 @@ public class VirtualMouse
 			return true;
 
 		if (ControllerSettings.loggingLevel > 1)
-			LogHelper.Info("Releasing mouse button: " + button);
+			JoypadMod.logger.info("Releasing mouse button: " + button);
 		setMouseButton(button, false);
 		addMouseEvent((byte) button, (byte) 0, lastX, lastY, 0, 1000);
 		buttonsDown[button] = 0;
@@ -143,7 +143,7 @@ public class VirtualMouse
 			return false;
 
 		if (ControllerSettings.loggingLevel > 1)
-			LogHelper.Info("Setting scroll wheel: " + event_dwheel);
+			JoypadMod.logger.info("Setting scroll wheel: " + event_dwheel);
 		addMouseEvent((byte) -1, (byte) 0, 0, 0, event_dwheel, 10000);
 		return true;
 	}
@@ -154,7 +154,7 @@ public class VirtualMouse
 			return false;
 
 		if (ControllerSettings.loggingLevel > 3 && ( lastX != x || lastY != y))
-			LogHelper.Info("Setting mouse position to x:" + x + " y:" + y);
+			JoypadMod.logger.info("Setting mouse position to x:" + x + " y:" + y);
 
 		try
 		{
@@ -168,7 +168,7 @@ public class VirtualMouse
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed setting x/y value of mouse. " + ex.toString());
+			JoypadMod.logger.error("Failed setting x/y value of mouse. " + ex.toString());
 		}
 		return false;
 	}
@@ -176,14 +176,14 @@ public class VirtualMouse
 	public static boolean setMouseButton(int button, boolean down)
 	{
 		if (ControllerSettings.loggingLevel > 3)
-			LogHelper.Info("Hacking mouse button: " + button);
+			JoypadMod.logger.info("Hacking mouse button: " + button);
 		try
 		{
 			((ByteBuffer) buttonField.get(null)).put(button, (byte) (down ? 1 : 0));
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed setting mouse button field: " + ex.toString());
+			JoypadMod.logger.error("Failed setting mouse button field: " + ex.toString());
 			return false;
 		}
 
@@ -197,7 +197,7 @@ public class VirtualMouse
 			return false;
 
 		if (ControllerSettings.loggingLevel > 1)
-			LogHelper.Info("AddMouseEvent: eventButton: " + eventButton + " eventState: " + eventState + " event_dx: "
+			JoypadMod.logger.info("AddMouseEvent: eventButton: " + eventButton + " eventState: " + eventState + " event_dx: "
 					+ event_dx + " event_dy: " + event_dy + " event_dwheel: " + event_dwheel);
 
 		try
@@ -213,7 +213,7 @@ public class VirtualMouse
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed putting value in mouseReadBuffer " + ex.toString());
+			JoypadMod.logger.error("Failed putting value in mouseReadBuffer " + ex.toString());
 			return false;
 		}
 
@@ -223,14 +223,14 @@ public class VirtualMouse
 	public static void setGrabbed(boolean grabbed)
 	{
 		if (ControllerSettings.loggingLevel > 3)
-			LogHelper.Info("Setting Mouse.isGrabbed to return: " + grabbed);
+			JoypadMod.logger.info("Setting Mouse.isGrabbed to return: " + grabbed);
 		try
 		{
 			isGrabbedField.setBoolean(null, grabbed);
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed trying to set Mouse.isGrabbed. " + ex.toString());
+			JoypadMod.logger.error("Failed trying to set Mouse.isGrabbed. " + ex.toString());
 		}
 	}
 
@@ -238,7 +238,7 @@ public class VirtualMouse
 	{
 		if (button < 0 || button >= buttonsSupported)
 		{
-			LogHelper.Error("Button number is not supported.  Max button index is " + (buttonsSupported - 1));
+			JoypadMod.logger.error("Button number is not supported.  Max button index is " + (buttonsSupported - 1));
 			return false;
 		}
 		return true;
@@ -248,7 +248,7 @@ public class VirtualMouse
 	{
 		if (!created)
 		{
-			LogHelper.Error("Virtual mouse has not been created or failed to initialize and cannot be used");
+			JoypadMod.logger.error("Virtual mouse has not been created or failed to initialize and cannot be used");
 			return false;
 		}
 		return true;

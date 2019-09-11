@@ -1,7 +1,7 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 
 import net.minecraft.client.gui.GuiButton;
@@ -76,7 +76,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 	@Override
 	protected void actionPerformed(GuiButton guiButton)
 	{
-		LogHelper.Info("Action performed on " + guiButton.displayString);
+		JoypadMod.logger.info("Action performed on " + guiButton.displayString);
 		switch (guiButton.id)
 		{
 		case 100: // calibrate

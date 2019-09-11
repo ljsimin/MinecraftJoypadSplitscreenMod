@@ -6,10 +6,8 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.helpers.Customizations;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerBinding;
 import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent;
@@ -65,7 +63,7 @@ public class GameRenderHandler
 						{
 							if (ControllerSettings.loggingLevel > 2 && !mouseDetected)
 							{
-								LogHelper.Info("Mouse sharing of screen detected");
+								JoypadMod.logger.info("Mouse sharing of screen detected");
 							}
 							mouseDetected = true;
 						}
@@ -111,7 +109,7 @@ public class GameRenderHandler
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
+			JoypadMod.logger.fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 	}
 	
@@ -184,7 +182,7 @@ public class GameRenderHandler
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Fatal("Joypad mod unhandled exception caught! " + ex.toString());
+			JoypadMod.logger.fatal("Joypad mod unhandled exception caught! " + ex.toString());
 		}
 
 	}
@@ -287,13 +285,13 @@ public class GameRenderHandler
 							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
-						LogHelper.Info("Input event " + inputEvent.toString()
+						JoypadMod.logger.info("Input event " + inputEvent.toString()
 								+ " triggered.  Finding associated binding");
 					}
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Exception caught debugging controller input events: " + ex.toString());
+					JoypadMod.logger.error("Exception caught debugging controller input events: " + ex.toString());
 				}
 			}
 
@@ -336,13 +334,13 @@ public class GameRenderHandler
 							ControllerSettings.JoypadModInputLibrary.getController(ControllerSettings.joyNo), ControllerSettings.JoypadModInputLibrary.getEventControlIndex());
 					if (inputEvent != null)
 					{
-						LogHelper.Info("Input event " + inputEvent.toString()
+						JoypadMod.logger.info("Input event " + inputEvent.toString()
 								+ " triggered.  Finding associated binding");
 					}
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Exception caught debugging controller input events: " + ex.toString());
+					JoypadMod.logger.error("Exception caught debugging controller input events: " + ex.toString());
 				}
 			}
 
@@ -372,7 +370,7 @@ public class GameRenderHandler
 		{
 			try
 			{
-				LogHelper.Debug("Replacing control screen");
+				JoypadMod.logger.debug("Replacing control screen");
 				String[] names = McObfuscationHelper.getMcVarNames("parentScreen");
 				GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui,
 						names[0], names[1]);
@@ -380,7 +378,7 @@ public class GameRenderHandler
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Failed to get parent of options gui.  aborting. Exception " + ex.toString());
+				JoypadMod.logger.error("Failed to get parent of options gui.  aborting. Exception " + ex.toString());
 				return;
 			}
 		}

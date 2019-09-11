@@ -124,7 +124,7 @@ public class McObfuscationHelper
 	public enum JSyms
 	{
 		lArrow, rArrow, uArrow, dArrow, eCircle, fCircle, unbind, remove, warning
-	};
+	}
 
 	public static char symGet(JSyms sym)
 	{

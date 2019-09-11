@@ -9,7 +9,7 @@ import com.github.strikerx3.jxinput.enums.XInputButton;
 import com.github.strikerx3.jxinput.listener.SimpleXInputDeviceListener;
 import com.github.strikerx3.jxinput.listener.XInputDeviceListener;
 import com.github.strikerx3.jxinput.natives.XInputNatives;
-import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.JoypadMod;
 
 public class XInputLibrary extends InputLibrary {
 	
@@ -36,7 +36,7 @@ public class XInputLibrary extends InputLibrary {
 			eventType = event;
 		    eventControlIndex = controlIndex;
 		}
-	};
+	}
 
 	@Override
 	public void create() throws Exception {
@@ -46,11 +46,11 @@ public class XInputLibrary extends InputLibrary {
 		{
 			if (!XInputNatives.isLoaded())
 			{
-				LogHelper.Error("XInput native libraries failed to load with error: " + XInputNatives.getLoadError().toString());
+				JoypadMod.logger.error("XInput native libraries failed to load with error: " + XInputNatives.getLoadError().toString());
 			}
 			else
 			{
-				LogHelper.Error("XInputNatives were loaded but XInputDevice reports it is not available");
+				JoypadMod.logger.error("XInputNatives were loaded but XInputDevice reports it is not available");
 			}
 			
 			throw new Exception("XInput is not available on system.");
@@ -59,7 +59,7 @@ public class XInputLibrary extends InputLibrary {
 		theDevice = new XInputDeviceWrapper(0);
 		theDevice.setIndex(0, xInput14);
 		created = true;
-		LogHelper.Info("XInput is available on system.  Using version: " + XInputLibraryVersion.values()[XInputNatives.getLoadedLibVersion()].toString());
+		JoypadMod.logger.info("XInput is available on system.  Using version: " + XInputLibraryVersion.values()[XInputNatives.getLoadedLibVersion()].toString());
 	}
 
 	@Override
@@ -148,20 +148,20 @@ public class XInputLibrary extends InputLibrary {
 	XInputDeviceListener listener = new SimpleXInputDeviceListener() {
 	    @Override
 	    public void connected() {
-	        LogHelper.Info("Connection message received");
+	        JoypadMod.logger.info("Connection message received");
 	        recentlyConnected = true;
 	    }
 
 	    @Override
 	    public void disconnected() {
-	    	LogHelper.Info("Disconnection message received");
+	    	JoypadMod.logger.info("Disconnection message received");
 	    	recentlyDisconnected = true;
 	    }
 
 	    @Override
 	    public void buttonChanged(final XInputButton button, final boolean pressed) {
 	    	events.add(new InputEvent(0, button.ordinal()));
-	    	LogHelper.Info(button.name() + (pressed ? " pressed" : " released"));
+	    	JoypadMod.logger.info(button.name() + (pressed ? " pressed" : " released"));
 	        // the given button was just pressed (if pressed == true) or released (pressed == false)
 	    }
 	};

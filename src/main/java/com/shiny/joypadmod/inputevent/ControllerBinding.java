@@ -3,10 +3,10 @@ package com.shiny.joypadmod.inputevent;
 import java.util.EnumSet;
 import java.util.Locale;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
@@ -32,7 +32,7 @@ public class ControllerBinding
 		CATEGORY_GAMEPLAY,
 		CATEGORY_MULTIPLAYER,
 		CATEGORY_MISC,
-	};
+	}
 
 	public static String[] BindingOptionsComment = { "Will trigger in menu screens", "Will trigger during game play",
 			"Pressing button once will toggle on / off", "Continues to trigger if held down",
@@ -126,7 +126,7 @@ public class ControllerBinding
 	{
 		if (code >= 0)
 		{
-			LogHelper.Warn("Someone is calling handle mouse for a non-mouse code!");
+			JoypadMod.logger.warn("Someone is calling handle mouse for a non-mouse code!");
 			return;
 		}
 		// this code is a little weird but the idea was taken from Mojang
@@ -316,13 +316,13 @@ public class ControllerBinding
 		if (s == null)
 			return false;
 
-		LogHelper.Info("setToConfigFileString called with following values: " + s);
+		JoypadMod.logger.info("setToConfigFileString called with following values: " + s);
 
 		String[] settings = s.split(",");
 		int minToProcess = 6;
 		if (settings.length < minToProcess)
 		{
-			LogHelper.Error("Expected " + minToProcess + " arguments when parsing config setting: \"" + s
+			JoypadMod.logger.error("Expected " + minToProcess + " arguments when parsing config setting: \"" + s
 					+ "\" Received " + settings.length);
 			return false;
 		}
@@ -398,7 +398,7 @@ public class ControllerBinding
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Failed trying to parse " + settings[i] + " to a binding option. " + ex.toString());
+					JoypadMod.logger.error("Failed trying to parse " + settings[i] + " to a binding option. " + ex.toString());
 				}
 				i++;
 			}
@@ -421,7 +421,7 @@ public class ControllerBinding
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed setting bindings using config string: " + s + ". Exception: " + ex.toString());
+			JoypadMod.logger.error("Failed setting bindings using config string: " + s + ". Exception: " + ex.toString());
 			return false;
 		}
 

@@ -23,7 +23,6 @@ import com.shiny.joypadmod.devices.LWJGLibrary;
 import com.shiny.joypadmod.devices.XInputLibrary;
 import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
@@ -114,20 +113,20 @@ public class ControllerSettings
 			{
 				JoypadModInputLibrary = new XInputLibrary();
 				JoypadModInputLibrary.create();
-				LogHelper.Info("Using XInput library for Joypad Mod controls");
+				JoypadMod.logger.info("Using XInput library for Joypad Mod controls");
 			}
 			catch (UnsatisfiedLinkError e)
 			{
-				LogHelper.Error("XInput: Controller object linking error. " + e.toString());
+				JoypadMod.logger.error("XInput: Controller object linking error. " + e.toString());
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("XInput: Failed creating controller object. " + ex.toString());
+				JoypadMod.logger.error("XInput: Failed creating controller object. " + ex.toString());
 			}
 		}
 		else
 		{
-			LogHelper.Info("XInput: LegacyInput is set to true.");
+			JoypadMod.logger.info("XInput: LegacyInput is set to true.");
 		}
 
 		if (JoypadModInputLibrary == null || !JoypadModInputLibrary.isCreated())
@@ -139,11 +138,11 @@ public class ControllerSettings
 				JoypadModInputLibrary.create();
 				bMap = bMap.new LWJGLButtonMappings();
 				aMap = aMap.new LWJGLAxisMappings();
-				LogHelper.Info("Using LWJGL for Joypad Mod controls");
+				JoypadMod.logger.info("Using LWJGL for Joypad Mod controls");
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Fatal("Failed creating LWJGL controller object. This mod will not work. " + ex.toString());
+				JoypadMod.logger.fatal("Failed creating LWJGL controller object. This mod will not work. " + ex.toString());
 				modDisabled = true;
 			}
 		}
@@ -155,14 +154,14 @@ public class ControllerSettings
 	{
 		if (currentDisplayedMap == joyIndex)
 		{
-			LogHelper.Info("Skipping setting up the joybinding map as it is already set up for this joypad");
+			JoypadMod.logger.info("Skipping setting up the joybinding map as it is already set up for this joypad");
 			return;
 		}
 
 		currentDisplayedMap = joyIndex;
 
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
-		LogHelper.Info("Setting default joy binding map");
+		JoypadMod.logger.info("Setting default joy binding map");
 
 		joyBindingsMap.clear();
 
@@ -173,7 +172,7 @@ public class ControllerSettings
 		InputDevice controller = JoypadModInputLibrary.getController(joyIndex);
 		if (controller.getName().toLowerCase().contains("xbox one") && controller.getAxisCount() == 6)
 		{
-			LogHelper.Info("XBox One 6 axis joypad detected.");
+			JoypadMod.logger.info("XBox One 6 axis joypad detected.");
 			if (!xbox6Axis.contains(joyIndex))
 				xbox6Axis.add(joyIndex);
 		}
@@ -388,18 +387,18 @@ public class ControllerSettings
 
 	public void init()
 	{
-		LogHelper.Info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION
+		JoypadMod.logger.info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION
 				+ " by Ljubomir Simin & Andrew Hickey\n---");
 
 		if (config.preferedJoyName == "disabled")
 		{
-			LogHelper.Warn("Controller input disabled due to joypad value 'preferedJoyName' set to disabled");
+			JoypadMod.logger.warn("Controller input disabled due to joypad value 'preferedJoyName' set to disabled");
 			inputEnabled = false;
 			ControllerSettings.modDisabled = true;
 			return;
 		}
 
-		LogHelper.Info("Initializing Controllers");
+		JoypadMod.logger.info("Initializing Controllers");
 
 		// only set a controller as in use on init if they have previously gone
 		// into controls to set it up
@@ -417,14 +416,14 @@ public class ControllerSettings
 			}
 			else
 			{
-				LogHelper.Info("No joypad set up for this session.  Must enter controller menu to enable");
+				JoypadMod.logger.info("No joypad set up for this session.  Must enter controller menu to enable");
 			}
 
 		}
 
 		if (selectedController < 0)
 		{
-			LogHelper.Warn("No joypad set up for this session."
+			JoypadMod.logger.warn("No joypad set up for this session."
 					+ (nControllers > 0 ? " Must enter controller menu to enable." : ""));
 			inputEnabled = false;
 		}
@@ -442,7 +441,7 @@ public class ControllerSettings
 
 				if (JoypadModInputLibrary.getControllerCount() > 0)
 				{
-					LogHelper.Info("Found " + JoypadModInputLibrary.getControllerCount() + " controller(s) in total.");
+					JoypadMod.logger.info("Found " + JoypadModInputLibrary.getControllerCount() + " controller(s) in total.");
 					for (int joyIndex = 0; joyIndex < JoypadModInputLibrary.getControllerCount(); joyIndex++)
 					{
 						InputDevice thisController = JoypadModInputLibrary.getController(joyIndex);
@@ -452,16 +451,15 @@ public class ControllerSettings
 						if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
 								requiredMinButtonCount, requiredAxisCount))
 						{
-							LogHelper.Info("Controller #" + joyIndex + " ( " + thisController.getName()
+							JoypadMod.logger.info("Controller #" + joyIndex + " ( " + thisController.getName()
 									+ ") meets the input requirements");
 							addControllerToList(validControllers, thisController.getName(), joyIndex);
 						}
 						else
 						{
-							LogHelper.Info("This controller does not meet the input requirements");
+							JoypadMod.logger.info("This controller does not meet the input requirements");
 							addControllerToList(inValidControllers, thisController.getName(), joyIndex);
 						}
-						LogHelper.Info("---");
 					}
 				}
 			}
@@ -471,7 +469,7 @@ public class ControllerSettings
 			}
 		}
 
-		LogHelper.Info("Found " + validControllers.size() + " valid controllers!");
+		JoypadMod.logger.info("Found " + validControllers.size() + " valid controllers!");
 		return validControllers.size();
 	}
 
@@ -501,7 +499,7 @@ public class ControllerSettings
 			}
 			catch (NumberFormatException e)
 			{
-				LogHelper.Info("[stringToIntList] Invalid Integer in list." + e.toString());
+				JoypadMod.logger.info("[stringToIntList] Invalid Integer in list." + e.toString());
 			}
 		}
 		return ret;
@@ -548,10 +546,10 @@ public class ControllerSettings
 			}
 			else
 			{
-				LogHelper.Info("Rejecting invalid axis in Single Direction Axis list: " + i);
+				JoypadMod.logger.info("Rejecting invalid axis in Single Direction Axis list: " + i);
 			}
 		}
-		LogHelper.Info(sbSDAMessage.toString());
+		JoypadMod.logger.info(sbSDAMessage.toString());
 		singleDirectionAxis.put(controllerNo, finalAxisList);
 	}
 
@@ -588,18 +586,18 @@ public class ControllerSettings
 
 	public static boolean setController(int controllerNo)
 	{
-		LogHelper.Info("Attempting to use controller " + controllerNo);
+		JoypadMod.logger.info("Attempting to use controller " + controllerNo);
 
 		try
 		{
 			if (!JoypadModInputLibrary.isCreated())
 				JoypadModInputLibrary.create();
 
-			LogHelper.Info("Controllers.getControllerCount == " + JoypadModInputLibrary.getControllerCount());
+			JoypadMod.logger.info("Controllers.getControllerCount == " + JoypadModInputLibrary.getControllerCount());
 
 			if (controllerNo < 0 || controllerNo >= JoypadModInputLibrary.getControllerCount())
 			{
-				LogHelper.Error("Attempting to set controller index " + controllerNo + " there are currently "
+				JoypadMod.logger.error("Attempting to set controller index " + controllerNo + " there are currently "
 						+ JoypadModInputLibrary.getControllerCount() + " controllers detected.");
 				return false;
 			}
@@ -625,14 +623,14 @@ public class ControllerSettings
 					if (xbox6Axis.contains(joyNo))
 					{
 						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4, 5)));
-						LogHelper.Info(
+						JoypadMod.logger.info(
 								"Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
 					}
 				}
 				else if (!axisStr.equals(""))
 				{
 					setSingleDirectionAxis(joyNo, stringToIntList(axisStr));
-					LogHelper.Info("Retrieved informations about single-direction axis");
+					JoypadMod.logger.info("Retrieved informations about single-direction axis");
 				}
 			}
 
@@ -646,7 +644,7 @@ public class ControllerSettings
 		}
 		catch (Exception e)
 		{
-			LogHelper.Error("Couldn't initialize Controllers: " + e.toString());
+			JoypadMod.logger.error("Couldn't initialize Controllers: " + e.toString());
 			inputEnabled = false;
 		}
 
@@ -785,9 +783,9 @@ public class ControllerSettings
 
 	private void logControllerInfo(InputDevice controller)
 	{
-		LogHelper.Info("Found controller " + controller.getName() + " (" + controller.getIndex() + ")");
-		LogHelper.Info("It has  " + controller.getButtonCount() + " buttons.");
-		LogHelper.Info("It has  " + controller.getAxisCount() + " axes.");
+		JoypadMod.logger.info("Found controller " + controller.getName() + " (" + controller.getIndex() + ")");
+		JoypadMod.logger.info("It has  " + controller.getButtonCount() + " buttons.");
+		JoypadMod.logger.info("It has  " + controller.getAxisCount() + " axes.");
 	}
 
 	private static List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
@@ -905,10 +903,10 @@ public class ControllerSettings
 
 	public static void saveSensitivityValues()
 	{
-		LogHelper.Info("Saving game sensitivity value: " + ControllerSettings.inGameSensitivity);
+		JoypadMod.logger.info("Saving game sensitivity value: " + ControllerSettings.inGameSensitivity);
 		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GameSensitivity,
 				"" + ControllerSettings.inGameSensitivity);
-		LogHelper.Info("Saving menu sensitivity value: " + ControllerSettings.inMenuSensitivity);
+		JoypadMod.logger.info("Saving menu sensitivity value: " + ControllerSettings.inMenuSensitivity);
 		config.updateConfigFileSetting(ConfigFile.UserJoypadSettings.GuiSensitivity,
 				"" + ControllerSettings.inMenuSensitivity);
 	}
@@ -923,7 +921,7 @@ public class ControllerSettings
 					df.format(controller.getDeadZone(i)));
 		}
 		config.addComment("-Deadzones-", "Deadzone values here will override values in individual bindings");
-		LogHelper.Info("Saved deadzones for " + controller.getName());
+		JoypadMod.logger.info("Saved deadzones for " + controller.getName());
 	}
 
 	public static void saveSingleDirectionAxis(InputDevice controller)
@@ -931,7 +929,7 @@ public class ControllerSettings
 		String axisList = intListToString(getSingleDirectionAxis(controller.getIndex()));
 		config.setConfigFileSetting("-SingleDirectionAxis-", controller.getName(), axisList);
 		config.addComment("-SingleDirectionAxis-", "Set single-direction axis for this controller");
-		LogHelper.Info("Saved single-direction axis for " + controller.getName() + " values: '" + axisList + "'");
+		JoypadMod.logger.info("Saved single-direction axis for " + controller.getName() + " values: '" + axisList + "'");
 	}
 
 	private static void saveCurrentJoyBindings()
@@ -948,7 +946,7 @@ public class ControllerSettings
 		if (joyId < 0)
 			return;
 
-		LogHelper.Info("Applying configurated deadzones");
+		JoypadMod.logger.info("Applying configurated deadzones");
 
 		config.applySavedDeadZones(JoypadModInputLibrary.getController(joyId));
 

@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.devices.XInputDeviceWrapper;
-import com.shiny.joypadmod.helpers.LogHelper;
 
 public class ControllerUtils
 {
@@ -25,7 +25,7 @@ public class ControllerUtils
 		{
 			for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++)
 			{
-				LogHelper.Info("Axis " + axisNo + " deadzone: " + joystick2.getDeadZone(axisNo));
+				JoypadMod.logger.info("Axis " + axisNo + " deadzone: " + joystick2.getDeadZone(axisNo));
 			}
 		}
 	}
@@ -34,7 +34,7 @@ public class ControllerUtils
 	{
 		for (int axisNo = 0; axisNo < joystick2.getAxisCount(); axisNo++)
 		{
-			LogHelper.Info("Axis " + axisNo + ", " + joystick2.getAxisName(axisNo));
+			JoypadMod.logger.info("Axis " + axisNo + ", " + joystick2.getAxisName(axisNo));
 		}
 	}
 
@@ -42,7 +42,7 @@ public class ControllerUtils
 	{
 		for (int buttonNo = 0; buttonNo < joystick2.getButtonCount(); buttonNo++)
 		{			
-			LogHelper.Info("Button " + buttonNo + ", " + joystick2.getButtonName(buttonNo));
+			JoypadMod.logger.info("Button " + buttonNo + ", " + joystick2.getButtonName(buttonNo));
 		}
 	}
 
@@ -62,7 +62,7 @@ public class ControllerUtils
 					controller.getAxisCount()).append("\n").append(
 					"Check settings file named 'options.txt' for the correct value of 'joyNo' parameter\n").append(
 					"Total number of controllers detected: ").append(ControllerSettings.JoypadModInputLibrary.getControllerCount());
-			LogHelper.Info(msg.toString());
+			JoypadMod.logger.info(msg.toString());
 		}
 		return meetsRequirements;
 	}
@@ -130,7 +130,7 @@ public class ControllerUtils
 				joypadNameMap.put(inputEvent.getDescription(), inputEvent.getDescription());
 		} catch (Exception ex)
 		{
-			LogHelper.Error("Error in getHumanReadableInputName: " + ex.toString());
+			JoypadMod.logger.error("Error in getHumanReadableInputName: " + ex.toString());
 		}
 	
 		return result == null ? inputEvent.getDescription() : result;
@@ -164,10 +164,10 @@ public class ControllerUtils
 		InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joyId);
 		controller.setDeadZone(axisId, 0);
 		float currentValue = Math.abs(getAxisValue(controller, axisId));
-		LogHelper.Info("Axis: " + axisId + " currently has a value of: " + currentValue);
+		JoypadMod.logger.info("Axis: " + axisId + " currently has a value of: " + currentValue);
 		float newValue = currentValue + 0.15f;
 		controller.setDeadZone(axisId, newValue);
-		LogHelper.Info("Auto set axis " + axisId + " deadzone to " + newValue);
+		JoypadMod.logger.info("Auto set axis " + axisId + " deadzone to " + newValue);
 	}
 
 	public static float getAxisValue(InputDevice inputDevice, int axisNum)
@@ -330,7 +330,7 @@ public class ControllerUtils
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Failed trying to save joypadMap" + ex.toString());
+				JoypadMod.logger.error("Failed trying to save joypadMap" + ex.toString());
 			}
 		}
 		return false;

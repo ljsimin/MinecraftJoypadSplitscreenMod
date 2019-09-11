@@ -1,7 +1,5 @@
 package com.shiny.joypadmod.devices;
 
-import org.lwjgl.LWJGLException;
-
 public abstract class InputLibrary {
 	
 	

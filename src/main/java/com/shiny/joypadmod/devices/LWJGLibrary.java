@@ -3,8 +3,6 @@ package com.shiny.joypadmod.devices;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 
-import com.shiny.joypadmod.helpers.LogHelper;
-
 public class LWJGLibrary extends InputLibrary {
 	
 	LWJGLDeviceWrapper theDevice;

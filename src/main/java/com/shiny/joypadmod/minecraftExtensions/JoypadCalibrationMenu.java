@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 
 import net.minecraft.client.Minecraft;
@@ -122,7 +122,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 	@Override
 	protected void actionPerformed(GuiButton guiButton)
 	{
-		LogHelper.Info("Action performed on buttonID " + guiButton.id);
+		JoypadMod.logger.info("Action performed on buttonID " + guiButton.id);
 
 		switch (guiButton.id)
 		{

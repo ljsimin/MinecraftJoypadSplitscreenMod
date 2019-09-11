@@ -1,5 +1,6 @@
 package com.shiny.joypadmod.helpers;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.opengl.GL11;
 
 import com.shiny.joypadmod.ControllerSettings;
@@ -81,12 +82,12 @@ public class Customizations {
 						return true;
 					} catch (Exception ex)
 					{
-						LogHelper.Error("Failed parsing settings string for reticle: " + settings +
+						JoypadMod.logger.error("Failed parsing settings string for reticle: " + settings +
 								". " + ex.toString());
 					}
 				}
 			}
-			LogHelper.Error("Unexpected settings string: " + settings);
+			JoypadMod.logger.error("Unexpected settings string: " + settings);
 			return false;
 		}
 		
@@ -104,7 +105,7 @@ public class Customizations {
 					
 				} catch (Exception ex)
 				{
-					LogHelper.Error("Caught exception when rendering reticle. Defaulting to basic."
+					JoypadMod.logger.error("Caught exception when rendering reticle. Defaulting to basic."
 							+ ex.getMessage());
 					resource = null;
 				}

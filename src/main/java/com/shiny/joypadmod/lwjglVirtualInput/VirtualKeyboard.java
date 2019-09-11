@@ -3,10 +3,10 @@ package com.shiny.joypadmod.lwjglVirtualInput;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
+import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 
 public class VirtualKeyboard
 {
@@ -26,7 +26,7 @@ public class VirtualKeyboard
 		if (created)
 			return;
 
-		LogHelper.Info("Creating VirtualKeyboard");
+		JoypadMod.logger.info("Creating VirtualKeyboard");
 		keyBufferField = Keyboard.class.getDeclaredField("readBuffer");
 		keyDownField = Keyboard.class.getDeclaredField("keyDownBuffer");
 		keyDownField.setAccessible(true);
@@ -53,7 +53,7 @@ public class VirtualKeyboard
 		if (keyHelper(keycode, 1))
 		{
 			if (ControllerSettings.loggingLevel > 1)
-				LogHelper.Info("Pressing key " + Keyboard.getKeyName(keycode));
+				JoypadMod.logger.info("Pressing key " + Keyboard.getKeyName(keycode));
 			keyState[keycode] = 1;
 			holdKey(keycode, true);
 		}
@@ -71,7 +71,7 @@ public class VirtualKeyboard
 		if (isValidKey(keycode, true) && (!onlyIfPressed || keyState[keycode] == 1))
 		{
 			if (ControllerSettings.loggingLevel > 1)
-				LogHelper.Info("Releasing key " + Keyboard.getKeyName(keycode));
+				JoypadMod.logger.info("Releasing key " + Keyboard.getKeyName(keycode));
 			keyHelper(keycode, 0);
 			keyState[keycode] = 0;
 			holdKey(keycode, false);
@@ -91,7 +91,7 @@ public class VirtualKeyboard
 		}
 
 		if (ControllerSettings.loggingLevel > 2)
-			LogHelper.Info("Holding key " + Keyboard.getKeyName(keycode));
+			JoypadMod.logger.info("Holding key " + Keyboard.getKeyName(keycode));
 		if (keyDownField != null)
 		{
 			try
@@ -101,7 +101,7 @@ public class VirtualKeyboard
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Failed putting value in key buffer" + ex.toString());
+				JoypadMod.logger.error("Failed putting value in key buffer" + ex.toString());
 			}
 		}
 	}
@@ -110,7 +110,7 @@ public class VirtualKeyboard
 	{
 		if (!created)
 		{
-			LogHelper.Error("Virtual Keyboard has not been created or failed to initialize and cannot be used");
+			JoypadMod.logger.error("Virtual Keyboard has not been created or failed to initialize and cannot be used");
 			return false;
 		}
 		return true;
@@ -122,7 +122,7 @@ public class VirtualKeyboard
 		{
 			if (logError)
 			{
-				LogHelper.Error("Invalid keyboard keycode requested: " + keycode);
+				JoypadMod.logger.error("Invalid keyboard keycode requested: " + keycode);
 			}
 			return false;
 		}
@@ -144,7 +144,7 @@ public class VirtualKeyboard
 		if (keyBufferField != null)
 		{
 			if (ControllerSettings.loggingLevel > 1)
-				LogHelper.Info("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
+				JoypadMod.logger.info("Hacking key " + Keyboard.getKeyName(keycode) + " state: " + state);
 			try
 			{
 				((ByteBuffer) keyBufferField.get(null)).compact();
@@ -159,7 +159,7 @@ public class VirtualKeyboard
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Failed putting value in keyBufferField " + ex.toString());
+				JoypadMod.logger.error("Failed putting value in keyBufferField " + ex.toString());
 			}
 		}
 		return false;

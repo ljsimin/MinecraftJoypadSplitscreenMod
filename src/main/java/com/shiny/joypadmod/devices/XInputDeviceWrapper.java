@@ -8,7 +8,7 @@ import com.github.strikerx3.jxinput.enums.XInputAxis;
 import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
 import com.github.strikerx3.jxinput.enums.XInputButton;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
-import com.shiny.joypadmod.helpers.LogHelper;
+import com.shiny.joypadmod.JoypadMod;
 
 public class XInputDeviceWrapper extends InputDevice {
 
@@ -122,7 +122,7 @@ public class XInputDeviceWrapper extends InputDevice {
 			myIndex = index;
 			theDevice.poll();
 		} catch (XInputNotLoadedException e) { 
-			LogHelper.Fatal("Failed calling setIndex on XInputDevice: " + e.toString());
+			JoypadMod.logger.fatal("Failed calling setIndex on XInputDevice: " + e.toString());
 		}
 	}
 

@@ -87,7 +87,7 @@ public class ConfigFile
 			this.deleteKey("-UserBindings-", "NumBindings");
 		}
 
-		LogHelper.Info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
+		JoypadMod.logger.info(userName + "'s JoyNo == " + preferedJoyNo + " (" + preferedJoyName + "). SharedProfile = "
 				+ getConfigFileSetting("-Global-.SharedProfile") + ". GrabMouse = "
 				+ getConfigFileSetting("-Global-.GrabMouse") + ".  invertYAxis = " + ControllerSettings.invertYAxis
 				+ ". ConfigVersion " + lastConfigFileVersion + ". Game Sensitivity multiplier: "
@@ -111,7 +111,7 @@ public class ConfigFile
 
 	public void setSharedProfile(boolean shared)
 	{
-		LogHelper.Info("Setting shared profile to " + shared);
+		JoypadMod.logger.info("Setting shared profile to " + shared);
 
 		updateKey(globalCat, "SharedProfile", "" + shared, true);
 		// individual or global
@@ -187,12 +187,12 @@ public class ConfigFile
 				try
 				{
 					String floatStr = cc.get(key).getString();
-					LogHelper.Info("Applying deadzone value " + floatStr + " to " + inputDevice.getAxisName(i));
+					JoypadMod.logger.info("Applying deadzone value " + floatStr + " to " + inputDevice.getAxisName(i));
 					inputDevice.setDeadZone(i, Float.parseFloat(floatStr));
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Failed trying to apply deadzone for " + inputDevice.getAxisName(i) + " using the value for "
+					JoypadMod.logger.error("Failed trying to apply deadzone for " + inputDevice.getAxisName(i) + " using the value for "
 							+ key + " from the config file");
 				}
 			}
@@ -204,7 +204,7 @@ public class ConfigFile
 		String catName = cat + "." + name;
 		if (!config.hasCategory(catName))
 		{
-			LogHelper.Info("No category name mapping found for: " + catName);
+			JoypadMod.logger.info("No category name mapping found for: " + catName);
 			return null;
 		}
 			
@@ -236,7 +236,7 @@ public class ConfigFile
 	{
 		String catToUpdate = "-UserBindings-";
 
-		LogHelper.Info("Attempting to delete " + binding.inputString + " " + binding.toConfigFileString() + " for "
+		JoypadMod.logger.info("Attempting to delete " + binding.inputString + " " + binding.toConfigFileString() + " for "
 				+ catToUpdate);
 
 		deleteKey(catToUpdate, binding.inputString);
@@ -266,7 +266,7 @@ public class ConfigFile
 			}
 			catch (Exception ex)
 			{
-				LogHelper.Error("Exception caught trying to process user binding " + bindSettings + " Exception "
+				JoypadMod.logger.error("Exception caught trying to process user binding " + bindSettings + " Exception "
 						+ ex.toString());
 			}
 		}
@@ -304,7 +304,7 @@ public class ConfigFile
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Failed trying to save controller binding: " + binding.toConfigFileString()
+					JoypadMod.logger.error("Failed trying to save controller binding: " + binding.toConfigFileString()
 							+ " Exception: " + ex.toString());
 				}
 			}
@@ -313,7 +313,7 @@ public class ConfigFile
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed calling updateControllerBindings from config file. Exception: " + ex.toString());
+			JoypadMod.logger.error("Failed calling updateControllerBindings from config file. Exception: " + ex.toString());
 		}
 	}
 
@@ -321,7 +321,7 @@ public class ConfigFile
 	{
 		if (joyNo < 0)
 		{
-			LogHelper.Info("Not processing joyNo " + joyNo);
+			JoypadMod.logger.info("Not processing joyNo " + joyNo);
 			return 0;
 		}
 
@@ -357,7 +357,7 @@ public class ConfigFile
 				// check to see if Minecraft is currently using this binding
 				if (McKeyBindHelper.getMinecraftKeyBind(key) == null)
 				{
-					LogHelper.Info("Skipping binding " + key
+					JoypadMod.logger.info("Skipping binding " + key
 							+ " from config file as Minecraft isn't using it this session");
 					continue;
 				}
@@ -390,7 +390,7 @@ public class ConfigFile
 				}
 				catch (Exception ex)
 				{
-					LogHelper.Error("Failed parsing config string " + bindSettings);
+					JoypadMod.logger.error("Failed parsing config string " + bindSettings);
 				}
 			}
 			if (cleanupCategories)
@@ -413,7 +413,7 @@ public class ConfigFile
 			catToUpdate = createConfigSettingString(joyName, binding.inputString);
 		}
 
-		LogHelper.Info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for "
+		JoypadMod.logger.info("Attempting to save " + binding.inputString + " " + binding.toConfigFileString() + " for "
 				+ catToUpdate);
 
 		updateKey(catToUpdate, binding.inputString, binding.toConfigFileString(), save);
@@ -439,7 +439,7 @@ public class ConfigFile
 		if (null != config.getCategory(category).remove(key))
 		{
 			config.save();
-			LogHelper.Info("Deleted category " + category + " key " + key);
+			JoypadMod.logger.info("Deleted category " + category + " key " + key);
 			return true;
 		}
 
@@ -456,7 +456,7 @@ public class ConfigFile
 			bRet = !deleteKey(category, key);
 			config.get(category, key, value);
 
-			LogHelper.Info(String.format("updateKey %s %s:%s with %s", bRet ? "created" : "updated", category, key,
+			JoypadMod.logger.info(String.format("updateKey %s %s:%s with %s", bRet ? "created" : "updated", category, key,
 					value));
 
 			if (save)
@@ -464,7 +464,7 @@ public class ConfigFile
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed trying to save key " + category + " value " + key + ":" + value + ". Exception: "
+			JoypadMod.logger.error("Failed trying to save key " + category + " value " + key + ":" + value + ". Exception: "
 					+ ex.toString());
 		}
 		return bRet;

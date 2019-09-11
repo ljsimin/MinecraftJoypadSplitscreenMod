@@ -2,6 +2,7 @@ package com.shiny.joypadmod.helpers;
 
 import java.lang.reflect.Method;
 
+import com.shiny.joypadmod.JoypadMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -20,7 +21,7 @@ public class McGuiHelper
 	@SuppressWarnings("rawtypes")
 	public static void create() throws Exception
 	{
-		LogHelper.Info("Creating McGuiHelper");
+		JoypadMod.logger.info("Creating McGuiHelper");
 		String[] names3 = McObfuscationHelper.getMcVarNames("mouseClickMove");
 
 		Class[] params3 = new Class[] { int.class, int.class, int.class, long.class };
@@ -55,7 +56,7 @@ public class McGuiHelper
 
 		long lastEvent = -1;
 		int eventButton = -1;
-		// LogHelper.Info("Calling mouseDrag");
+		// JoypadMod.logger.info("Calling mouseDrag");
 
 		try
 		{
@@ -66,7 +67,7 @@ public class McGuiHelper
 		}
 		catch (Exception ex)
 		{
-			LogHelper.Error("Failed calling ObfuscationReflectionHelper" + ex.toString());
+			JoypadMod.logger.error("Failed calling ObfuscationReflectionHelper" + ex.toString());
 			if (lastEvent == -1)
 				lastEvent = 100;
 			eventButton = 0;
@@ -86,7 +87,7 @@ public class McGuiHelper
 	{
 		if (!created)
 		{
-			LogHelper.Error("Unable to use McGuiHelper because it failed to initialize");
+			JoypadMod.logger.error("Unable to use McGuiHelper because it failed to initialize");
 		}
 
 		return created;

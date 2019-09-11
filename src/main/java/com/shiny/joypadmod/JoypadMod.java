@@ -1,6 +1,5 @@
 package com.shiny.joypadmod;
 
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
@@ -12,11 +11,14 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
 		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.12]")
 public class JoypadMod
 {
+	public static Logger logger = LogManager.getLogger("Joypad Mod");
 	public static final String MODID = "joypadsplitscreenmod";
 	public static final String NAME = "Joypad / SplitScreen Mod";
 	public static final float MINVERSION = 0.22f;
@@ -29,61 +31,39 @@ public class JoypadMod
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		LogHelper.Info("preInit");
+		logger.info("preInit");
 		controllerSettings = new ControllerSettings(event.getSuggestedConfigurationFile());
 	}
 
 	@EventHandler
-	public void init(FMLInitializationEvent event)
-	{
-		LogHelper.Info("init");
-		try
-		{
-			if (Minecraft.getMinecraft().mouseHelper == null)
-			{
-				LogHelper.Warn("Replacing Mousehelper that may have already been replaced by another mod!");
+	public void init(FMLInitializationEvent event) {
+		logger.info("init");
+		try {
+			if (Minecraft.getMinecraft().mouseHelper == null) {
+				JoypadMod.logger.warn("Replacing Mousehelper that may have already been replaced by another mod!");
 			}
 			Minecraft.getMinecraft().mouseHelper = new JoypadMouseHelper();
-			LogHelper.Info("Replaced mousehelper in Minecraft with JoypadMouseHelper");
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
+			JoypadMod.logger.info("Replaced mousehelper in Minecraft with JoypadMouseHelper");
+		} catch (Exception ex) {
+			JoypadMod.logger.warn("Unable to exchange mousehelper. Game may grab mouse from keyboard players!");
 		}
 	}
 
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event)
-	{
-		LogHelper.Info("postInit");
+	public void postInit(FMLPostInitializationEvent event) {
+		logger.info("postInit");
 		controllerSettings.init();
-		try
-		{
+		try {
 			VirtualKeyboard.create();
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Fatal("Unable to initialize VirtualKeyboard.  Limited compatibility with some mods likely. "
-					+ ex.toString());
+		} catch (Exception ex) {
+			logger.fatal("Unable to initialize VirtualKeyboard.  Limited compatibility with some mods likely. " + ex.toString());
 		}
 
-		try
-		{
+		try{
 			VirtualMouse.create();
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Fatal("Unable to initialize VirtualMouse.  Unable to continue. " + ex.toString());
-			ControllerSettings.modDisabled = true;
-		}
-
-		try
-		{
 			McGuiHelper.create();
-		}
-		catch (Exception ex)
-		{
-			LogHelper.Fatal("Unable to initialize McGuiHelper.  Unable to continue. " + ex.toString());
+		}catch (Exception e){
+			logger.fatal("A fatal error occurred, disabling mod. " + e.toString());
 			ControllerSettings.modDisabled = true;
 		}
 

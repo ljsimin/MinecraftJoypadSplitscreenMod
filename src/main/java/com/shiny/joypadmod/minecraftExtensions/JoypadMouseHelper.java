@@ -1,8 +1,8 @@
 package com.shiny.joypadmod.minecraftExtensions;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.LogHelper;
 
+import com.shiny.joypadmod.JoypadMod;
 import net.minecraft.util.MouseHelper;
 
 // warning: small but non zero chance of this causing incompatibility with other mods
@@ -39,7 +39,7 @@ public class JoypadMouseHelper extends MouseHelper
 	}
 
 	/*
-	 * @Override public void mouseXYChange() { this.deltaX = Mouse.getDX(); this.deltaY = Mouse.getDY(); if (this.deltaX != 0 || this.deltaY != 0) { LogHelper.Info("MouseHelper dx:" + deltaX + " dy:"
+	 * @Override public void mouseXYChange() { this.deltaX = Mouse.getDX(); this.deltaY = Mouse.getDY(); if (this.deltaX != 0 || this.deltaY != 0) { JoypadMod.logger.info("MouseHelper dx:" + deltaX + " dy:"
 	 * + deltaY); } }
 	 */
 
@@ -48,7 +48,7 @@ public class JoypadMouseHelper extends MouseHelper
 	{
 		try
 		{
-			LogHelper.Warn("JoypadMouseHelper being garbage collected. "
+			JoypadMod.logger.warn("JoypadMouseHelper being garbage collected. "
 					+ "If Minecraft not shutting down, this means another mod may have replaced it.");
 		}
 		catch (Throwable t)

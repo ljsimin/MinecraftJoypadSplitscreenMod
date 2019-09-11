@@ -3,7 +3,6 @@ package com.shiny.joypadmod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
-import com.shiny.joypadmod.helpers.LogHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
@@ -187,7 +186,7 @@ public class JoypadMouse
 			deltaX = calculateFinalDelta(inGui, deltaX, horizontalThreshold);
 			deltaY = calculateFinalDelta(inGui, deltaY, verticalThreshold);
 			if (ControllerSettings.loggingLevel > 2)
-				LogHelper.Info("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
+				JoypadMod.logger.info("Camera deltaX: " + deltaX + " Camera deltaY: " + deltaY);
 			lastAxisReading = Minecraft.getSystemTime();
 		}
 
@@ -219,7 +218,7 @@ public class JoypadMouse
 
 				if (ControllerSettings.loggingLevel > 2 && 
 						(lastReportedX != x || lastReportedY != y))
-					LogHelper.Debug("Virtual Mouse x: " + x + " y: " + y);
+					JoypadMod.logger.debug("Virtual Mouse x: " + x + " y: " + y);
 
 				mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
 				mcX = x * scaledResolution.getScaleFactor();
@@ -285,7 +284,7 @@ public class JoypadMouse
 				if (ControllerSettings.loggingLevel > 2 && 
 						lastReportedMultiplier != currentMultiplier)
 				{
-					LogHelper.Info("CameraMultiplier " + currentMultiplier);
+					JoypadMod.logger.info("CameraMultiplier " + currentMultiplier);
 					lastReportedMultiplier = currentMultiplier;
 				}
 			}
