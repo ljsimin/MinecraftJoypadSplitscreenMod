@@ -499,9 +499,6 @@ public class JoypadConfigMenu extends GuiScreen
 
 	private boolean joyConfigMenuEnabled()
 	{
-		if (controllers == null || controllers.size() <= 0)
-			return false;
-
-		return true;
+		return controllers != null && controllers.size() > 0;
 	}
 }

@@ -77,16 +77,13 @@ public class ControllerBinding
 
 	public boolean hasCategory()
 	{
-		if ((bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_UI))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
-				|| (bindingOptions.contains(BindingOptions.CATEGORY_MISC)))
-			return true;
-
-		return false;
-	}
+        return (bindingOptions.contains(BindingOptions.CATEGORY_GAMEPLAY))
+                || (bindingOptions.contains(BindingOptions.CATEGORY_UI))
+                || (bindingOptions.contains(BindingOptions.CATEGORY_INVENTORY))
+                || (bindingOptions.contains(BindingOptions.CATEGORY_MOVEMENT))
+                || (bindingOptions.contains(BindingOptions.CATEGORY_MULTIPLAYER))
+                || (bindingOptions.contains(BindingOptions.CATEGORY_MISC));
+    }
 
 	public BindingOptions getCategory()
 	{
@@ -181,7 +178,7 @@ public class ControllerBinding
 	{
 		boolean bRet = inputEvent.isPressed();
 		// consume the wasReleasedEvent if it was just released
-		boolean wasReleased = !bRet ? inputEvent.wasReleased() : false;
+		boolean wasReleased = !bRet && inputEvent.wasReleased();
 
 		// override to set to true if it has been toggled on
 		if (bindingOptions.contains(BindingOptions.IS_TOGGLE) && toggleState)
@@ -230,7 +227,7 @@ public class ControllerBinding
 
 	public boolean wasPressed(boolean autoHandle, boolean forceHandle)
 	{
-		boolean bRet = forceHandle ? true : inputEvent.wasPressed();
+		boolean bRet = forceHandle || inputEvent.wasPressed();
 		if (bRet)
 		{
 			boolean sendPressKey = true;
@@ -443,15 +440,10 @@ public class ControllerBinding
 
 		ControllerBinding bind = (ControllerBinding) obj;
 
-		if (this.inputString != bind.inputString
-				|| this.inputEvent.getControllerIndex() != bind.inputEvent.getControllerIndex()
-				|| !this.toConfigFileString().equals(bind.toConfigFileString()))
-		{
-			return false;
-		}
-
-		return true;
-	}
+        return this.inputString == bind.inputString
+                && this.inputEvent.getControllerIndex() == bind.inputEvent.getControllerIndex()
+                && this.toConfigFileString().equals(bind.toConfigFileString());
+    }
 	
 	// return the name of the associated button / axis / pov 
 	public String getInputName()

@@ -379,31 +379,16 @@ public class GameRenderHandler
 
 	public static boolean InGameCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.player == null)
-		{
-			return false;
-		}
-
-		return true;
+		return CheckIfModEnabled() && mc.player != null;
 	}
 
 	public static boolean InGuiCheckNeeded()
 	{
-		if (!CheckIfModEnabled() || mc.currentScreen == null)
-		{
-			return false;
-		}
-
-		return true;
+		return CheckIfModEnabled() && mc.currentScreen != null;
 	}
 
 	public static boolean CheckIfModEnabled()
 	{
-		if (mc == null || !ControllerSettings.isInputEnabled() || ControllerSettings.joyNo == -1)
-		{
-			return false;
-		}
-
-		return true;
+		return mc != null && ControllerSettings.isInputEnabled() && ControllerSettings.joyNo != -1;
 	}
 }

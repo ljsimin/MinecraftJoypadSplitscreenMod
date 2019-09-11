@@ -85,7 +85,7 @@ public class McObfuscationHelper
 			if (input.equals("joy.closeInventory"))
 				return doTranslate("key.inventory") + " " + symGet(JSyms.remove);
 
-			if (ret != "")
+			if (!ret.equals(""))
 			{
 				if (input.contains("camera"))
 					ret = doTranslate("controlMenu.look") + " " + ret;
@@ -93,7 +93,7 @@ public class McObfuscationHelper
 					ret = doTranslate("controlMenu.mouse") + " " + ret;
 				else if (input.contains("scroll"))
 					ret = doTranslate("controlMenu.scroll") + " " + ret;
-				else if (input.contains("Item") || (input.contains("Item")))
+				else if (input.contains("Item"))
 					ret = doTranslate("key.inventory") + " " + ret;
 
 				return ret;

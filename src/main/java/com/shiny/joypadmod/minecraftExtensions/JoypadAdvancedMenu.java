@@ -115,7 +115,7 @@ public class JoypadAdvancedMenu extends GuiScreen
 
 	private void addButton(int buttonNum, int id, String code, boolean isToggle)
 	{
-		boolean toggleValue = isToggle ? ControllerSettings.getGameOption(code).equals("true") : false;
+		boolean toggleValue = isToggle && ControllerSettings.getGameOption(code).equals("true");
 		addButton(buttonNum, id, code, isToggle, toggleValue);
 	}
 

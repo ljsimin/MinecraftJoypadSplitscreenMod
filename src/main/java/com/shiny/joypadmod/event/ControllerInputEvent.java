@@ -186,10 +186,7 @@ public abstract class ControllerInputEvent
 			return false;
 		}
 		ControllerInputEvent inputEvent = (ControllerInputEvent) obj;
-		if (inputEvent.type == this.type && inputEvent.buttonNumber == this.buttonNumber
-				&& inputEvent.threshold == this.threshold)
-			return true;
-
-		return false;
-	}
+        return inputEvent.type == this.type && inputEvent.buttonNumber == this.buttonNumber
+                && inputEvent.threshold == this.threshold;
+    }
 }

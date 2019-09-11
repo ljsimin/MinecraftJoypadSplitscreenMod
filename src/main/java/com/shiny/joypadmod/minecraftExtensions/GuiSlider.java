@@ -130,7 +130,7 @@ public class GuiSlider extends GuiButton
 			this.displayString = fr.trimStringToWidth(output, this.width - fr.getStringWidth(value)) + value;
 		}
 		else
-		{			
+		{
 			this.displayString = I18n.translateToLocalFormatted(this.baseDisplayString,
 					(int) (this.sliderValue * 100.0F));
 		}

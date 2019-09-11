@@ -37,10 +37,8 @@ public class JoypadMouse
 	public static boolean pollAxis(boolean inGui)
 	{
 		AxisReader.pollAxis(inGui);
-		if (AxisReader.deltaX == 0 && AxisReader.deltaY == 0)
-			return false;
-		return true;
-	}
+        return AxisReader.deltaX != 0 || AxisReader.deltaY != 0;
+    }
 
 	public static void updateXY()
 	{
@@ -240,11 +238,8 @@ public class JoypadMouse
 
 		public static boolean pollNeeded(boolean inGui)
 		{
-			if (Minecraft.getSystemTime() - lastAxisReading < (inGui ? guiPollTimeout : gamePollTimeout))
-				return false;
-
-			return true;
-		}
+            return Minecraft.getSystemTime() - lastAxisReading >= (inGui ? guiPollTimeout : gamePollTimeout);
+        }
 
 		public static void setXY(int x, int y)
 		{
