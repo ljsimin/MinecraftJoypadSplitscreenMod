@@ -15,7 +15,7 @@ public class ControllerUtils
 
 	public ControllerUtils()
 	{
-		joypadNameMap = new HashMap<String, String>();
+		joypadNameMap = new HashMap<>();
 		mappedControllerIndex = -1;
 	}
 
@@ -212,12 +212,12 @@ public class ControllerUtils
 	
 	private Map<String, String> buildDefaultMap(InputDevice controller)
 	{
-		Map<String, String> retMap = new HashMap<String, String>();
+		Map<String, String> retMap = new HashMap<>();
 		if (controller.getName().toLowerCase().contains("xinput")
 				|| controller.getName().toLowerCase().contains("xusb")
 				|| controller.getName().toLowerCase().contains("xbox"))
 		{
-			retMap = new HashMap<String, String>();
+			retMap = new HashMap<>();
 			retMap.put("Button 0", "A");
 			retMap.put("Button 1", "B");
 			retMap.put("Button 2", "X");

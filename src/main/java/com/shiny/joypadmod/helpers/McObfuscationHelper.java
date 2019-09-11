@@ -29,7 +29,7 @@ public class McObfuscationHelper
 
 	static
 	{
-		versionNameMap = new HashMap<String, String[]>();
+		versionNameMap = new HashMap<>();
 		versionNameMap.put("mouseClicked", new String[] { "func_73864_a", "func_73864_a" });
 		versionNameMap.put("leftClick", new String[] { "doesn't exist!", "func_147116_af" });
 		versionNameMap.put("clickMouse", new String[] { "func_71402_c", "doesn't exist!" });

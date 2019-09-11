@@ -73,7 +73,7 @@ public class ControllerSettings
 	private static DefaultAxisMappings aMap = new DefaultAxisMappings();
 	public static ControllerUtils controllerUtils;
 
-	public static List<Integer> xbox6Axis = new ArrayList<Integer>();
+	public static List<Integer> xbox6Axis = new ArrayList<>();
 
 	// modDisabled will not set up the event handlers and will therefore render
 	// the mod inoperable
@@ -99,11 +99,11 @@ public class ControllerSettings
 		config = new ConfigFile(configFile);
 		config.init();
 		controllerUtils = new ControllerUtils();
-		validControllers = new HashMap<String, List<Integer>>();
-		inValidControllers = new HashMap<String, List<Integer>>();
-		singleDirectionAxis = new HashMap<Integer, List<Integer>>();
-		joyBindingsMap = new HashMap<String, ControllerBinding>();
-		userDefinedBindings = new ArrayList<ControllerBinding>();
+		validControllers = new HashMap<>();
+		inValidControllers = new HashMap<>();
+		singleDirectionAxis = new HashMap<>();
+		joyBindingsMap = new HashMap<>();
+		userDefinedBindings = new ArrayList<>();
 		grabMouse = ControllerSettings.getGameOption("-Global-.GrabMouse").equals("true");
 
 		if (!useLegacyInput)
@@ -356,7 +356,7 @@ public class ControllerSettings
 
 	public static List<String> getBindingsWithCategory(String categoryString)
 	{
-		List<String> cList = new ArrayList<String>();
+		List<String> cList = new ArrayList<>();
 		for (Map.Entry<String, ControllerBinding> entry : joyBindingsMap.entrySet())
 		{
 			if (entry.getValue().getCategoryString().compareTo(categoryString) == 0)
@@ -385,11 +385,7 @@ public class ControllerSettings
 		return joyBindingsMap.size();
 	}
 
-	public void init()
-	{
-		JoypadMod.logger.info("Minecraft Joypad (Controller) Mod v" + ModVersionHelper.VERSION
-				+ " by Ljubomir Simin & Andrew Hickey\n---");
-
+	public void init() {
 		if (config.preferedJoyName == "disabled")
 		{
 			JoypadMod.logger.warn("Controller input disabled due to joypad value 'preferedJoyName' set to disabled");
@@ -491,7 +487,7 @@ public class ControllerSettings
 
 	private static List<Integer> stringToIntList(String intStr)
 	{
-		List<Integer> ret = new ArrayList<Integer>();
+		List<Integer> ret = new ArrayList<>();
 		for (String theInt : intStr.split(","))
 		{
 			try
@@ -528,13 +524,13 @@ public class ControllerSettings
 	{
 		if (!singleDirectionAxis.containsKey(controllerNo))
 		{
-			singleDirectionAxis.put(controllerNo, new ArrayList<Integer>());
+			singleDirectionAxis.put(controllerNo, new ArrayList<>());
 		}
 	}
 
 	private static void setSingleDirectionAxis(int controllerNo, List<Integer> axisList)
 	{
-		List<Integer> finalAxisList = new ArrayList<Integer>();
+		List<Integer> finalAxisList = new ArrayList<>();
 		InputDevice c = JoypadModInputLibrary.getController(controllerNo);
 		StringBuilder sbSDAMessage = new StringBuilder();
 		sbSDAMessage.append("Setting the following as Single Direction Axes on " + c.getName());
@@ -582,7 +578,7 @@ public class ControllerSettings
 	{
 		if (singleDirectionAxis.containsKey(controllerNo))
 			return singleDirectionAxis.get(controllerNo);
-		return new ArrayList<Integer>(); //return empty list
+		return new ArrayList<>(); //return empty list
 	}
 
 	public static boolean setController(int controllerNo)
@@ -623,7 +619,7 @@ public class ControllerSettings
 				{
 					if (xbox6Axis.contains(joyNo))
 					{
-						setSingleDirectionAxis(joyNo, new ArrayList<Integer>(Arrays.asList(4, 5)));
+						setSingleDirectionAxis(joyNo, new ArrayList<>(Arrays.asList(4, 5)));
 						JoypadMod.logger.info(
 								"Auto setting XBox One single direction axis. If there are trigger problems after this this is why");
 					}
@@ -756,7 +752,7 @@ public class ControllerSettings
 		}
 		else
 		{
-			ids = new ArrayList<Integer>();
+			ids = new ArrayList<>();
 		}
 		ids.add(id);
 
@@ -791,14 +787,11 @@ public class ControllerSettings
 
 	private static List<Integer> flattenMap(Map<String, List<Integer>> listToFlatten)
 	{
-		List<Integer> values = new ArrayList<Integer>();
-		Iterator<Entry<String, List<Integer>>> it = listToFlatten.entrySet().iterator();
-		while (it.hasNext())
-		{
-			List<Integer> ids = it.next().getValue();
-			for (int i = 0; i < ids.size(); i++)
-			{
-				values.add(ids.get(i));
+		List<Integer> values = new ArrayList<>();
+		for (Entry<String, List<Integer>> stringListEntry : listToFlatten.entrySet()) {
+			List<Integer> ids = stringListEntry.getValue();
+			for (Integer id : ids) {
+				values.add(id);
 			}
 		}
 		java.util.Collections.sort(values);

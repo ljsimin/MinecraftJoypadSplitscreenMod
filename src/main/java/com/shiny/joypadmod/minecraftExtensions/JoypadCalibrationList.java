@@ -113,7 +113,7 @@ public class JoypadCalibrationList extends GuiScrollingList
 		}
 	}
 
-	public List<GuiButton> buttonList = new ArrayList<GuiButton>();
+	public List<GuiButton> buttonList = new ArrayList<>();
 
 	@Override
 	protected void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5)

@@ -30,8 +30,8 @@ public class GameRenderHandler
 	private static long lastInGuiTick = 0;
 	private static long lastInGameTick = 0;
 
-	public static List<String> preRenderGuiBucket = new ArrayList<String>();
-	public static List<String> preRenderGameBucket = new ArrayList<String>();
+	public static List<String> preRenderGuiBucket = new ArrayList<>();
+	public static List<String> preRenderGameBucket = new ArrayList<>();
 
 	public static boolean mouseDetected = false;
 

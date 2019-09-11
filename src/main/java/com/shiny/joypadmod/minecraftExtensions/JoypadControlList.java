@@ -76,7 +76,7 @@ public class JoypadControlList extends GuiScrollingList
 		this.fontRenderer = fontRenderer;
 		this.textInputName = new GuiTextField(20001, this.fontRenderer, 0, 0, 0, 0);
 		this.textInputName.setVisible(false);
-		joyBindKeys = new ArrayList<String>();
+		joyBindKeys = new ArrayList<>();
 		descriptionStartX = parent.buttonXStart_top;
 		if (this.parent.getCurrentControllerId() != -1)
 		{
@@ -151,13 +151,7 @@ public class JoypadControlList extends GuiScrollingList
 					// found current category end
 					if (lastCategoryStart < i - 2)
 					{
-						Arrays.sort(list, lastCategoryStart + 1, i, new Comparator<String>()
-						{
-							public int compare(String s1, String s2)
-							{
-								return parent.sGet(s1).compareTo(parent.sGet(s2));
-							}
-						});
+						Arrays.sort(list, lastCategoryStart + 1, i, Comparator.comparing(s -> parent.sGet(s)));
 					}
 				}
 				lastCategoryStart = i;
@@ -165,10 +159,9 @@ public class JoypadControlList extends GuiScrollingList
 		}
 		joyBindKeys.clear();
 		int longestWidthFound = 0;
-		for (int i = 0; i < list.length; i++)
-		{
-			joyBindKeys.add(list[i]);
-			int thisWidth = parent.getFontRenderer().getStringWidth(parent.sGet(list[i]));
+		for (String s : list) {
+			joyBindKeys.add(s);
+			int thisWidth = parent.getFontRenderer().getStringWidth(parent.sGet(s));
 			if (thisWidth > longestWidthFound)
 				longestWidthFound = thisWidth;
 		}

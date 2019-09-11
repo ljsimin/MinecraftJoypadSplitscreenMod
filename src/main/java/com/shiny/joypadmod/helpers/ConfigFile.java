@@ -26,7 +26,7 @@ public class ConfigFile
 	private String userName;
 	private String userCategory;
 	private String bindingComment = "S:<actionID>=<Menu String>,{ <keycode> },<AXIS/BUTTON/POV>,<INDEX>,<THRESHOLD>,<DEADZONE>,<BINDING_OPTIONS1>,<BINDING_OPTIONS2>...";
-	private List<ControllerBinding> controlBindingsFromConfigFile = new ArrayList<ControllerBinding>();
+	private List<ControllerBinding> controlBindingsFromConfigFile = new ArrayList<>();
 
 	private String globalCat = "-Global-";
 
@@ -97,7 +97,7 @@ public class ConfigFile
 		addBindingOptionsComment();
 		addGlobalOptionsComment();
 
-		updateKey(getDefaultCategory(), "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
+		updateKey(getDefaultCategory(), "ConfigVersion", String.valueOf(JoypadMod.VERSION), true);
 	}
 
 	public String getDefaultCategory()
@@ -209,7 +209,7 @@ public class ConfigFile
 		}
 			
 		ConfigCategory cc = config.getCategory(catName);	
-		Map<String, String> retMap = new HashMap<String, String>();
+		Map<String, String> retMap = new HashMap<>();
 		
 		for (String key : cc.keySet())
 		{
@@ -309,7 +309,7 @@ public class ConfigFile
 				}
 			}
 
-			updateKey(category, "ConfigVersion", String.valueOf(JoypadMod.MINVERSION), true);
+			updateKey(category, "ConfigVersion", String.valueOf(JoypadMod.VERSION), true);
 		}
 		catch (Exception ex)
 		{

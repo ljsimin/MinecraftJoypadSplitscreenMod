@@ -45,7 +45,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		this.joypadIndex = joypadIndex;
 		this.parent = parent;
 		// create a copy of the currently saved SDA to compare when exiting
-		singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
+		singleDirectionAxisSaved = new ArrayList<>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
 	}
 
 	@Override
@@ -61,9 +61,8 @@ public class JoypadCalibrationMenu extends GuiScreen
 
 		povBoxWidth = fr.getStringWidth("PovX: -10.00");
 		instructionBoxWidth = 0;
-		for (int i = 0; i < instructions.length; i++)
-		{
-			int newWidth = fr.getStringWidth(McObfuscationHelper.lookupString(instructions[i]));
+		for (String instruction : instructions) {
+			int newWidth = fr.getStringWidth(McObfuscationHelper.lookupString(instruction));
 			if (newWidth > instructionBoxWidth)
 				instructionBoxWidth = newWidth;
 		}
@@ -126,7 +125,7 @@ public class JoypadCalibrationMenu extends GuiScreen
 		switch (guiButton.id)
 		{
 		case 400: // Save
-			singleDirectionAxisSaved = new ArrayList<Integer>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
+			singleDirectionAxisSaved = new ArrayList<>(ControllerSettings.getSingleDirectionAxis(joypadIndex));
 			InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
 			ControllerSettings.saveDeadZones(controller);
 			ControllerSettings.saveSingleDirectionAxis(controller);

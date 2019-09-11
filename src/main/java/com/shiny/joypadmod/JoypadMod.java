@@ -14,15 +14,13 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = ModVersionHelper.VERSION + "-" + JoypadMod.MINVERSION
-		+ JoypadMod.REVISION, clientSideOnly = true, acceptedMinecraftVersions = "[1.12]")
+@Mod(modid = JoypadMod.MODID, name = JoypadMod.NAME, version = JoypadMod.VERSION, clientSideOnly = true, acceptedMinecraftVersions = "[1.12]")
 public class JoypadMod
 {
 	public static Logger logger = LogManager.getLogger("Joypad Mod");
 	public static final String MODID = "joypadmod";
 	public static final String NAME = "Joypad Mod";
-	public static final float MINVERSION = 0.22f;
-	public static final String REVISION = "";	
+	public static final String VERSION = "1.12.0-0.22";
 
 	private static ControllerSettings controllerSettings;
 
