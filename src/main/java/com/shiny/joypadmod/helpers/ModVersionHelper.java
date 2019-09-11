@@ -17,63 +17,49 @@ import com.shiny.joypadmod.GameRenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
-public class ModVersionHelper
-{
+public class ModVersionHelper {
 
-	public void gameInit()
-	{
-		if (ControllerSettings.modDisabled)
-		{
-			JoypadMod.logger.warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
-			return;
-		}
+    public void gameInit() {
+        if (ControllerSettings.modDisabled) {
+            JoypadMod.logger.warn("Mod game initialization ignored due to mod disabled.  No in game options will appear to change this unless config file updated");
+            return;
+        }
 
-		MinecraftForge.EVENT_BUS.register(this);
-		
-		Customizations.init();
-	}
+        MinecraftForge.EVENT_BUS.register(this);
 
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void tickRender(RenderTickEvent event)
-	{
-		if (event.phase == Phase.START)
-		{
-			GameRenderHandler.HandlePreRender();
-		}
-		else if (event.phase == Phase.END)
-		{
-			GameRenderHandler.HandlePostRender();
-		}
-	}
+        Customizations.init();
+    }
 
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void tickRenderClient(ClientTickEvent event)
-	{
-		if (event.phase == Phase.START)
-		{
-			GameRenderHandler.HandleClientStartTick();
-		}
-		else if (event.phase == Phase.END)
-		{
-			GameRenderHandler.HandleClientEndTick();
-		}
-	}
-	
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void buttonMapDisplay(RenderGameOverlayEvent.Post event)
-	{
-		
-		if(event.isCancelable() || event.getType() != ElementType.EXPERIENCE)
-	    {      
-	        return;
-	    }
-		new ButtonScreenTips();
-	}
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void tickRender(RenderTickEvent event) {
+        if (event.phase == Phase.START) {
+            GameRenderHandler.HandlePreRender();
+        } else if (event.phase == Phase.END) {
+            GameRenderHandler.HandlePostRender();
+        }
+    }
 
-	//TODO: Replace this (removed in 1.13+)
-	public static ScaledResolution GetScaledResolution()
-	{
-		Minecraft mc = Minecraft.getMinecraft();
-		return new ScaledResolution(mc);
-	}
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void tickRenderClient(ClientTickEvent event) {
+        if (event.phase == Phase.START) {
+            GameRenderHandler.HandleClientStartTick();
+        } else if (event.phase == Phase.END) {
+            GameRenderHandler.HandleClientEndTick();
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void buttonMapDisplay(RenderGameOverlayEvent.Post event) {
+
+        if (event.isCancelable() || event.getType() != ElementType.EXPERIENCE) {
+            return;
+        }
+        new ButtonScreenTips();
+    }
+
+    //TODO: Replace this (removed in 1.13+)
+    public static ScaledResolution GetScaledResolution() {
+        Minecraft mc = Minecraft.getMinecraft();
+        return new ScaledResolution(mc);
+    }
 }
