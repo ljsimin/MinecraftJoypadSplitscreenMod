@@ -16,11 +16,11 @@ import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper.JSyms;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
-import com.shiny.joypadmod.inputevent.ButtonInputEvent;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
+import com.shiny.joypadmod.event.ButtonInputEvent;
+import com.shiny.joypadmod.event.ControllerBinding;
+import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.event.ControllerInputEvent;
+import com.shiny.joypadmod.event.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 import net.minecraft.client.Minecraft;

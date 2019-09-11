@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.inputevent;
+package com.shiny.joypadmod.event;
 
 import java.util.EnumSet;
 import java.util.Locale;
@@ -8,7 +8,7 @@ import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent.EventType;
+import com.shiny.joypadmod.event.ControllerInputEvent.EventType;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadCalibrationMenu;

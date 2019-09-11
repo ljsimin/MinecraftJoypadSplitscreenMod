@@ -43,14 +43,8 @@ public class McObfuscationHelper
 		versionNameMap.put("parentScreen", new String[] { "field_73909_b", "field_146496_h" });
 	}
 
-	public static int keyCode(KeyBinding key)
-	{
-
-		// de-obfuscated
+	public static int keyCode(KeyBinding key) {
 		return key.getKeyCode();
-
-		// obfuscated 1.7.2
-		// return key.func_151463_i();
 	}
 
 	// returns de-obfuscated and obfuscated names for that version
@@ -58,17 +52,10 @@ public class McObfuscationHelper
 	{
 		String[] candidates = versionNameMap.get(fieldOrFunctionName);
 
-		if (candidates == null)
-			return new String[] { fieldOrFunctionName, "unknown" };
-
-		switch (ModVersionHelper.MC_VERSION)
-		{
-		case 164:
-			return new String[] { fieldOrFunctionName, candidates[0] };
-		case 172:
-			return new String[] { fieldOrFunctionName, candidates[1] };
-		default:
-			return new String[] { fieldOrFunctionName, candidates[1] };
+		if (candidates == null) {
+			return new String[]{fieldOrFunctionName, "unknown"};
+		}else {
+			return new String[]{fieldOrFunctionName, candidates[1]};
 		}
 	}
 

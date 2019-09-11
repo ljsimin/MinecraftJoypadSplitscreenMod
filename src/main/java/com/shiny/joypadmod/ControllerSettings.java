@@ -26,11 +26,11 @@ import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
-import com.shiny.joypadmod.inputevent.AxisInputEvent;
-import com.shiny.joypadmod.inputevent.ButtonInputEvent;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerUtils;
+import com.shiny.joypadmod.event.AxisInputEvent;
+import com.shiny.joypadmod.event.ButtonInputEvent;
+import com.shiny.joypadmod.event.ControllerBinding;
+import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.event.ControllerUtils;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 import net.minecraft.client.Minecraft;
@@ -446,7 +446,8 @@ public class ControllerSettings
 					{
 						InputDevice thisController = JoypadModInputLibrary.getController(joyIndex);
 
-						logControllerInfo(thisController);
+						JoypadMod.logger.info("Found controller " + thisController.getName() + " (" + thisController.getIndex() + ")");
+						JoypadMod.logger.info("It has  " + thisController.getButtonCount() + " buttons and " + thisController.getAxisCount() + " axes.");
 
 						if (controllerUtils.meetsInputRequirements(thisController, requiredButtonCount,
 								requiredMinButtonCount, requiredAxisCount))

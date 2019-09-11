@@ -2,7 +2,7 @@ package com.shiny.joypadmod;
 
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
+import com.shiny.joypadmod.event.ControllerBinding;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -11,7 +11,7 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.ModVersionHelper;
-import com.shiny.joypadmod.inputevent.ControllerUtils;
+import com.shiny.joypadmod.event.ControllerUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

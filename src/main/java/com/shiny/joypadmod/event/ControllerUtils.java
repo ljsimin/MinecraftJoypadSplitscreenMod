@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.inputevent;
+package com.shiny.joypadmod.event;
 
 import java.util.HashMap;
 import java.util.Map;

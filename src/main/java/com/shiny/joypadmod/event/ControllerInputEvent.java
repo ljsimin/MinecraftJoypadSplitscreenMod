@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.inputevent;
+package com.shiny.joypadmod.event;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;

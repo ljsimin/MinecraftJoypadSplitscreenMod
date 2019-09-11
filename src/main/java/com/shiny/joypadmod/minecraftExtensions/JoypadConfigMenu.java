@@ -10,9 +10,9 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.GameRenderHandler;
 import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.inputevent.ButtonInputEvent;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.event.ButtonInputEvent;
+import com.shiny.joypadmod.event.ControllerBinding;
+import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

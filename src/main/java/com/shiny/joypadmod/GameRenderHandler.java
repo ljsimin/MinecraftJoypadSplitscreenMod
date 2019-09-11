@@ -8,9 +8,9 @@ import org.lwjgl.input.Mouse;
 import com.shiny.joypadmod.helpers.Customizations;
 import com.shiny.joypadmod.helpers.McGuiHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.inputevent.ControllerBinding;
-import com.shiny.joypadmod.inputevent.ControllerBinding.BindingOptions;
-import com.shiny.joypadmod.inputevent.ControllerInputEvent;
+import com.shiny.joypadmod.event.ControllerBinding;
+import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
+import com.shiny.joypadmod.event.ControllerInputEvent;
 import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 import com.shiny.joypadmod.minecraftExtensions.JoypadConfigMenu;
 
