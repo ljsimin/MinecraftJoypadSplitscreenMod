@@ -1,7 +1,7 @@
-MinecraftJoypadSplitscreenMod
+MinecraftJoypadMod
 =============================
 
-**Mod that adds support for joypads in Minecraft: Java Edition.**
+**Mod that adds support for splitscreen games and joypads in Minecraft: Java Edition.**
 
 _Notice: The mod supports as many joypads as your PC can handle, as well as supporting your keyboard and mouse._
 
