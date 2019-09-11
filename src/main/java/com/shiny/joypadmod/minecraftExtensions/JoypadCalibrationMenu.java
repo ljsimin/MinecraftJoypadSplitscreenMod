@@ -55,7 +55,6 @@ public class JoypadCalibrationMenu extends GuiScreen
 		super.onGuiClosed();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui()
 	{

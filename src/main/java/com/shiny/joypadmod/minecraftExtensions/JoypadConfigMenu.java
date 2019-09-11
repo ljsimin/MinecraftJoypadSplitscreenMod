@@ -464,7 +464,6 @@ public class JoypadConfigMenu extends GuiScreen
 	// Obfuscation & back porting helpers -- here and not in ObfuscationHelper
 	// because accessing protected methods
 
-	@SuppressWarnings("unchecked")
 	private void addButton(GuiButton guiButton, boolean enabled)
 	{
 		if (!enabled)

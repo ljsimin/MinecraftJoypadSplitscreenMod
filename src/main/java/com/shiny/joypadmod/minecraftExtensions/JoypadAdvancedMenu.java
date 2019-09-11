@@ -30,7 +30,6 @@ public class JoypadAdvancedMenu extends GuiScreen
 		this.joyIndex = joyIndex;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui()
 	{
@@ -120,7 +119,6 @@ public class JoypadAdvancedMenu extends GuiScreen
 		addButton(buttonNum, id, code, isToggle, toggleValue);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addButton(int buttonNum, int id, String code, boolean isToggle, boolean toggleValue)
 	{
 		int buttonBase = buttonNum % buttonsPerRow;
