@@ -19,8 +19,8 @@ import org.apache.logging.log4j.Logger;
 public class JoypadMod
 {
 	public static Logger logger = LogManager.getLogger("Joypad Mod");
-	public static final String MODID = "joypadsplitscreenmod";
-	public static final String NAME = "Joypad / SplitScreen Mod";
+	public static final String MODID = "joypadmod";
+	public static final String NAME = "Joypad Mod";
 	public static final float MINVERSION = 0.22f;
 	public static final String REVISION = "";	
 
