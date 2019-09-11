@@ -15,7 +15,6 @@ import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper.JSyms;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.event.ButtonInputEvent;
 import com.shiny.joypadmod.event.ControllerBinding;
 import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
@@ -233,7 +232,7 @@ public class JoypadControlList extends GuiScrollingList {
             return;
 
         Minecraft mc = Minecraft.getMinecraft();
-        final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
+        final ScaledResolution scaledResolution = JoypadMod.GetScaledResolution();
 
         final int k = Mouse.getX() * scaledResolution.getScaledWidth() / mc.displayWidth;
         final int i1 = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight()

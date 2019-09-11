@@ -10,7 +10,6 @@ import org.lwjgl.input.Mouse;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.devices.InputDevice;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.event.ControllerUtils;
 
 import net.minecraft.client.Minecraft;
@@ -100,7 +99,7 @@ public class JoypadCalibrationList extends GuiScrollingList {
 
     @Override
     protected void drawSlot(int var1, int var2, int var3, int var4, Tessellator var5) {
-        final ScaledResolution scaledResolution = ModVersionHelper.GetScaledResolution();
+        final ScaledResolution scaledResolution = JoypadMod.GetScaledResolution();
 
         final int k = Mouse.getX() * scaledResolution.getScaledWidth() / mc.displayWidth;
         final int i1 = scaledResolution.getScaledHeight() - Mouse.getY() * scaledResolution.getScaledHeight()

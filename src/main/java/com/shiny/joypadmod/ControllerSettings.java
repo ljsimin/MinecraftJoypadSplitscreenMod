@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.crash.CrashReport;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.devices.DefaultAxisMappings;
@@ -25,7 +26,6 @@ import com.shiny.joypadmod.helpers.ConfigFile;
 import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
 import com.shiny.joypadmod.helpers.McKeyBindHelper;
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.event.AxisInputEvent;
 import com.shiny.joypadmod.event.ButtonInputEvent;
 import com.shiny.joypadmod.event.ControllerBinding;
@@ -73,10 +73,6 @@ public class ControllerSettings {
     public static ControllerUtils controllerUtils;
 
     public static List<Integer> xbox6Axis = new ArrayList<>();
-
-    // modDisabled will not set up the event handlers and will therefore render
-    // the mod inoperable
-    public static boolean modDisabled = false;
 
     // inputEnabled will control whether the mod will continually poll the
     // selected joystick for data
@@ -128,8 +124,7 @@ public class ControllerSettings {
                 aMap = aMap.new LWJGLAxisMappings();
                 JoypadMod.logger.info("Using LWJGL for Joypad Mod controls");
             } catch (Exception ex) {
-                JoypadMod.logger.fatal("Failed creating LWJGL controller object. This mod will not work. " + ex.toString());
-                modDisabled = true;
+                Minecraft.getMinecraft().crashed(new CrashReport("Failed creating LWJGL controller object", ex));
             }
         }
     }
@@ -364,7 +359,7 @@ public class ControllerSettings {
         if (config.preferedJoyName == "disabled") {
             JoypadMod.logger.warn("Controller input disabled due to joypad value 'preferedJoyName' set to disabled");
             inputEnabled = false;
-            ControllerSettings.modDisabled = true;
+            //ControllerSettings.modDisabled = true; TODO: See if this ruins anything.
             return;
         }
 

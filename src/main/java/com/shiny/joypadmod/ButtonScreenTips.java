@@ -1,7 +1,6 @@
 package com.shiny.joypadmod;
 
 import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.helpers.ModVersionHelper;
 import com.shiny.joypadmod.event.ControllerBinding;
 
 import net.minecraft.client.Minecraft;
@@ -110,7 +109,7 @@ public class ButtonScreenTips extends Gui {
     }
 
     private void displayTips() {
-        ScaledResolution scaled = ModVersionHelper.GetScaledResolution();
+        ScaledResolution scaled = JoypadMod.GetScaledResolution();
         int width = scaled.getScaledWidth();
         int height = scaled.getScaledHeight();
 
