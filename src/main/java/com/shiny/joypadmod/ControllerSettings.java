@@ -13,25 +13,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.shiny.joypadmod.devices.*;
+import com.shiny.joypadmod.gui.ButtonScreenTips;
 import net.minecraft.crash.CrashReport;
 import org.lwjgl.input.Keyboard;
 
-import com.shiny.joypadmod.devices.DefaultAxisMappings;
-import com.shiny.joypadmod.devices.DefaultButtonMappings;
-import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.devices.InputLibrary;
-import com.shiny.joypadmod.devices.LWJGLibrary;
-import com.shiny.joypadmod.devices.XInputLibrary;
-import com.shiny.joypadmod.helpers.ConfigFile;
-import com.shiny.joypadmod.helpers.ConfigFile.UserJoypadSettings;
-import com.shiny.joypadmod.helpers.McKeyBindHelper;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.mappings.DefaultAxisMappings;
+import com.shiny.joypadmod.mappings.DefaultButtonMappings;
+import com.shiny.joypadmod.utils.ConfigFile;
+import com.shiny.joypadmod.utils.ConfigFile.UserJoypadSettings;
+import com.shiny.joypadmod.utils.McKeyBindHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 import com.shiny.joypadmod.event.AxisInputEvent;
 import com.shiny.joypadmod.event.ButtonInputEvent;
 import com.shiny.joypadmod.event.ControllerBinding;
 import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.event.ControllerUtils;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;

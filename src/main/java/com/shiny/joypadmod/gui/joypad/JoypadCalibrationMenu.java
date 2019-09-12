@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.minecraftExtensions;
+package com.shiny.joypadmod.gui.joypad;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.JoypadMod;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

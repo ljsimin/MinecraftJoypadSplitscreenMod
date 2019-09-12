@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.minecraftExtensions;
+package com.shiny.joypadmod.gui.joypad;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 import com.shiny.joypadmod.event.ControllerUtils;
 
 import net.minecraft.client.Minecraft;

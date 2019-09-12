@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.helpers;
+package com.shiny.joypadmod.utils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;

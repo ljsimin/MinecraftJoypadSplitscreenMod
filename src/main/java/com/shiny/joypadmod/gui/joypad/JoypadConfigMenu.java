@@ -1,15 +1,16 @@
-package com.shiny.joypadmod.minecraftExtensions;
+package com.shiny.joypadmod.gui.joypad;
 
 import java.util.EnumSet;
 import java.util.List;
 
+import com.shiny.joypadmod.gui.GuiSlider;
 import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.GameRenderHandler;
+import com.shiny.joypadmod.utils.GameRenderHandler;
 import com.shiny.joypadmod.devices.InputDevice;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 import com.shiny.joypadmod.event.ButtonInputEvent;
 import com.shiny.joypadmod.event.ControllerBinding;
 import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;

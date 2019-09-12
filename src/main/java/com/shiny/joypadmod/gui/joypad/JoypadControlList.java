@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.minecraftExtensions;
+package com.shiny.joypadmod.gui.joypad;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,15 +12,15 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.McKeyBindHelper;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
-import com.shiny.joypadmod.helpers.McObfuscationHelper.JSyms;
+import com.shiny.joypadmod.utils.McKeyBindHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper.JSyms;
 import com.shiny.joypadmod.event.ButtonInputEvent;
 import com.shiny.joypadmod.event.ControllerBinding;
 import com.shiny.joypadmod.event.ControllerBinding.BindingOptions;
 import com.shiny.joypadmod.event.ControllerInputEvent;
 import com.shiny.joypadmod.event.ControllerInputEvent.EventType;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
+import com.shiny.joypadmod.devices.VirtualMouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

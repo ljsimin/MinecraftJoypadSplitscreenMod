@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.devices;
+package com.shiny.joypadmod.mappings;
 
 public class DefaultButtonMappings {
 

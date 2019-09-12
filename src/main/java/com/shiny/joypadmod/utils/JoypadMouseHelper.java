@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.minecraftExtensions;
+package com.shiny.joypadmod.utils;
 
 import com.shiny.joypadmod.ControllerSettings;
 

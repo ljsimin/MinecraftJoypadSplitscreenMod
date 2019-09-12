@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.helpers;
+package com.shiny.joypadmod.utils;
 
 import java.io.File;
 import java.util.ArrayList;

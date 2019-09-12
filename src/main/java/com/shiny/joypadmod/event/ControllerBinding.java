@@ -7,11 +7,11 @@ import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.input.Keyboard;
 
 import com.shiny.joypadmod.ControllerSettings;
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 import com.shiny.joypadmod.event.ControllerInputEvent.EventType;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
-import com.shiny.joypadmod.minecraftExtensions.JoypadCalibrationMenu;
+import com.shiny.joypadmod.devices.VirtualKeyboard;
+import com.shiny.joypadmod.devices.VirtualMouse;
+import com.shiny.joypadmod.gui.joypad.JoypadCalibrationMenu;
 
 import net.minecraft.client.Minecraft;
 

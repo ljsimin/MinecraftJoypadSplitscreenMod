@@ -1,6 +1,8 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.gui;
 
-import com.shiny.joypadmod.helpers.McObfuscationHelper;
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
+import com.shiny.joypadmod.utils.McObfuscationHelper;
 import com.shiny.joypadmod.event.ControllerBinding;
 
 import net.minecraft.client.Minecraft;

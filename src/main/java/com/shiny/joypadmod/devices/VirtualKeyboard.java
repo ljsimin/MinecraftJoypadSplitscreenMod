@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.lwjglVirtualInput;
+package com.shiny.joypadmod.devices;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;

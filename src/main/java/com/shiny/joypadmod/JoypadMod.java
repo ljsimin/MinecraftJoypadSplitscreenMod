@@ -1,10 +1,12 @@
 package com.shiny.joypadmod;
 
-import com.shiny.joypadmod.helpers.Customizations;
-import com.shiny.joypadmod.helpers.McGuiHelper;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualKeyboard;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
-import com.shiny.joypadmod.minecraftExtensions.JoypadMouseHelper;
+import com.shiny.joypadmod.gui.ButtonScreenTips;
+import com.shiny.joypadmod.utils.Customizations;
+import com.shiny.joypadmod.gui.McGuiHelper;
+import com.shiny.joypadmod.devices.VirtualKeyboard;
+import com.shiny.joypadmod.devices.VirtualMouse;
+import com.shiny.joypadmod.utils.GameRenderHandler;
+import com.shiny.joypadmod.utils.JoypadMouseHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.crash.CrashReport;

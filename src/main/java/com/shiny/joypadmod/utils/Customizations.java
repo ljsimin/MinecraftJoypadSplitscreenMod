@@ -1,4 +1,4 @@
-package com.shiny.joypadmod.helpers;
+package com.shiny.joypadmod.utils;
 
 import com.shiny.joypadmod.JoypadMod;
 import org.lwjgl.opengl.GL11;

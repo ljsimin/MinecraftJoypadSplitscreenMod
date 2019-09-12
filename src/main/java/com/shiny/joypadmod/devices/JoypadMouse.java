@@ -1,10 +1,11 @@
-package com.shiny.joypadmod;
+package com.shiny.joypadmod.devices;
 
+import com.shiny.joypadmod.ControllerSettings;
+import com.shiny.joypadmod.JoypadMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 
 import com.shiny.joypadmod.event.ControllerInputEvent.EventType;
-import com.shiny.joypadmod.lwjglVirtualInput.VirtualMouse;
 
 public class JoypadMouse {
     public static int getX() {
