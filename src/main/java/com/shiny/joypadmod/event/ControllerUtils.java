@@ -114,7 +114,7 @@ public class ControllerUtils {
      * @return
      */
     public boolean isDeadlocked(InputDevice controller) {
-        Integer numberOfNegativeAxes = 0;
+        int numberOfNegativeAxes = 0;
         if (controller.getAxisCount() < 1) {
             return false;
         }

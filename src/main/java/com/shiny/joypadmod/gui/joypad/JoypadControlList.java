@@ -57,7 +57,6 @@ public class JoypadControlList extends GuiScrollingList {
     public List<String> joyBindKeys;
 
     public JoypadControlList(JoypadConfigMenu parent, FontRenderer fontRenderer) {
-
         super(mc, parent.controlListWidth, // width
                 parent.height, // height
                 parent.controlListYStart, // top start
@@ -71,8 +70,8 @@ public class JoypadControlList extends GuiScrollingList {
 
         this.parent = parent;
         this.fontRenderer = fontRenderer;
-        this.textInputName = new GuiTextField(20001, this.fontRenderer, 0, 0, 0, 0);
-        this.textInputName.setVisible(false);
+        textInputName = new GuiTextField(20001, this.fontRenderer, 0, 0, 0, 0);
+        textInputName.setVisible(false);
         joyBindKeys = new ArrayList<>();
         descriptionStartX = parent.buttonXStart_top;
         if (this.parent.getCurrentControllerId() != -1) {
@@ -279,26 +278,26 @@ public class JoypadControlList extends GuiScrollingList {
                     String theKey = binding.inputEvent.getDescription();
                     if (theKey != "NONE") {
                         String newMapping =
-                                this.textInputName.getText().length() > 0 ?
-                                        this.textInputName.getText() :
+                                textInputName.getText().length() > 0 ?
+                                        textInputName.getText() :
                                         binding.inputEvent.getDescription();
                         // update the mapping
                         ControllerSettings.controllerUtils.updateCurrentJoypadMap(theKey, newMapping);
                     }
                 }
-                this.textInputName.setVisible(false);
+                textInputName.setVisible(false);
                 inputIndexToUpdate = -1;
             } else {
-                if (!this.textInputName.getVisible()) {
+                if (!textInputName.getVisible()) {
                     textInputName.width = controlButtonWidth;
                     textInputName.height = buttonHeight;
                     textInputName.setText(controlButtonStr);
-                    this.textInputName.setVisible(true);
+                    textInputName.setVisible(true);
                 }
                 textInputName.x = x;
                 textInputName.y = y;
                 textInputName.drawTextBox();
-                this.textInputName.setFocused(true);
+                textInputName.setFocused(true);
             }
             parent.lastKeyCode = -1;
         } else {
@@ -360,12 +359,12 @@ public class JoypadControlList extends GuiScrollingList {
             // remove any stale keycodes
             parent.lastKeyCode = -1;
             // check if we are in range of the buttons
-            if (this.lastMouseButton == 1 && lastXClick <= x + controlButtonWidth) {
+            if (lastMouseButton == 1 && lastXClick <= x + controlButtonWidth) {
                 if (bindingIndexToUpdate == -1) {
                     this.inputIndexToUpdate = id;
                     checkCancelInputWait = false;
                 }
-            } else if (this.lastMouseButton == 0 && !this.textInputName.getVisible()) {
+            } else if (lastMouseButton == 0 && !textInputName.getVisible()) {
                 ControllerBinding binding = ControllerSettings.get(bindingKey);
                 if (lastXClick <= x + controlButtonWidth) {
                     bindingIndexToUpdate = id;
@@ -399,7 +398,7 @@ public class JoypadControlList extends GuiScrollingList {
                 // click was outside so timeout the controller input wait
                 controllerTickStart = controllerInputTimeout + 1;
             inputIndexToUpdate = -1;
-            this.textInputName.setVisible(false);
+            textInputName.setVisible(false);
         }
         return true;
     }
