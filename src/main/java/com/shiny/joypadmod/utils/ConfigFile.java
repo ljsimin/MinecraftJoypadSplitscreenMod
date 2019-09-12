@@ -89,7 +89,7 @@ public class ConfigFile {
         addBindingOptionsComment();
         addGlobalOptionsComment();
 
-        updateKey(getDefaultCategory(), "ConfigVersion", String.valueOf(JoypadMod.VERSION), true);
+        updateKey(getDefaultCategory(), "ConfigVersion", JoypadMod.VERSION, true);
     }
 
     public String getDefaultCategory() {
@@ -266,7 +266,7 @@ public class ConfigFile {
                 }
             }
 
-            updateKey(category, "ConfigVersion", String.valueOf(JoypadMod.VERSION), true);
+            updateKey(category, "ConfigVersion", JoypadMod.VERSION, true);
         } catch (Exception ex) {
             JoypadMod.logger.error("Failed calling updateControllerBindings from config file. Exception: " + ex.toString());
         }
