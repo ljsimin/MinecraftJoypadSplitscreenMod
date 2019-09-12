@@ -119,7 +119,7 @@ public class JoypadCalibrationMenu extends GuiScreen {
                 InputDevice controller = ControllerSettings.JoypadModInputLibrary.getController(joypadIndex);
                 ControllerSettings.saveDeadZones(controller);
                 ControllerSettings.saveSingleDirectionAxis(controller);
-                ((GuiButton) buttonList.get(1)).displayString = McObfuscationHelper.lookupString("gui.done");
+                buttonList.get(1).displayString = McObfuscationHelper.lookupString("gui.done");
                 break;
             case 500: // Done
                 if (joypadIndex >= 0) {

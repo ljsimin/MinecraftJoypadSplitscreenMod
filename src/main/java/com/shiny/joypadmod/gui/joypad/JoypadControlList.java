@@ -82,7 +82,7 @@ public class JoypadControlList extends GuiScrollingList {
     public void updatejoyBindKeys() {
         joyBindKeys.clear();
 
-        KeyBinding[] akeybinding = (KeyBinding[]) ArrayUtils.clone(mc.gameSettings.keyBindings);
+        KeyBinding[] akeybinding = ArrayUtils.clone(mc.gameSettings.keyBindings);
 
         Arrays.sort(akeybinding);
 
@@ -127,7 +127,7 @@ public class JoypadControlList extends GuiScrollingList {
 
     private void sortBindKeys() {
         int lastCategoryStart = -1;
-        String[] list = joyBindKeys.toArray(new String[joyBindKeys.size()]);
+        String[] list = joyBindKeys.toArray(new String[0]);
         for (int i = 0; i < list.length; i++) {
             if (list[i].contains("categories") || (i + 1 == list.length && i++ > 0)) {
                 if (lastCategoryStart != -1) {

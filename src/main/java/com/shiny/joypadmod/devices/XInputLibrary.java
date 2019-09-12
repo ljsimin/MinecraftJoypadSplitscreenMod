@@ -28,7 +28,7 @@ public class XInputLibrary extends InputLibrary {
     int lastEvent = -1;
     int lastEventControlIndex = -1;
 
-    public class InputEvent {
+    public static class InputEvent {
         int eventType = -1; // 0 = axis event 1 = button press
         int eventControlIndex = -1; // button or axis number
 

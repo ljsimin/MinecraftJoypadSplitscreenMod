@@ -398,7 +398,7 @@ public class JoypadConfigMenu extends GuiScreen {
     }
 
     private void changeButtonText(int buttonIndex, String text) {
-        ((GuiButton) buttonList.get(buttonIndex)).displayString = text;
+        buttonList.get(buttonIndex).displayString = text;
     }
 
     /*

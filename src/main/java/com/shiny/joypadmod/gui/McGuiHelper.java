@@ -55,9 +55,9 @@ public class McGuiHelper {
         // JoypadMod.logger.info("Calling mouseDrag");
 
         try {
-            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen,
                     eventButtonNames[0], eventButtonNames[1]);
-            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, (GuiScreen) mc.currentScreen,
+            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen,
                     lastMouseEventNames[0], lastMouseEventNames[1]);
             JoypadMod.logger.info(eventButtonNames[0]);
             JoypadMod.logger.info(lastMouseEventNames[0]);
@@ -70,7 +70,7 @@ public class McGuiHelper {
         long var3 = Minecraft.getSystemTime() - lastEvent;
 
         try {
-            mouseButtonMove.invoke((Object) mc.currentScreen, rawX, rawY, eventButton, var3);
+            mouseButtonMove.invoke(mc.currentScreen, rawX, rawY, eventButton, var3);
         } catch (Exception ex) {
         }
 

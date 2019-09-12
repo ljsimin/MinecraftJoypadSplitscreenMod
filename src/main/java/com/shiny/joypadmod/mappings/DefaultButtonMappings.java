@@ -43,7 +43,7 @@ public class DefaultButtonMappings {
     }
 
 
-    public class LWJGLButtonMappings extends DefaultButtonMappings {
+    public static class LWJGLButtonMappings extends DefaultButtonMappings {
         @Override
         public int Back() {
             return 6;

@@ -231,30 +231,30 @@ public class ControllerBinding {
     }
 
     public String toConfigFileString() {
-        String s = menuString + ",";
+        StringBuilder s = new StringBuilder(menuString + ",");
 
         if (keyCodes != null) {
-            s += "{";
+            s.append("{");
             for (int i = 0; i < keyCodes.length; i++) {
-                s += keyCodes[i];
+                s.append(keyCodes[i]);
 
                 if (i + 1 < keyCodes.length)
-                    s += " ";
+                    s.append(" ");
             }
-            s += "},";
+            s.append("},");
         }
 
         if (inputEvent != null)
-            s += inputEvent.toConfigFileString();
+            s.append(inputEvent.toConfigFileString());
 
         if (bindingOptions != null) {
             Object[] options = bindingOptions.toArray();
             for (Object bo : options) {
-                s += "," + bo.toString();
+                s.append(",").append(bo.toString());
             }
         }
 
-        return s;
+        return s.toString();
     }
 
     // returns boolean - whether the input string was accepted and bound

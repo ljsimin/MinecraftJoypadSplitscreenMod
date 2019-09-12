@@ -186,7 +186,7 @@ public class JoypadMouse {
                         (lastReportedX != x || lastReportedY != y))
                     JoypadMod.logger.debug("Virtual Mouse x: " + x + " y: " + y);
 
-                mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
+                mcY = mc.displayHeight - (y * scaledResolution.getScaleFactor());
                 mcX = x * scaledResolution.getScaleFactor();
                 deltaX = 0;
                 deltaY = 0;
@@ -199,7 +199,7 @@ public class JoypadMouse {
             x = scaledResolution.getScaledWidth() / 2;
             y = scaledResolution.getScaledHeight() / 2;
 
-            mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
+            mcY = mc.displayHeight - (y * scaledResolution.getScaleFactor());
             mcX = x * scaledResolution.getScaleFactor();
         }
 
@@ -213,7 +213,7 @@ public class JoypadMouse {
             AxisReader.x = x;
             AxisReader.y = y;
             AxisReader.mcX = x * scaledResolution.getScaleFactor();
-            AxisReader.mcY = mc.displayHeight - (int) (y * scaledResolution.getScaleFactor());
+            AxisReader.mcY = mc.displayHeight - (y * scaledResolution.getScaleFactor());
         }
 
         private static float getReading(String bindKey) {

@@ -117,8 +117,8 @@ public class ControllerSettings {
             try {
                 JoypadModInputLibrary = new LWJGLibrary();
                 JoypadModInputLibrary.create();
-                bMap = bMap.new LWJGLButtonMappings();
-                aMap = aMap.new LWJGLAxisMappings();
+                bMap = new DefaultButtonMappings.LWJGLButtonMappings();
+                aMap = new DefaultAxisMappings.LWJGLAxisMappings();
                 JoypadMod.logger.info("Using LWJGL for Joypad Mod controls");
             } catch (Exception ex) {
                 Minecraft.getMinecraft().crashed(new CrashReport("Failed creating LWJGL controller object", ex));
@@ -471,10 +471,10 @@ public class ControllerSettings {
         List<Integer> finalAxisList = new ArrayList<>();
         InputDevice c = JoypadModInputLibrary.getController(controllerNo);
         StringBuilder sbSDAMessage = new StringBuilder();
-        sbSDAMessage.append("Setting the following as Single Direction Axes on " + c.getName());
+        sbSDAMessage.append("Setting the following as Single Direction Axes on ").append(c.getName());
         for (Integer i : axisList) {
             if (i >= 0 && i < c.getAxisCount()) {
-                sbSDAMessage.append(" " + c.getAxisName(i));
+                sbSDAMessage.append(" ").append(c.getAxisName(i));
                 finalAxisList.add(i);
             } else {
                 JoypadMod.logger.info("Rejecting invalid axis in Single Direction Axis list: " + i);
@@ -684,9 +684,7 @@ public class ControllerSettings {
         List<Integer> values = new ArrayList<>();
         for (Entry<String, List<Integer>> stringListEntry : listToFlatten.entrySet()) {
             List<Integer> ids = stringListEntry.getValue();
-            for (Integer id : ids) {
-                values.add(id);
-            }
+            values.addAll(ids);
         }
         java.util.Collections.sort(values);
 

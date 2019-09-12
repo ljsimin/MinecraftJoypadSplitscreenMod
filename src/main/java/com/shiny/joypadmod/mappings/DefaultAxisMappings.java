@@ -27,7 +27,7 @@ public class DefaultAxisMappings {
         return 5;
     }
 
-    public class LWJGLAxisMappings extends DefaultAxisMappings {
+    public static class LWJGLAxisMappings extends DefaultAxisMappings {
 
         @Override
         public int LSx() {

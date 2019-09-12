@@ -293,7 +293,7 @@ public class GameRenderHandler {
             try {
                 JoypadMod.logger.debug("Replacing control screen");
                 String[] names = McObfuscationHelper.getMcVarNames("parentScreen");
-                GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, (GuiControls) gui,
+                GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, gui,
                         names[0], names[1]);
                 mc.displayGuiScreen(new JoypadConfigMenu(parent));
             } catch (Exception ex) {
