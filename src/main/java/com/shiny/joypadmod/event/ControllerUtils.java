@@ -41,7 +41,7 @@ public class ControllerUtils {
                                            int requiredAxisCount) {
         boolean meetsRequirements = meetsInputRequirements(controller, requiredButtonCount, requiredMinButtonCount,
                 requiredAxisCount);
-        StringBuilder msg = new StringBuilder("");
+        StringBuilder msg = new StringBuilder();
 
         if (!meetsRequirements) {
             msg.append("Selected controller ").append(controller.getName()).append(
@@ -109,9 +109,6 @@ public class ControllerUtils {
 
     /**
      * Returns true if any two controller axes read "-1" at the same time. Used to work around the issue with LWJGL which initializes axes at -1 until the axes are moved by the player.
-     *
-     * @param controller
-     * @return
      */
     public boolean isDeadlocked(InputDevice controller) {
         int numberOfNegativeAxes = 0;

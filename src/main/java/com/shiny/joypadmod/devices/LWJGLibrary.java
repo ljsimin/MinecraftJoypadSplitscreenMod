@@ -74,7 +74,7 @@ public class LWJGLibrary extends InputLibrary {
 
     @Override
     public void poll() {
-        return; // polling happens within Minecraft itself so no need to do our own
+        // polling happens within Minecraft itself so no need to do our own
     }
 
     @Override

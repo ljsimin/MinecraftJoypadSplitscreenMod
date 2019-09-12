@@ -31,14 +31,14 @@ public class PovInputEvent extends ControllerInputEvent {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(
-                " Max Value: ").append(threshold).append(" Current value: ").append(getAnalogReading()).append(
-                " Is pressed: ").append(isPressed()).toString();
+        return "Event: " + getName() + " Type: " + getEventType() +
+                " Max Value: " + threshold + " Current value: " + getAnalogReading() +
+                " Is pressed: " + isPressed();
     }
 
     @Override
     public String getDescription() {
-        return new StringBuilder().append(getName()).append(" ").append(getDirection(getThreshold())).toString();
+        return getName() + " " + getDirection(getThreshold());
     }
 
     private String getDirection(float reading) {

@@ -58,9 +58,9 @@ public class AxisInputEvent extends ControllerInputEvent {
     public String toString() {
         if (!isValid())
             return "Not Set";
-        return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(
-                " Threshold: ").append(threshold).append(" Current value: ").append(getAnalogReading()).append(
-                " Is pressed: ").append(isPressed()).toString();
+        return "Event: " + getName() + " Type: " + getEventType() +
+                " Threshold: " + threshold + " Current value: " + getAnalogReading() +
+                " Is pressed: " + isPressed();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AxisInputEvent extends ControllerInputEvent {
         if (!isValid())
             return "NONE";
 
-        return new StringBuilder().append(getName()).append(" ").append(getDirection(getThreshold())).toString();
+        return getName() + " " + getDirection(getThreshold());
     }
 
     private String getDirection(float reading) {

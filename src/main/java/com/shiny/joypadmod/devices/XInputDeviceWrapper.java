@@ -24,8 +24,7 @@ public class XInputDeviceWrapper extends InputDevice {
 
     @Override
     public String getName() {
-        String name = "XInput Device";
-        return name;
+        return "XInput Device";
     }
 
     @Override

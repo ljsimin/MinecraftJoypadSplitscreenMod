@@ -125,11 +125,11 @@ public class McObfuscationHelper {
     }
 
     private static String doTranslate(String input) {
-        String translation = I18n.format(input, new Object[0]);
+        String translation = I18n.format(input);
         if (translation.compareTo(input) == 0) {
             String keyString = input.replace("joy.", "key.");
             // translation failed so try to lookup with the key name
-            translation = I18n.format(keyString, new Object[0]);
+            translation = I18n.format(keyString);
             if (translation.compareTo(keyString) == 0)
                 return input;
         }

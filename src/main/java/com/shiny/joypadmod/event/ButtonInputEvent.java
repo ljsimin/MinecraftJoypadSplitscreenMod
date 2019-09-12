@@ -30,8 +30,8 @@ public class ButtonInputEvent extends ControllerInputEvent {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("Event: ").append(getName()).append(" Type: ").append(getEventType()).append(
-                " Current value: ").append(getAnalogReading()).append(" Is pressed: ").append(isPressed()).toString();
+        return "Event: " + getName() + " Type: " + getEventType() +
+                " Current value: " + getAnalogReading() + " Is pressed: " + isPressed();
     }
 
     @Override

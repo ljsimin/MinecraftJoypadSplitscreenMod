@@ -147,8 +147,7 @@ public abstract class ControllerInputEvent {
     }
 
     public String toConfigFileString() {
-        String s = getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + "," + getDeadZone();
-        return s;
+        return getEventType().toString() + "," + getEventIndex() + "," + getThreshold() + "," + getDeadZone();
     }
 
     @Override

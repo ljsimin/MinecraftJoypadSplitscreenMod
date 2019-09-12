@@ -197,7 +197,7 @@ public class GameRenderHandler {
             VirtualMouse.setMouseButton(JoypadMouse.isLeftButtonDown() ? 0 : 1, true);
         }
 
-        if (mc.currentScreen != null && mc.currentScreen instanceof GuiContainer) {
+        if (mc.currentScreen instanceof GuiContainer) {
             if (Minecraft.getSystemTime() - ControllerSettings.get("joy.scrollDown").lastTick < 100
                     || Minecraft.getSystemTime() - ControllerSettings.get("joy.scrollUp").lastTick < 100)
                 return;
@@ -298,7 +298,6 @@ public class GameRenderHandler {
                 mc.displayGuiScreen(new JoypadConfigMenu(parent));
             } catch (Exception ex) {
                 JoypadMod.logger.error("Failed to get parent of options gui.  aborting. Exception " + ex.toString());
-                return;
             }
         }
     }
