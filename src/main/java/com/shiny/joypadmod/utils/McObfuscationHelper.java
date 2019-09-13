@@ -1,8 +1,5 @@
 package com.shiny.joypadmod.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 
@@ -23,32 +20,8 @@ public class McObfuscationHelper {
     // key = de-obfuscated function or field Name
     // values = str1=164Name, str2=1.7.2,str3=nextVersionName etc
 
-    // currently supported versions 1.6.4, 1.7.2
-    public static Map<String, String[]> versionNameMap;
-
-    static {
-        versionNameMap = new HashMap<>();
-
-        //TODO: Figure out the actual function for these, they're all outdated and not working.
-        versionNameMap.put("mouseClickMove", new String[]{"func_85041_a", "func_146273_a"});
-        versionNameMap.put("eventButton", new String[]{"field_85042_b", "field_146287_f"});
-        versionNameMap.put("lastMouseEvent", new String[]{"field_85043_c", "field_146288_g"});
-        versionNameMap.put("parentScreen", new String[]{"field_73909_b", "field_146496_h"});
-    }
-
     public static int keyCode(KeyBinding key) {
         return key.getKeyCode();
-    }
-
-    // returns de-obfuscated and obfuscated names for that version
-    public static String[] getMcVarNames(String fieldOrFunctionName) {
-        String[] candidates = versionNameMap.get(fieldOrFunctionName);
-
-        if (candidates == null) {
-            return new String[]{fieldOrFunctionName, "unknown"};
-        } else {
-            return new String[]{fieldOrFunctionName, candidates[1]};
-        }
     }
 
     public static String getKeyDescription(KeyBinding key) {

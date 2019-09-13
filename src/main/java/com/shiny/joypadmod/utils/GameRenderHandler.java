@@ -292,9 +292,7 @@ public class GameRenderHandler {
         if (!(mc.currentScreen instanceof JoypadConfigMenu)) {
             try {
                 JoypadMod.logger.debug("Replacing control screen");
-                String[] names = McObfuscationHelper.getMcVarNames("parentScreen");
-                GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, gui,
-                        names[0], names[1]);
+                GuiScreen parent = ObfuscationReflectionHelper.getPrivateValue(GuiControls.class, gui, "parentScreen");
                 mc.displayGuiScreen(new JoypadConfigMenu(parent));
             } catch (Exception ex) {
                 JoypadMod.logger.error("Failed to get parent of options gui.  aborting. Exception " + ex.toString());

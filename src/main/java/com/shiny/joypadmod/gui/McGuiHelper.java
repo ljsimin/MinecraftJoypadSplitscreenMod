@@ -3,7 +3,6 @@ package com.shiny.joypadmod.gui;
 import java.lang.reflect.Method;
 
 import com.shiny.joypadmod.JoypadMod;
-import com.shiny.joypadmod.utils.McObfuscationHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -13,19 +12,14 @@ public class McGuiHelper {
     private static Method mouseButtonMove = null;
     private static Minecraft mc = Minecraft.getMinecraft();
 
-    private static final String[] eventButtonNames = McObfuscationHelper.getMcVarNames("eventButton");
-    private static final String[] lastMouseEventNames = McObfuscationHelper.getMcVarNames("lastMouseEvent");
-
     private static boolean created = false;
 
     @SuppressWarnings("rawtypes")
     public static void create() throws Exception {
         JoypadMod.logger.info("Creating McGuiHelper");
-        String[] names3 = McObfuscationHelper.getMcVarNames("mouseClickMove");
-
         Class[] params3 = new Class[]{int.class, int.class, int.class, long.class};
 
-        mouseButtonMove = tryGetMethod(GuiScreen.class, params3, names3);
+        mouseButtonMove = tryGetMethod(GuiScreen.class, params3, new String[]{"mouseClickMove"});
 
         created = true;
     }
@@ -55,12 +49,8 @@ public class McGuiHelper {
         // JoypadMod.logger.info("Calling mouseDrag");
 
         try {
-            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen,
-                    eventButtonNames[0], eventButtonNames[1]);
-            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen,
-                    lastMouseEventNames[0], lastMouseEventNames[1]);
-            JoypadMod.logger.info(eventButtonNames[0]);
-            JoypadMod.logger.info(lastMouseEventNames[0]);
+            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "eventButton");
+            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "lastMouseEvent");
         } catch (Exception ex) {
             JoypadMod.logger.error("Failed calling ObfuscationReflectionHelper" + ex.toString());
             if (lastEvent == -1)
