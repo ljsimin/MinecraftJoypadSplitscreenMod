@@ -301,7 +301,7 @@ public class GameRenderHandler {
     }
 
     public static boolean InGameCheckNeeded() {
-        return CheckIfModEnabled() && mc.player != null;
+        return CheckIfModEnabled() && mc.player != null && mc.currentScreen == null;
     }
 
     public static boolean InGuiCheckNeeded() {
