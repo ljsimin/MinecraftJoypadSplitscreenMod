@@ -19,7 +19,7 @@ public class McGuiHelper {
         JoypadMod.logger.info("Creating McGuiHelper");
         Class[] params3 = new Class[]{int.class, int.class, int.class, long.class};
 
-        mouseButtonMove = tryGetMethod(GuiScreen.class, params3, new String[]{"mouseClickMove"});
+        mouseButtonMove = tryGetMethod(GuiScreen.class, params3, new String[]{"mouseClickMove","func_146273_a"});
 
         created = true;
     }
@@ -49,8 +49,8 @@ public class McGuiHelper {
         // JoypadMod.logger.info("Calling mouseDrag");
 
         try {
-            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "eventButton");
-            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "lastMouseEvent");
+            eventButton = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "eventButton","field_146287_f");
+            lastEvent = ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, mc.currentScreen, "lastMouseEvent","field_146288_g");
         } catch (Exception ex) {
             JoypadMod.logger.error("Failed calling ObfuscationReflectionHelper" + ex.toString());
             if (lastEvent == -1)
